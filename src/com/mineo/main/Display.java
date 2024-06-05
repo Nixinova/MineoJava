@@ -13,7 +13,7 @@ public class Display extends Canvas implements Runnable {
 
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 450;
-	public static final String TITLE = "in-060620";
+	public static final String TITLE = "in-060808";
 
 	private Thread thread;
 	private Screen screen;
@@ -68,7 +68,7 @@ public class Display extends Canvas implements Runnable {
 
 		this.screen.render();
 		Graphics graphics = buffer.getDrawGraphics();
-		graphics.drawImage(this.img, 0, 0, 16000, 9000, null);
+		graphics.drawImage(this.img, 0, 0, WIDTH, HEIGHT, null);
 		graphics.dispose();
 		buffer.show();
 	}
