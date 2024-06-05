@@ -1,8 +1,6 @@
 package com.nixinova.main;
 
-public class Render {
-	private Game game;
-
+public class Render extends Game {
 	public final int width;
 	public final int height;
 	public final int[] pixels;

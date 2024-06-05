@@ -1,9 +1,9 @@
 package com.nixinova.main;
 
 public class Game {
-	public double time = 0.0D;
+	public static double time = 0.0D;
 
-	public void tick() {
-		this.time++;
+	public static void tick() {
+		time += 5.0E-4D;
 	}
 }
