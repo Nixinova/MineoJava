@@ -1,6 +1,8 @@
-package com.mineo.main;
+package com.nixinova.main;
 
 public class Render {
+	private Game game;
+
 	public final int width;
 	public final int height;
 	public final int[] pixels;
@@ -18,7 +20,8 @@ public class Render {
 				for (int x = 0; x < render.width; x++) {
 					int xPx = x + xOffset;
 					if (xPx >= 0 && xPx < this.width) {
-						this.pixels[xPx + yPx * this.width] = render.pixels[x + y * render.width];
+						int alpha = render.pixels[x + y * render.width];
+						this.pixels[xPx + yPx * this.width] = alpha;
 					}
 				}
 			}

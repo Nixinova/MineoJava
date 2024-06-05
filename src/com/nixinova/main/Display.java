@@ -1,7 +1,8 @@
-package com.mineo.main;
+package com.nixinova.main;
 
 import java.awt.Canvas;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
@@ -13,16 +14,20 @@ public class Display extends Canvas implements Runnable {
 
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 450;
-	public static final String TITLE = "in-060808";
+	public static final String TITLE = "in-060809";
 
 	private Thread thread;
 	private Screen screen;
 	private BufferedImage img;
-	private Render render;
+	private Game game;
 	private boolean running = false;
 	private int[] pixels;
 
 	public Display() {
+		Dimension size = new Dimension(WIDTH, HEIGHT);
+		setPreferredSize(size);
+		setMinimumSize(size);
+		setMaximumSize(size);
 		this.screen = new Screen(WIDTH, HEIGHT);
 		this.img = new BufferedImage(WIDTH, HEIGHT, 1);
 		this.pixels = ((DataBufferInt) this.img.getRaster().getDataBuffer()).getData();
@@ -37,7 +42,9 @@ public class Display extends Canvas implements Runnable {
 	private void stop() {
 		if (this.running)
 			return;
+
 		this.running = false;
+
 		try {
 			this.thread.join();
 		} catch (Exception err) {
@@ -46,9 +53,38 @@ public class Display extends Canvas implements Runnable {
 	}
 
 	public void run() {
+		int frames = 0;
+		double unprocessedSecs = 0.0D;
+		long prevTime = System.nanoTime();
+		double secsPerTick = 1.0D / 60;
+		int tickCount = 0;
+		boolean ticked = false;
+
 		while (this.running) {
-			tick();
+			long curTime = System.nanoTime();
+			long passedTime = curTime - prevTime;
+			prevTime = curTime;
+			double billion = 1.0E9D;
+			unprocessedSecs += passedTime / billion;
+
+			while (unprocessedSecs > secsPerTick) {
+				tick();
+				unprocessedSecs -= secsPerTick;
+				ticked = true;
+				tickCount++;
+				if (tickCount % 60 == 0)
+					System.out.println(String.valueOf(frames) + " FPS");
+				prevTime += 1000L;
+				frames = 0;
+			}
+
+			if (ticked) {
+				render();
+				frames++;
+			}
+
 			render();
+			frames++;
 		}
 	}
 
@@ -61,12 +97,11 @@ public class Display extends Canvas implements Runnable {
 			createBufferStrategy(3);
 			return;
 		}
-
 		for (int i = 0; i < WIDTH * HEIGHT; i++) {
 			this.pixels[i] = this.screen.pixels[i];
 		}
 
-		this.screen.render();
+		this.screen.render(this.game);
 		Graphics graphics = buffer.getDrawGraphics();
 		graphics.drawImage(this.img, 0, 0, WIDTH, HEIGHT, null);
 		graphics.dispose();
