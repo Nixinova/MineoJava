@@ -7,7 +7,6 @@ import com.nixinova.input.InputHandler;
 import com.nixinova.readwrite.Options;
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -25,11 +24,17 @@ import javax.swing.JFrame;
 public class Display extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
 
-	public static final int DATA_VERSION = 15;
-	public static final int WIDTH = 854;
-	public static final int HEIGHT = 477;
-	public static final String VERSION = "0.0.3_2";
+	public static final int OPTIONS_VERSION = 4;
+	
+	private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+	public static int WIDTH = (int) screenSize.getWidth();
+	public static int HEIGHT = (int) screenSize.getHeight();
+
+	public static final String VERSION = "0.0.4";
 	public static final String TITLE = "Mineo " + VERSION;
+
+	public static JFrame frame;
 
 	private Thread thread;
 	private Screen screen;
@@ -42,7 +47,6 @@ public class Display extends Canvas implements Runnable {
 	private int newY = 0;
 	private int oldX = 0;
 	private int oldY = 0;
-
 	public int fps = 0;
 
 	public Display() {
@@ -160,31 +164,39 @@ public class Display extends Canvas implements Runnable {
 		graphics.setColor(Color.white);
 
 		int sep = 15;
+		String intLimit = "214748364";
+
 		String playerX = String.format("%01d", new Object[] { Integer.valueOf((int) Render3D.playerX) });
 		String playerY = String.format("%01d", new Object[] { Integer.valueOf((int) Render3D.playerY) });
 		String playerZ = String.format("%01d", new Object[] { Integer.valueOf((int) Render3D.playerZ) });
 
+		playerX = playerX.contains(intLimit) ? "infinity" : playerX;
+		playerY = playerY.contains(intLimit) ? "infinity" : playerY;
+		playerZ = playerZ.contains(intLimit) ? "infinity" : playerZ;
+
+		String msg1 = "", msg2 = "", msg3 = "";
+		if (Options.fileVersion < OPTIONS_VERSION || Options.fileVersion > OPTIONS_VERSION) {
+			if (Options.fileVersion < OPTIONS_VERSION) {
+				msg1 = "Outdated options version: client is on version " + OPTIONS_VERSION +
+						" while options.txt is still on version " + Options.fileVersion + ".";
+			} else if (Options.fileVersion > OPTIONS_VERSION) {
+				msg1 = "Outdated client version: options.txt is on v" + Options.fileVersion +
+						" while client is still on v" + OPTIONS_VERSION + ".";
+			}
+			msg2 = "Data in options.txt which differs from the current version may break or crash your game!";
+			msg3 = "Delete options.txt in %appdata%\\.mineo to refresh the options file.";
+		}
+
 		if (Controller.debugShown) {
+			graphics.setColor(Color.white);
 			graphics.drawString(TITLE, 5, sep);
 			graphics.drawString("FPS: " + String.valueOf(this.fps), 5, sep * 2);
 			graphics.drawString("Block: " + playerX + " / " + playerY + " / " + playerZ, 5, sep * 3);
-		}
 
-		if (Options.dataVersion < DATA_VERSION || Options.dataVersion > DATA_VERSION) {
-			String msg1 = null;
-			if (Options.dataVersion < DATA_VERSION) {
-				msg1 = "Outdated data version: options.txt is still on v" + Options.dataVersion +
-						" while client is on v" + DATA_VERSION + ".";
-			} else if (Options.dataVersion > DATA_VERSION) {
-				msg1 = "Data version is too new: options.txt is on v" + Options.dataVersion +
-						" while client is still on v" + DATA_VERSION + ".";
-			}
-			String msg2 = "Data in options.txt which differs from the current version may crash your game!";
-			String msg3 = "Delete options.txt in %appdata%\\.mineo to refresh the options file.";
 			graphics.setColor(Color.red);
-			graphics.drawString(msg1, 5, HEIGHT - sep * 4);
-			graphics.drawString(msg2, 5, HEIGHT - sep * 3 - 1);
-			graphics.drawString(msg3, 5, HEIGHT - sep * 2 - 2);
+			graphics.drawString(msg1, 5, sep * 4);
+			graphics.drawString(msg2, 5, sep * 5);
+			graphics.drawString(msg3, 5, sep * 6);
 		}
 
 		graphics.dispose();
@@ -205,8 +217,6 @@ public class Display extends Canvas implements Runnable {
 		frame.setDefaultCloseOperation(3);
 		frame.setSize(WIDTH, HEIGHT);
 		frame.setTitle(TITLE);
-		frame.setLocationRelativeTo((Component) null);
-		frame.setResizable(false);
 		frame.setVisible(true);
 		frame.setFocusable(true);
 		frame.requestFocus();

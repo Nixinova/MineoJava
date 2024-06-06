@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.4
+*2019-06-13 18:29*
+- Going to the 32-bit limits now displays "infinity"
+- Game now gets screen size
+- Game now exits on Escape
+- Lowered options version to 4
+
 ## v0.0.3_2
 *2019-06-11 19:34*
 - Added data version (15)

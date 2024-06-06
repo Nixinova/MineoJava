@@ -22,7 +22,8 @@ public class Game {
 		boolean sprint = key[16];
 		boolean crouch = key[17];
 		boolean f3 = key[114];
+		boolean esc = key[27];
 
-		controls.tick(forward, back, left, right, jump, crouch, sprint, f3);
+		controls.tick(forward, back, left, right, jump, crouch, sprint, f3, esc);
 	}
 }

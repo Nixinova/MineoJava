@@ -1,5 +1,8 @@
 package com.nixinova.input;
 
+import com.nixinova.main.Display;
+import java.awt.AWTException;
+import java.awt.Robot;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -11,6 +14,8 @@ import java.awt.event.MouseMotionListener;
 public class InputHandler implements KeyListener, FocusListener, MouseListener, MouseMotionListener {
 	public boolean[] key = new boolean[68836];
 
+	public Robot robot;
+
 	public static int mouseX;
 	public static int mouseY;
 
@@ -20,6 +25,19 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 	public void mouseMoved(MouseEvent event) {
 		mouseX = event.getX();
 		mouseY = event.getY();
+
+		try {
+			if (mouseX < 40) {
+				Robot robot = new Robot();
+				robot.mouseMove(Display.WIDTH / 2, Display.HEIGHT / 2);
+			}
+			if (mouseX > Display.WIDTH - 40) {
+				Robot robot = new Robot();
+				robot.mouseMove(Display.WIDTH / 2, Display.HEIGHT / 2);
+			}
+		} catch (AWTException err) {
+			err.printStackTrace();
+		}
 	}
 
 	public void mouseClicked(MouseEvent event) {

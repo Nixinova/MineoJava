@@ -12,24 +12,29 @@ public class Controller {
 	public double z2;
 	public double rot2;
 
+	private int debugCooldown = 0;
+
 	public static boolean panLeft = false;
 	public static boolean panRight = false;
 	public static boolean tiltUp = false;
 	public static boolean tiltDown = false;
 	public static boolean debugShown = true;
 	public static boolean walking = false;
-
-	private int debugCooldown = 0;
+	public static boolean escapePressed = false;
 
 	public void tick(boolean forward, boolean back, boolean left, boolean right, boolean jump, boolean crouch,
-			boolean sprint, boolean f3) {
+			boolean sprint, boolean f3, boolean esc) {
+
 		double skyHeight = Options.skyHeight;
 		double groundHeight = Options.groundHeight;
+
 		double rotSpeed = Options.rotationSpeed;
+
 		double moveSpeed = Options.moveSpeed;
 		double walkSpeed = Options.walkSpeed;
 		double sprintSpeed = Options.sprintSpeed;
 		double jumpHeight = Options.jumpHeight;
+
 		double yMove = 0.0D;
 		double xMove = 0.0D;
 		double zMove = 0.0D;
@@ -68,11 +73,14 @@ public class Controller {
 				yMove = 0.0D;
 			}
 		}
-
 		if (this.y < 0.0D) {
 			this.y = 8.0D;
 			yMove = 1.0D;
 		}
+		if (esc) {
+			System.exit(1);
+		}
+
 		if (f3 && this.debugCooldown > 10) {
 			debugShown = !debugShown;
 			this.debugCooldown = 0;

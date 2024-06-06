@@ -34,16 +34,14 @@ public class Textures {
 
 	public static Render loadBitmap(String filename) {
 		try {
-			System.out.println("Textures:37: " + texturesPath + filename);
 			BufferedImage image = ImageIO.read(Textures.class.getResource(String.valueOf(texturesPath) + filename));
 			int width = image.getWidth();
 			int height = image.getHeight();
 			Render result = new Render(width, height);
 			image.getRGB(0, 0, width, height, result.pixels, 0, width);
-
 			return result;
 		} catch (Exception error) {
-			System.out.println("Error: Missing file \"" + filename + "\"");
+			System.out.println("(Textures:44) Error: Missing file \"" + filename + "\"");
 			throw new RuntimeException(error);
 		}
 	}
