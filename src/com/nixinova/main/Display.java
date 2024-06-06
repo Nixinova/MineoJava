@@ -13,14 +13,21 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.util.Calendar;
 import javax.swing.JFrame;
 
 public class Display extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
 
-	public static final int WIDTH = 800;
-	public static final int HEIGHT = 450;
-	public static final String TITLE = "in-060818";
+	public static final int WIDTH = 854;
+	public static final int HEIGHT = 477;
+
+	static Calendar rightNow = Calendar.getInstance();
+	static String month = String.format("%02d", new Object[] { Integer.valueOf(rightNow.get(2) + 1) });
+	static String day = String.format("%02d", new Object[] { Integer.valueOf(rightNow.get(5)) });
+	static String hour = String.format("%02d", new Object[] { Integer.valueOf(rightNow.get(11)) });
+
+	public static final String TITLE = "in-" + month + day + hour;
 
 	private Thread thread;
 	private Screen screen;
@@ -112,6 +119,7 @@ public class Display extends Canvas implements Runnable {
 			createBufferStrategy(3);
 			return;
 		}
+
 		for (int i = 0; i < WIDTH * HEIGHT; i++) {
 			this.pixels[i] = this.screen.pixels[i];
 		}
