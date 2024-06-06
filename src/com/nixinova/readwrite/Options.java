@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Options {
+	public static int dataVersion;
 	public static int renderDistance;
 	public static int skyHeight;
 	public static int groundHeight;
@@ -45,6 +46,7 @@ public class Options {
 		if (fileIsNew)
 			try {
 				FileWriter writer = new FileWriter(optionsFilePath);
+				writer.write(WriteValue("dataVersion", String.valueOf(15)));
 				writer.write(WriteValue("renderDistance", "5000"));
 				writer.write(WriteValue("skyHeight", "144"));
 				writer.write(WriteValue("groundHeight", "16"));
@@ -83,6 +85,9 @@ public class Options {
 		}
 
 		for (int i = 0; i < optionsDataNames.length; i++) {
+			if (optionsDataNames[i] != null && optionsDataNames[i].contains("dataVersion")) {
+				dataVersion = Integer.parseInt(optionsDataValues[i]);
+			}
 			if (optionsDataNames[i] != null && optionsDataNames[i].contains("renderDistance")) {
 				renderDistance = Integer.parseInt(optionsDataValues[i]);
 			}

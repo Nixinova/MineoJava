@@ -25,9 +25,10 @@ import javax.swing.JFrame;
 public class Display extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
 
+	public static final int DATA_VERSION = 15;
 	public static final int WIDTH = 854;
 	public static final int HEIGHT = 477;
-	public static final String VERSION = "0.0.3_1";
+	public static final String VERSION = "0.0.3_2";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	private Thread thread;
@@ -162,10 +163,28 @@ public class Display extends Canvas implements Runnable {
 		String playerX = String.format("%01d", new Object[] { Integer.valueOf((int) Render3D.playerX) });
 		String playerY = String.format("%01d", new Object[] { Integer.valueOf((int) Render3D.playerY) });
 		String playerZ = String.format("%01d", new Object[] { Integer.valueOf((int) Render3D.playerZ) });
+
 		if (Controller.debugShown) {
-			graphics.drawString(TITLE, 5, 1 * sep);
-			graphics.drawString("FPS: " + String.valueOf(this.fps), 5, 2 * sep);
-			graphics.drawString("Block: " + playerX + " / " + playerY + " / " + playerZ, 5, 3 * sep);
+			graphics.drawString(TITLE, 5, sep);
+			graphics.drawString("FPS: " + String.valueOf(this.fps), 5, sep * 2);
+			graphics.drawString("Block: " + playerX + " / " + playerY + " / " + playerZ, 5, sep * 3);
+		}
+
+		if (Options.dataVersion < DATA_VERSION || Options.dataVersion > DATA_VERSION) {
+			String msg1 = null;
+			if (Options.dataVersion < DATA_VERSION) {
+				msg1 = "Outdated data version: options.txt is still on v" + Options.dataVersion +
+						" while client is on v" + DATA_VERSION + ".";
+			} else if (Options.dataVersion > DATA_VERSION) {
+				msg1 = "Data version is too new: options.txt is on v" + Options.dataVersion +
+						" while client is still on v" + DATA_VERSION + ".";
+			}
+			String msg2 = "Data in options.txt which differs from the current version may crash your game!";
+			String msg3 = "Delete options.txt in %appdata%\\.mineo to refresh the options file.";
+			graphics.setColor(Color.red);
+			graphics.drawString(msg1, 5, HEIGHT - sep * 4);
+			graphics.drawString(msg2, 5, HEIGHT - sep * 3 - 1);
+			graphics.drawString(msg3, 5, HEIGHT - sep * 2 - 2);
 		}
 
 		graphics.dispose();

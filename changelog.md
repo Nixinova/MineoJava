@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.0.3_2
+*2019-06-11 19:34*
+- Added data version (15)
+- Added warning when options.txt is outdated
+
 ## 0.0.3_1
 *2019-06-11 19:16*
 - options.txt is now checked every 10 seconds
