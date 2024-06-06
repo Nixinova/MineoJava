@@ -1,4 +1,6 @@
-package com.nixinova.main;
+package com.nixinova.graphics;
+
+import com.nixinova.main.Game;
 
 public class Render extends Game {
 	public final int width;

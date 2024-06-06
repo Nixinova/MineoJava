@@ -1,9 +1,15 @@
 package com.nixinova.main;
 
+import com.nixinova.graphics.Screen;
+import com.nixinova.input.InputHandler;
 import java.awt.Canvas;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -14,12 +20,13 @@ public class Display extends Canvas implements Runnable {
 
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 450;
-	public static final String TITLE = "in-060816";
+	public static final String TITLE = "in-060818";
 
 	private Thread thread;
 	private Screen screen;
 	private BufferedImage img;
 	private Game game;
+	private InputHandler input;
 	private boolean running = false;
 	private int[] pixels;
 
@@ -28,9 +35,16 @@ public class Display extends Canvas implements Runnable {
 		setPreferredSize(size);
 		setMinimumSize(size);
 		setMaximumSize(size);
+
 		this.screen = new Screen(WIDTH, HEIGHT);
 		this.img = new BufferedImage(WIDTH, HEIGHT, 1);
 		this.pixels = ((DataBufferInt) this.img.getRaster().getDataBuffer()).getData();
+		this.input = new InputHandler();
+
+		addKeyListener((KeyListener) this.input);
+		addFocusListener((FocusListener) this.input);
+		addMouseListener((MouseListener) this.input);
+		addMouseMotionListener((MouseMotionListener) this.input);
 	}
 
 	private void start() {
@@ -89,7 +103,7 @@ public class Display extends Canvas implements Runnable {
 	}
 
 	private void tick() {
-		Game.tick();
+		Game.tick(this.input.key);
 	}
 
 	private void render() {
@@ -105,7 +119,8 @@ public class Display extends Canvas implements Runnable {
 		this.screen.render(this.game);
 		Graphics graphics = buffer.getDrawGraphics();
 		graphics.drawImage(this.img, 0, 0, WIDTH, HEIGHT, null);
-		
+		graphics.dispose();
+
 		buffer.show();
 	}
 
