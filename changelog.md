@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.1_1
+*2019-06-08 20:54*
+- Removed ceiling
+- Decreased render distance
+
 ## 0.0.1
 *2019-06-08 20:48*
 - Added textures

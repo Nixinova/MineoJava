@@ -25,7 +25,8 @@ public class Display extends Canvas implements Runnable {
 
 	public static final int WIDTH = 854;
 	public static final int HEIGHT = 477;
-	public static final String TITLE = "Mineo 0.0.1";
+	public static final String VERSION = "0.0.1_1";
+	public static final String TITLE = "Mineo " + VERSION;
 
 	private Thread thread;
 	private Screen screen;
@@ -154,7 +155,7 @@ public class Display extends Canvas implements Runnable {
 		Graphics graphics = buffer.getDrawGraphics();
 		graphics.drawImage(this.img, 0, 0, WIDTH, HEIGHT, null);
 		graphics.setColor(Color.white);
-		graphics.drawString("0.0.1", 5, 15);
+		graphics.drawString(VERSION, 5, 15);
 		graphics.drawString(String.valueOf(this.fps) + " FPS", 799, 15);
 		graphics.dispose();
 

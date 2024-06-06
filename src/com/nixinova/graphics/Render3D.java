@@ -14,7 +14,7 @@ public class Render3D extends Render {
 
 	public void floor(Game game) {
 		double floorPos = 8.0D;
-		double ceilPos = 64.0D;
+		double ceilPos = 564.0D;
 		double forward = Game.controls.z;
 		double right = Game.controls.x;
 		double rotation = Game.controls.xRot;
