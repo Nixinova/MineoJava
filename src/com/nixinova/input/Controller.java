@@ -37,7 +37,15 @@ public class Controller {
 			zMove -= sprint ? Options.sprintSpeed : Options.moveSpeed;
 			walking = true;
 		}
-		if (!forward && !back) {
+		if (right) {
+			xMove += sprint ? Options.sprintSpeed : Options.moveSpeed;
+			walking = true;
+		}
+		if (left) {
+			xMove -= sprint ? Options.sprintSpeed : Options.moveSpeed;
+			walking = true;
+		}
+		if (!forward && !back && !left && !right) {
 			walking = false;
 		}
 		if (panLeft) {
@@ -71,7 +79,7 @@ public class Controller {
 
 		this.x2 += (xMove * Math.cos(this.rot) + zMove * Math.sin(this.rot)) * Options.walkSpeed;
 		this.y2 += yMove;
-		this.z2 += (zMove * Math.cos(this.rot) + xMove * Math.sin(this.rot)) * Options.walkSpeed;
+		this.z2 += (zMove * Math.cos(this.rot) - xMove * Math.sin(this.rot)) * Options.walkSpeed;
 
 		this.x += this.x2;
 		this.y += this.y2;

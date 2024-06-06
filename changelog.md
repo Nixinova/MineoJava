@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.5_1
+*2024-06-07 01:38*
+- Added strafing
+
 ## 0.0.5
 *2024-06-07 00:39*
 - Fixed jumping
@@ -7,7 +11,7 @@
 - Added gravity option (defaults to 0.4)
 - Changed default jump height to 0.5
 - Use defaults if options are not given in options.txt
-- Coordinates are now rounded instead truncated
+- Coordinates are now rounded instead of truncated
 
 ## 0.0.4
 *2019-06-13 18:29*

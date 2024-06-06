@@ -29,7 +29,7 @@ public class Display extends Canvas implements Runnable {
 	public static int WIDTH = (int) screenSize.getWidth();
 	public static int HEIGHT = (int) screenSize.getHeight();
 
-	public static final String VERSION = "0.0.5";
+	public static final String VERSION = "0.0.5_1";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	public static JFrame frame;
