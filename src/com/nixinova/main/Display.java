@@ -4,6 +4,7 @@ import com.nixinova.graphics.Render3D;
 import com.nixinova.graphics.Screen;
 import com.nixinova.input.Controller;
 import com.nixinova.input.InputHandler;
+import com.nixinova.readwrite.Options;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Component;
@@ -26,7 +27,7 @@ public class Display extends Canvas implements Runnable {
 
 	public static final int WIDTH = 854;
 	public static final int HEIGHT = 477;
-	public static final String VERSION = "0.0.2";
+	public static final String VERSION = "0.0.3";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	private Thread thread;
@@ -44,6 +45,7 @@ public class Display extends Canvas implements Runnable {
 	public int fps = 0;
 
 	public Display() {
+		Options.CreateOptions();
 		Dimension size = new Dimension(WIDTH, HEIGHT);
 		setPreferredSize(size);
 		setMinimumSize(size);

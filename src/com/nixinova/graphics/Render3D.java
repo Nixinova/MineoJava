@@ -2,17 +2,19 @@ package com.nixinova.graphics;
 
 import com.nixinova.input.Controller;
 import com.nixinova.main.Game;
+import com.nixinova.readwrite.Options;
 
 public class Render3D extends Render {
 	public double[] zBuffer;
-	public double renderDist = 5000.0D;
+
+	public double renderDist = Options.renderDistance;
 
 	public static double playerX = 0.0D;
 	public static double playerY = 0.0D;
 	public static double playerZ = 0.0D;
 
-	public static final double GROUND = 16.0D;
-	public static final double SKY = 128.0D;
+	public static final double GROUND = Options.groundHeight;
+	public static final double SKY = Options.skyHeight;
 
 	public Render3D(int width, int height) {
 		super(width, height);

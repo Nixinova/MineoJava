@@ -1,5 +1,7 @@
 package com.nixinova.input;
 
+import com.nixinova.readwrite.Options;
+
 public class Controller {
 	public double x;
 	public double y;
@@ -10,8 +12,6 @@ public class Controller {
 	public double z2;
 	public double rot2;
 
-	private int debugCooldown = 0;
-
 	public static boolean panLeft = false;
 	public static boolean panRight = false;
 	public static boolean tiltUp = false;
@@ -19,18 +19,17 @@ public class Controller {
 	public static boolean debugShown = true;
 	public static boolean walking = false;
 
+	private int debugCooldown = 0;
+
 	public void tick(boolean forward, boolean back, boolean left, boolean right, boolean jump, boolean crouch,
 			boolean sprint, boolean f3) {
-		double skyHeight = 144.0D;
-		double groundHeight = 16.0D;
-
-		double rotSpeed = 0.03D;
-
-		double moveSpeed = 1.5D;
-		double sprintSpeed = 3.0D;
-		double walkSpeed = 0.5D;
-		double jumpHeight = 0.25D;
-
+		double skyHeight = Options.skyHeight;
+		double groundHeight = Options.groundHeight;
+		double rotSpeed = Options.rotationSpeed;
+		double moveSpeed = Options.moveSpeed;
+		double walkSpeed = Options.walkSpeed;
+		double sprintSpeed = Options.sprintSpeed;
+		double jumpHeight = Options.jumpHeight;
 		double yMove = 0.0D;
 		double xMove = 0.0D;
 		double zMove = 0.0D;
@@ -79,7 +78,6 @@ public class Controller {
 			this.debugCooldown = 0;
 		}
 		this.debugCooldown++;
-		System.out.println(this.debugCooldown);
 
 		this.x2 += (xMove * Math.cos(this.rot) + zMove * Math.sin(this.rot)) * walkSpeed;
 		this.y2 += yMove;

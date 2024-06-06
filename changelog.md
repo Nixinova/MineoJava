@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.3
+*2019-06-11 18:15*
+- Game now gets reads and writes data from %appdata%\.mineo\options.txt
+
 ## 0.0.2
 *2019-06-09 20:35*
 - Added sky
