@@ -1,5 +1,6 @@
 package com.nixinova.main;
 
+import com.nixinova.graphics.Render3D;
 import com.nixinova.graphics.Screen;
 import com.nixinova.input.Controller;
 import com.nixinova.input.InputHandler;
@@ -25,7 +26,7 @@ public class Display extends Canvas implements Runnable {
 
 	public static final int WIDTH = 854;
 	public static final int HEIGHT = 477;
-	public static final String VERSION = "0.0.1_1";
+	public static final String VERSION = "0.0.2";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	private Thread thread;
@@ -40,7 +41,7 @@ public class Display extends Canvas implements Runnable {
 	private int oldX = 0;
 	private int oldY = 0;
 
-	public int fps = 100;
+	public int fps = 0;
 
 	public Display() {
 		Dimension size = new Dimension(WIDTH, HEIGHT);
@@ -60,21 +61,24 @@ public class Display extends Canvas implements Runnable {
 	}
 
 	private void start() {
+		if (this.running)
+			return;
+
 		this.running = true;
 		this.thread = new Thread(this);
 		this.thread.start();
 	}
 
 	private void stop() {
-		if (this.running)
+		if (!this.running)
 			return;
 
 		this.running = false;
 
 		try {
 			this.thread.join();
-		} catch (Exception err) {
-			err.printStackTrace();
+		} catch (Exception error) {
+			error.printStackTrace();
 		}
 	}
 
@@ -84,31 +88,25 @@ public class Display extends Canvas implements Runnable {
 		long prevTime = System.nanoTime();
 		double secsPerTick = 1.0D / 60;
 		int tickCount = 0;
-		boolean ticked = false;
 
 		while (this.running) {
 			long curTime = System.nanoTime();
 			long passedTime = curTime - prevTime;
 			prevTime = curTime;
-			double billion = 1.0E9D;
-			unprocessedSecs += passedTime / billion;
+			unprocessedSecs += passedTime / 1.0E9D;
 
 			while (unprocessedSecs > secsPerTick) {
 				tick();
 				unprocessedSecs -= secsPerTick;
-				ticked = true;
+
 				tickCount++;
 				if (tickCount % 60 == 0) {
-					this.fps = frames;
 					prevTime += 1000L;
+					this.fps = frames;
 					frames = 0;
 				}
 			}
 
-			if (ticked) {
-				render();
-				frames++;
-			}
 			render();
 			frames++;
 
@@ -146,19 +144,28 @@ public class Display extends Canvas implements Runnable {
 			createBufferStrategy(3);
 			return;
 		}
+		this.screen.render(this.game);
 
 		for (int i = 0; i < WIDTH * HEIGHT; i++) {
 			this.pixels[i] = this.screen.pixels[i];
 		}
 
-		this.screen.render(this.game);
 		Graphics graphics = buffer.getDrawGraphics();
 		graphics.drawImage(this.img, 0, 0, WIDTH, HEIGHT, null);
 		graphics.setColor(Color.white);
-		graphics.drawString(VERSION, 5, 15);
-		graphics.drawString(String.valueOf(this.fps) + " FPS", 799, 15);
-		graphics.dispose();
 
+		int sep = 15;
+		String playerX = String.format("%01d", new Object[] { Integer.valueOf((int) Render3D.playerX) });
+		String playerY = String.format("%01d", new Object[] { Integer.valueOf((int) Render3D.playerY) });
+		String playerZ = String.format("%01d", new Object[] { Integer.valueOf((int) Render3D.playerZ) });
+
+		if (Controller.debugShown) {
+			graphics.drawString(TITLE, 5, 1 * sep);
+			graphics.drawString("FPS: " + String.valueOf(this.fps), 5, 2 * sep);
+			graphics.drawString("Block: " + playerX + " / " + playerY + " / " + playerZ, 5, 3 * sep);
+		}
+
+		graphics.dispose();
 		buffer.show();
 	}
 

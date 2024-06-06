@@ -18,7 +18,11 @@ public class Game {
 		boolean back = key[83];
 		boolean left = key[65];
 		boolean right = key[68];
+		boolean jump = key[32];
+		boolean sprint = key[16];
+		boolean crouch = key[17];
+		boolean f3 = key[114];
 
-		controls.tick(forward, back, left, right);
+		controls.tick(forward, back, left, right, jump, crouch, sprint, f3);
 	}
 }

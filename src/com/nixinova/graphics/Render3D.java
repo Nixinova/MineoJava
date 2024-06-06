@@ -1,50 +1,70 @@
 package com.nixinova.graphics;
 
+import com.nixinova.input.Controller;
 import com.nixinova.main.Game;
 
 public class Render3D extends Render {
 	public double[] zBuffer;
-	public double renderDist;
+	public double renderDist = 5000.0D;
+
+	public static double playerX = 0.0D;
+	public static double playerY = 0.0D;
+	public static double playerZ = 0.0D;
+
+	public static final double GROUND = 16.0D;
+	public static final double SKY = 128.0D;
 
 	public Render3D(int width, int height) {
 		super(width, height);
-		this.renderDist = 5000.0D;
 		this.zBuffer = new double[width * height];
 	}
 
 	public void floor(Game game) {
-		double floorPos = 8.0D;
-		double ceilPos = 564.0D;
-		double forward = Game.controls.z;
-		double right = Game.controls.x;
-		double rotation = Game.controls.xRot;
+		double xMove = Game.controls.x;
+		double yMove = Game.controls.y;
+		double zMove = Game.controls.z;
+		double bobbing = Math.sin(Game.time / 1.0D) * 10.5D;
+
+		double rotation = Game.controls.rot;
 		double cosine = Math.cos(rotation);
 		double sine = Math.sin(rotation);
 
 		for (int y = 0; y < this.height; y++) {
-			double ceiling = (y - this.height / 2.0D) / this.height;
-			double z = floorPos / ceiling;
+			double sky = (y - this.height / 2.0D) / this.height;
 
-			if (ceiling < 0.0D)
-				z = ceilPos / -ceiling;
+			double z = (GROUND + yMove) / sky;
+			if (Controller.walking) {
+				z = (GROUND + yMove) / sky + bobbing;
+			}
+
+			if (sky < 0.0D) {
+				z = (SKY - yMove) / -sky;
+				if (Controller.walking) {
+					z = (SKY - yMove - bobbing) / -sky;
+				}
+			}
 
 			for (int x = 0; x < this.width; x++) {
 				double depth = (x - this.width / 2.0D) / this.height;
 				depth *= z;
-				double xx = depth * cosine + z * sine + right;
-				double yy = z * cosine - depth * sine + forward;
-				int xPx = (int) (xx + right);
-				int yPx = (int) (yy + forward);
+				double xx = depth * cosine + z * sine + xMove;
+				double yy = z * cosine - depth * sine + zMove;
+				int xPx = (int) (xx + xMove);
+				int yPx = (int) (yy + zMove);
 
 				this.zBuffer[x + y * this.width] = z;
 
-				if (z < this.renderDist / 4.0D) {
-					if (z == ceilPos / -ceiling) {
-						this.pixels[x + y * this.width] = Textures.ceiling.pixels[(xPx & 0x7) + (yPx & 0x7) * 8];
+				if (z < this.renderDist / 2.0D) {
+					if (z <= SKY / -sky + 10.0D) {
+						this.pixels[x + y * this.width] = Textures.sky.pixels[(xPx & 0x7) + (yPx & 0x7) * 8];
 					} else {
-						this.pixels[x + y * this.width] = Textures.floor.pixels[(xPx & 0x7) + (yPx & 0x7) * 8];
+						this.pixels[x + y * this.width] = Textures.grass.pixels[(xPx & 0x7) + (yPx & 0x7) * 8];
 					}
 				}
+
+				playerX = xMove;
+				playerY = yMove;
+				playerZ = zMove;
 			}
 		}
 	}
@@ -52,7 +72,7 @@ public class Render3D extends Render {
 	public void renderDistLimiter() {
 		for (int i = 0; i < this.width * this.height; i++) {
 			int colour = this.pixels[i];
-			int brightness = (int) (this.renderDist * 2.0D / this.zBuffer[i]);
+			int brightness = (int) (this.renderDist * 4.0D / this.zBuffer[i]);
 
 			if (brightness < 0)
 				brightness = 0;

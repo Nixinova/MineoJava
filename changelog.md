@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.0.2
+*2019-06-09 20:35*
+- Added sky
+- Added sprinting
+- Added up and down movements
+- Changed player position
+- Doubled render distance
+- Removed broken sideways movement
+- Added coordinates to gui
+- Shifted gui elements to the top left corner
+- F3 now toggles gui
+
 ## 0.0.1_1
 *2019-06-08 20:54*
 - Removed ceiling
