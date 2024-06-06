@@ -17,7 +17,7 @@ public class Render3D extends Render {
 		double ceilPos = 64.0D;
 		double forward = Game.controls.z;
 		double right = Game.controls.x;
-		double rotation = Game.controls.rot;
+		double rotation = Game.controls.xRot;
 		double cosine = Math.cos(rotation);
 		double sine = Math.sin(rotation);
 
@@ -38,8 +38,13 @@ public class Render3D extends Render {
 
 				this.zBuffer[x + y * this.width] = z;
 
-				if (z < this.renderDist / 4.0D)
-					this.pixels[x + y * this.width] = xPx * 16 | yPx * 16 << 8;
+				if (z < this.renderDist / 4.0D) {
+					if (z == ceilPos / -ceiling) {
+						this.pixels[x + y * this.width] = Textures.ceiling.pixels[(xPx & 0x7) + (yPx & 0x7) * 8];
+					} else {
+						this.pixels[x + y * this.width] = Textures.floor.pixels[(xPx & 0x7) + (yPx & 0x7) * 8];
+					}
+				}
 			}
 		}
 	}
@@ -47,7 +52,7 @@ public class Render3D extends Render {
 	public void renderDistLimiter() {
 		for (int i = 0; i < this.width * this.height; i++) {
 			int colour = this.pixels[i];
-			int brightness = (int) (this.renderDist / this.zBuffer[i]);
+			int brightness = (int) (this.renderDist * 2.0D / this.zBuffer[i]);
 
 			if (brightness < 0)
 				brightness = 0;
@@ -57,7 +62,7 @@ public class Render3D extends Render {
 			int r = colour >> 16 & 0xFF;
 			int g = colour >> 8 & 0xFF;
 			int b = colour & 0xFF;
-			r = r * brightness / 255;
+			r = r * brightness / 255 + 8;
 			g = g * brightness / 255;
 			b = b * brightness / 255;
 

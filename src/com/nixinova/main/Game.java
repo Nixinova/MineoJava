@@ -18,9 +18,7 @@ public class Game {
 		boolean back = key[83];
 		boolean left = key[65];
 		boolean right = key[68];
-		boolean turnLeft = key[37];
-		boolean turnRight = key[39];
 
-		controls.tick(forward, back, left, right, turnLeft, turnRight);
+		controls.tick(forward, back, left, right);
 	}
 }

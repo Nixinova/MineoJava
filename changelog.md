@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.1
+*2019-06-08 20:48*
+- Added textures
+- Added FPS and version info
+- Changed movement to use mouse
+
 ## in-060819
 *2019-06-08 19:09*
 
