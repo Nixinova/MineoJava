@@ -23,15 +23,13 @@ import javax.swing.JFrame;
 
 public class Display extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
-
-	public static final int OPTIONS_VERSION = 4;
 	
 	private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
 	public static int WIDTH = (int) screenSize.getWidth();
 	public static int HEIGHT = (int) screenSize.getHeight();
 
-	public static final String VERSION = "0.0.4";
+	public static final String VERSION = "0.0.5";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	public static JFrame frame;
@@ -166,15 +164,16 @@ public class Display extends Canvas implements Runnable {
 		int sep = 15;
 		String intLimit = "214748364";
 
-		String playerX = String.format("%01d", new Object[] { Integer.valueOf((int) Render3D.playerX) });
-		String playerY = String.format("%01d", new Object[] { Integer.valueOf((int) Render3D.playerY) });
-		String playerZ = String.format("%01d", new Object[] { Integer.valueOf((int) Render3D.playerZ) });
+		String playerX = String.format("%01d", Math.round(Render3D.playerX));
+		String playerY = String.format("%01d", Math.round(Render3D.playerY));
+		String playerZ = String.format("%01d", Math.round(Render3D.playerZ));
 
 		playerX = playerX.contains(intLimit) ? "infinity" : playerX;
 		playerY = playerY.contains(intLimit) ? "infinity" : playerY;
 		playerZ = playerZ.contains(intLimit) ? "infinity" : playerZ;
 
 		String msg1 = "", msg2 = "", msg3 = "";
+		final int OPTIONS_VERSION = Options.OPTIONS_VERSION;
 		if (Options.fileVersion < OPTIONS_VERSION || Options.fileVersion > OPTIONS_VERSION) {
 			if (Options.fileVersion < OPTIONS_VERSION) {
 				msg1 = "Outdated options version: client is on version " + OPTIONS_VERSION +
