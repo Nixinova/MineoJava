@@ -1,10 +1,11 @@
 package com.nixinova.graphics;
 
+import com.nixinova.readwrite.Options;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 public class Textures {
-	private static final String path = "/textures/";
+	public static String texturesPath = Options.texturesFolder;
 
 	public static Render Texture(String name) {
 		String result = "";
@@ -12,12 +13,15 @@ public class Textures {
 			case "sky":
 				result = "env/sky.png";
 				break;
+
 			case "grass":
 				result = "blocks/grass.png";
 				break;
+
 			case "stone":
 				result = "blocks/stone.png";
 				break;
+
 			default:
 				result = "blocks/missing_texture.png";
 		}
@@ -30,8 +34,8 @@ public class Textures {
 
 	public static Render loadBitmap(String filename) {
 		try {
-			BufferedImage image = ImageIO.read(Textures.class.getResource(path + filename));
-
+			System.out.println("Textures:37: " + texturesPath + filename);
+			BufferedImage image = ImageIO.read(Textures.class.getResource(String.valueOf(texturesPath) + filename));
 			int width = image.getWidth();
 			int height = image.getHeight();
 			Render result = new Render(width, height);

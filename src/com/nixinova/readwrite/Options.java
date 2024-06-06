@@ -15,6 +15,7 @@ public class Options {
 	public static double sprintSpeed;
 	public static double walkSpeed;
 	public static double jumpHeight;
+	public static String texturesFolder = "/textures/";
 
 	public static String WriteValue(String id, String value) {
 		String br = System.getProperty("line.separator");
@@ -23,20 +24,20 @@ public class Options {
 
 	public static void CreateOptions() {
 		boolean fileIsNew = false;
-		String rootFolder = String.valueOf(System.getenv("APPDATA")) + "\\.mineo";
-		String optionsFilePath = String.valueOf(rootFolder) + "\\options.txt";
+		String rootFolder = String.valueOf(System.getenv("APPDATA")) + "/.mineo";
+		String optionsFilePath = String.valueOf(rootFolder) + "/options.txt";
 		File dir = new File(rootFolder);
 		dir.mkdir();
 		File optionsFile = new File(optionsFilePath);
 
 		try {
 			if (optionsFile.createNewFile()) {
-				System.out.println("File created: " + optionsFile.getName());
+				System.out.println("options.txt created: " + optionsFile.getName());
 				fileIsNew = true;
 			} else {
-				System.out.println("File already exists.");
+				System.out.println("options.txt already exists.");
 			}
-			System.out.println("File path: " + optionsFile.getAbsolutePath());
+			System.out.println("options.txt path: " + optionsFile.getAbsolutePath());
 		} catch (Exception err) {
 			err.printStackTrace();
 		}
@@ -82,22 +83,37 @@ public class Options {
 		}
 
 		for (int i = 0; i < optionsDataNames.length; i++) {
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("renderDistance"))
+			if (optionsDataNames[i] != null && optionsDataNames[i].contains("renderDistance")) {
 				renderDistance = Integer.parseInt(optionsDataValues[i]);
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("skyHeight:"))
+			}
+			if (optionsDataNames[i] != null && optionsDataNames[i].contains("skyHeight")) {
 				skyHeight = Integer.parseInt(optionsDataValues[i]);
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("groundHeight:"))
+			}
+			if (optionsDataNames[i] != null && optionsDataNames[i].contains("groundHeight")) {
 				groundHeight = Integer.parseInt(optionsDataValues[i]);
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("rotationSpeed:"))
+			}
+			if (optionsDataNames[i] != null && optionsDataNames[i].contains("rotationSpeed")) {
 				rotationSpeed = Double.parseDouble(optionsDataValues[i]);
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("moveSpeed:"))
+			}
+			if (optionsDataNames[i] != null && optionsDataNames[i].contains("moveSpeed")) {
 				moveSpeed = Double.parseDouble(optionsDataValues[i]);
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("walkSpeed:"))
+			}
+			if (optionsDataNames[i] != null && optionsDataNames[i].contains("walkSpeed")) {
 				walkSpeed = Double.parseDouble(optionsDataValues[i]);
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("sprintSpeed:"))
+			}
+			if (optionsDataNames[i] != null && optionsDataNames[i].contains("sprintSpeed")) {
 				sprintSpeed = Double.parseDouble(optionsDataValues[i]);
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("jumpHeight:"))
+			}
+			if (optionsDataNames[i] != null && optionsDataNames[i].contains("jumpHeight")) {
 				jumpHeight = Double.parseDouble(optionsDataValues[i]);
+			}
+			if (optionsDataNames[i] != null && optionsDataNames[i].contains("texturesFolder")) {
+				if (optionsDataValues[i].contains("default")) {
+					texturesFolder = "/textures/";
+				} else {
+					texturesFolder = String.valueOf(optionsDataValues[i]) + "/textures/";
+				}
+			}
 		}
 	}
 }

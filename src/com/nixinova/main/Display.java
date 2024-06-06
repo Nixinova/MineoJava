@@ -27,7 +27,7 @@ public class Display extends Canvas implements Runnable {
 
 	public static final int WIDTH = 854;
 	public static final int HEIGHT = 477;
-	public static final String VERSION = "0.0.3";
+	public static final String VERSION = "0.0.3_1";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	private Thread thread;
@@ -45,7 +45,6 @@ public class Display extends Canvas implements Runnable {
 	public int fps = 0;
 
 	public Display() {
-		Options.CreateOptions();
 		Dimension size = new Dimension(WIDTH, HEIGHT);
 		setPreferredSize(size);
 		setMinimumSize(size);
@@ -107,6 +106,9 @@ public class Display extends Canvas implements Runnable {
 					this.fps = frames;
 					frames = 0;
 				}
+				if (tickCount % 600 == 0) {
+					Options.CreateOptions();
+				}
 			}
 
 			render();
@@ -160,7 +162,6 @@ public class Display extends Canvas implements Runnable {
 		String playerX = String.format("%01d", new Object[] { Integer.valueOf((int) Render3D.playerX) });
 		String playerY = String.format("%01d", new Object[] { Integer.valueOf((int) Render3D.playerY) });
 		String playerZ = String.format("%01d", new Object[] { Integer.valueOf((int) Render3D.playerZ) });
-
 		if (Controller.debugShown) {
 			graphics.drawString(TITLE, 5, 1 * sep);
 			graphics.drawString("FPS: " + String.valueOf(this.fps), 5, 2 * sep);
@@ -172,6 +173,7 @@ public class Display extends Canvas implements Runnable {
 	}
 
 	public static void main(String[] args) {
+		Options.CreateOptions();
 		BufferedImage cursor = new BufferedImage(16, 16, 2);
 		Cursor blank = Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "blank");
 
