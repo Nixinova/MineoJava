@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.6
+*2024-06-12 00:18*
+- Added vertical mouse look
+- Added gamma option (defaults to 4.0)
+- Changed default rotation speed to 0.01
+- Render horizon with sky texture
+
 ## 0.0.5_1
 *2024-06-07 01:38*
 - Added strafing

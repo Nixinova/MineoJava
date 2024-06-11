@@ -13,9 +13,6 @@ public class Render3D extends Render {
 	public static double playerY = 0.0D;
 	public static double playerZ = 0.0D;
 
-	public static final double GROUND = Options.groundHeight;
-	public static final double SKY = Options.skyHeight;
-
 	public Render3D(int width, int height) {
 		super(width, height);
 		this.zBuffer = new double[width * height];
@@ -31,37 +28,53 @@ public class Render3D extends Render {
 		double cosine = Math.cos(rotation);
 		double sine = Math.sin(rotation);
 
+		double tilt = Game.controls.tilt;
+		double tiltCosine = Math.cos(tilt);
+		double tiltSine = Math.sin(tilt);
+
+		// Loop through pixel rows
 		for (int y = 0; y < this.height; y++) {
+			// Relative sky position
 			double sky = (y - this.height / 2.0D) / this.height;
+			// Apply tilt to sky
+			sky = sky * tiltCosine - tiltSine;
 
-			double z = (GROUND + yMove) / sky;
-			if (Controller.walking) {
-				z = (GROUND + yMove) / sky + bobbing;
-			}
-
+			// Calculate depth
+			double z;
 			if (sky < 0.0D) {
-				z = (SKY - yMove) / -sky;
+				// If sky
+				z = (Options.skyHeight - yMove) / -sky;
 				if (Controller.walking) {
-					z = (SKY - yMove - bobbing) / -sky;
+					z = (Options.skyHeight - yMove - bobbing) / -sky;
+				}
+			} else {
+				// If ground
+				z = (Options.groundHeight + yMove) / sky;
+				if (Controller.walking) {
+					z = (Options.groundHeight + yMove) / sky + bobbing;
 				}
 			}
 
+			// Loop through pixel columns
 			for (int x = 0; x < this.width; x++) {
+				int pixelI = x + y * this.width;
+
 				double depth = (x - this.width / 2.0D) / this.height;
 				depth *= z;
-				double xx = depth * cosine + z * sine + xMove;
-				double yy = z * cosine - depth * sine + zMove;
-				int xPx = (int) (xx + xMove);
-				int yPx = (int) (yy + zMove);
+				double newX = depth * cosine + z * sine + xMove;
+				double newY = z * cosine - depth * sine + zMove;
+				int xPx = (int) (newX + xMove);
+				int yPx = (int) (newY + zMove);
 
-				this.zBuffer[x + y * this.width] = z;
+				// Store depth in Z buffer
+				this.zBuffer[pixelI] = z;
 
-				if (z < this.renderDist / 2.0D) {
-					if (z <= SKY / -sky + 10.0D) {
-						this.pixels[x + y * this.width] = Textures.sky.pixels[(xPx & 0x7) + (yPx & 0x7) * 8];
-					} else {
-						this.pixels[x + y * this.width] = Textures.grass.pixels[(xPx & 0x7) + (yPx & 0x7) * 8];
-					}
+				if (z < this.renderDist && z > Options.skyHeight / -sky) {
+					// Apply grass texture within render distance
+					this.pixels[pixelI] = Textures.grass.pixels[(xPx & 0x7) + (yPx & 0x7) * 8];
+				} else {
+					// Apply sky texture otherwise
+					this.pixels[pixelI] = Textures.sky.pixels[(xPx & 0x7) + (yPx & 0x7) * 8];
 				}
 
 				playerX = xMove;
@@ -71,16 +84,23 @@ public class Render3D extends Render {
 		}
 	}
 
+	/** Adds depth-based fog to the pixels */
 	public void renderDistLimiter() {
-		for (int i = 0; i < this.width * this.height; i++) {
-			int colour = this.pixels[i];
-			int brightness = (int) (this.renderDist * 4.0D / this.zBuffer[i]);
+		double gamma = Options.gamma;
 
+		for (int i = 0; i < this.width * this.height; i++) {
+			// Get pixel colour
+			int colour = this.pixels[i];
+			// Determine brightness based on depth value from Z buffer
+			int brightness = (int) (this.renderDist * gamma / this.zBuffer[i]);
+
+			// Clamp brightness
 			if (brightness < 0)
 				brightness = 0;
 			if (brightness > 255)
 				brightness = 255;
 
+			// Calculate final RGB from pixel colour + fog
 			int r = colour >> 16 & 0xFF;
 			int g = colour >> 8 & 0xFF;
 			int b = colour & 0xFF;
@@ -88,6 +108,7 @@ public class Render3D extends Render {
 			g = g * brightness / 255;
 			b = b * brightness / 255;
 
+			// Save fog-adjusted colour to pixel
 			this.pixels[i] = r << 16 | g << 8 | b;
 		}
 	}

@@ -26,13 +26,14 @@ public class Display extends Canvas implements Runnable {
 	
 	private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-	public static int WIDTH = (int) screenSize.getWidth();
-	public static int HEIGHT = (int) screenSize.getHeight();
-
-	public static final String VERSION = "0.0.5_1";
+	public static final String VERSION = "0.0.6";
 	public static final String TITLE = "Mineo " + VERSION;
 
+	public static int WIDTH = (int) screenSize.getWidth();
+	public static int HEIGHT = (int) screenSize.getHeight();
 	public static JFrame frame;
+	
+	public int fps = 0;
 
 	private Thread thread;
 	private Screen screen;
@@ -41,11 +42,6 @@ public class Display extends Canvas implements Runnable {
 	private InputHandler input;
 	private boolean running = false;
 	private int[] pixels;
-	private int newX = 0;
-	private int newY = 0;
-	private int oldX = 0;
-	private int oldY = 0;
-	public int fps = 0;
 
 	public Display() {
 		Dimension size = new Dimension(WIDTH, HEIGHT);
@@ -116,28 +112,6 @@ public class Display extends Canvas implements Runnable {
 
 			render();
 			frames++;
-
-			this.newX = InputHandler.mouseX;
-			if (this.newX > this.oldX) {
-				Controller.panRight = true;
-			} else if (this.newX < this.oldX) {
-				Controller.panLeft = true;
-			} else {
-				Controller.panRight = false;
-				Controller.panLeft = false;
-			}
-			this.oldX = this.newX;
-
-			this.newY = InputHandler.mouseY;
-			if (this.newY > this.oldY) {
-				Controller.tiltUp = true;
-			} else if (this.newY < this.oldY) {
-				Controller.tiltDown = true;
-			} else {
-				Controller.tiltUp = false;
-				Controller.tiltDown = false;
-			}
-			this.oldX = this.newX;
 		}
 	}
 
@@ -207,8 +181,8 @@ public class Display extends Canvas implements Runnable {
 		BufferedImage cursor = new BufferedImage(16, 16, 2);
 		Cursor blank = Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "blank");
 
+		frame = new JFrame();
 		Display game = new Display();
-		JFrame frame = new JFrame();
 
 		frame.add(game);
 		frame.pack();

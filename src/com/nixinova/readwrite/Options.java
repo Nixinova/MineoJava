@@ -13,10 +13,11 @@ public class Options {
 	
 	public class DEFAULT_OPTIONS {
 		public static int renderDistance = 5000;
+		public static double gamma = 4.0;
 		public static int skyHeight = 144;
 		public static int groundHeight = 16;
 		public static double gravity = 0.04;
-		public static double rotationSpeed = 0.03;
+		public static double rotationSpeed = 0.01;
 		public static double moveSpeed = 1.5;
 		public static double walkSpeed = 0.5;
 		public static double sprintSpeed = 3.0;
@@ -25,6 +26,7 @@ public class Options {
 
 	public static int fileVersion = OPTIONS_VERSION;
 	public static int renderDistance = DEFAULT_OPTIONS.renderDistance;
+	public static double gamma = DEFAULT_OPTIONS.gamma;
 	public static int skyHeight = DEFAULT_OPTIONS.skyHeight;
 	public static int groundHeight = DEFAULT_OPTIONS.groundHeight;
 	public static double gravity = DEFAULT_OPTIONS.gravity;
@@ -75,6 +77,7 @@ public class Options {
 				writer.write(WriteValue("fileVersion", OPTIONS_VERSION));
 
 				writer.write(WriteValue("renderDistance", DEFAULT_OPTIONS.renderDistance));
+				writer.write(WriteValue("gamma", DEFAULT_OPTIONS.gamma));
 				writer.write(WriteValue("skyHeight", DEFAULT_OPTIONS.skyHeight));
 				writer.write(WriteValue("groundHeight", DEFAULT_OPTIONS.groundHeight));
 				writer.write(WriteValue("gravity", DEFAULT_OPTIONS.gravity));
@@ -101,6 +104,7 @@ public class Options {
 			int j = 0;
 
 			while (scanner.hasNextLine()) {
+				//if (scanner.hasNext())
 				String dataName = scanner.nextLine();
 				optionsDataNames[j] = dataName;
 				String dataValue = scanner.nextLine();
@@ -121,6 +125,9 @@ public class Options {
 			}
 			if (optionsDataNames[i] != null && optionsDataNames[i].contains("renderDistance")) {
 				renderDistance = Integer.parseInt(optionsDataValues[i]);
+			}
+			if (optionsDataNames[i] != null && optionsDataNames[i].contains("gamma")) {
+				gamma = Double.parseDouble(optionsDataValues[i]);
 			}
 			if (optionsDataNames[i] != null && optionsDataNames[i].contains("skyHeight")) {
 				skyHeight = Integer.parseInt(optionsDataValues[i]);

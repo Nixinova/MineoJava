@@ -1,3 +1,9 @@
+0.0.6
+ Added vertical mouse look
+ Added gamma option (defaults to 4.0)
+ Changed default rotation speed to 0.01
+ Render horizon with sky texture
+
 v0.0.5_1 (2024-06-07 01:38)
  Added strafing
 

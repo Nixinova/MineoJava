@@ -2,4 +2,4 @@
 
 ![Mineo in-game](game.png)
 
-Very early development of a sandbox block game.
+Early development of a sandbox game engine.
