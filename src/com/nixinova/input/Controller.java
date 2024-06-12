@@ -1,10 +1,23 @@
 package com.nixinova.input;
 
-import com.nixinova.main.Display;
-import com.nixinova.main.Game;
 import com.nixinova.readwrite.Options;
 
 public class Controller {
+
+	public static double playerX = 0;
+	public static double playerY = 0;
+	public static double playerZ = 0;
+	public static double playerPxX = 0;
+	public static double playerPxY = 0;
+	public static double playerPxZ = 0;
+	public static boolean panLeft = false;
+	public static boolean panRight = false;
+	public static boolean tiltUp = false;
+	public static boolean tiltDown = false;
+	public static boolean debugShown = true;
+	public static boolean walking = false;
+	public static boolean escapePressed = false;
+	
 	public double x;
 	public double y;
 	public double z;
@@ -20,16 +33,10 @@ public class Controller {
 	private int oldX, oldY;
 	private int debugCooldown = 0;
 	private double groundBuffer = 0.1D;
+	private boolean isJumping = false;
+	private double jumpY = 0;
 
-	public static boolean panLeft = false;
-	public static boolean panRight = false;
-	public static boolean tiltUp = false;
-	public static boolean tiltDown = false;
-	public static boolean debugShown = true;
-	public static boolean walking = false;
-	public static boolean escapePressed = false;
-
-	public void tick(boolean forward, boolean back, boolean left, boolean right, boolean jump, boolean crouch,
+	public void tick(boolean forward, boolean back, boolean left, boolean right, boolean jump,
 			boolean sprint, boolean f3, boolean esc) {
 		double yMove = 0.0D;
 		double xMove = 0.0D;
@@ -39,7 +46,7 @@ public class Controller {
 		Game.controls.checkControls();
 
 		/// Movement
-		double mvChange = sprint ? Options.sprintSpeed : Options.moveSpeed;
+		double mvChange = sprint ? Options.sprintSpeed : Options.walkSpeed;
 		if (forward) {
 			zMove += mvChange;
 		}
@@ -70,19 +77,32 @@ public class Controller {
 			this.tilt2 += -mouseDY;
 		}
 
+		// Ground checks
 		/// Jumping
+		if (isJumping) {
+			yMove += Options.jumpHeight * Options.jumpStrength;
+
+			// Keep track of Y-increase from jumping as this.y2 decelerates
+			this.jumpY += Options.jumpHeight * Options.jumpStrength;
+
+			// Once maximum height reached, stop isJumping
+			if (this.jumpY >= Options.jumpHeight) {
+				isJumping = false;
+				this.jumpY = 0;
+			}
+		}
 		if (onGround()) {
-			if (jump) {
-				yMove += Options.jumpHeight;
-			}
-		} else {
-			if (aboveGround()) {
-				yMove -= Options.jumpHeight * 0.04D;
-			}
-			if (belowGround()) {
-				this.y = Options.groundHeight + groundBuffer * 1.01D;
-				yMove = 0.01D;
-			}
+			if (jump)
+				isJumping = true;
+		}
+		else 
+		if (aboveGround()) {
+			yMove -= Options.jumpHeight * Options.gravity;
+		}
+		else
+		if (belowGround()) {
+			this.y = Options.groundHeight + groundBuffer * 1.01D;
+			yMove = 0.001D;
 		}
 
 		// Boundaries of controls
@@ -116,7 +136,7 @@ public class Controller {
 
 		// decel/interpolate
 		this.x2 *= 0.1D;
-		this.y2 *= 0.8D;
+		this.y2 *= 0.1D;
 		this.z2 *= 0.1D;
 		this.rot2 *= 0.5D;
 		this.tilt2 *= 0.5D;

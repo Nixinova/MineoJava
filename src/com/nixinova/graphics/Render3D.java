@@ -1,17 +1,15 @@
 package com.nixinova.graphics;
 
 import com.nixinova.input.Controller;
-import com.nixinova.main.Game;
+import com.nixinova.input.Game;
 import com.nixinova.readwrite.Options;
 
 public class Render3D extends Render {
+	private static final int TEX_SIZE = 8;
+
 	public double[] zBuffer;
 
 	public double renderDist = Options.renderDistance;
-
-	public static double playerX = 0.0D;
-	public static double playerY = 0.0D;
-	public static double playerZ = 0.0D;
 
 	public Render3D(int width, int height) {
 		super(width, height);
@@ -22,7 +20,7 @@ public class Render3D extends Render {
 		double xMove = Game.controls.x;
 		double yMove = Game.controls.y;
 		double zMove = Game.controls.z;
-		double bobbing = Math.sin(Game.time / 1.0D) * 10.5D;
+		double bobbing = Math.sin(Game.time) / 10.0;
 
 		double rotation = Game.controls.rot;
 		double cosine = Math.cos(rotation);
@@ -57,29 +55,32 @@ public class Render3D extends Render {
 
 			// Loop through pixel columns
 			for (int x = 0; x < this.width; x++) {
-				int pixelI = x + y * this.width;
+				int pixelI = x + (y * this.width);
 
-				double depth = (x - this.width / 2.0D) / this.height;
-				depth *= z;
-				double newX = depth * cosine + z * sine + xMove;
-				double newY = z * cosine - depth * sine + zMove;
-				int xPx = (int) (newX + xMove);
-				int yPx = (int) (newY + zMove);
+				double depth = (x - this.width / 2.0D) / this.height * z;
+				int xPx = (int) (depth * cosine + z * sine + xMove);
+				int yPx = (int) (z * cosine - depth * sine + zMove);
 
 				// Store depth in Z buffer
 				this.zBuffer[pixelI] = z;
 
+				int texPx = (xPx & (TEX_SIZE - 1)) + (yPx & (TEX_SIZE - 1)) * TEX_SIZE;
+				Render texture = Textures.none;
 				if (z < this.renderDist && z > Options.skyHeight / -sky) {
 					// Apply grass texture within render distance
-					this.pixels[pixelI] = Textures.grass.pixels[(xPx & 0x7) + (yPx & 0x7) * 8];
+					texture = Textures.grass;
 				} else {
 					// Apply sky texture otherwise
-					this.pixels[pixelI] = Textures.sky.pixels[(xPx & 0x7) + (yPx & 0x7) * 8];
+					texture = Textures.sky;
 				}
+				this.pixels[pixelI] = texture.pixels[texPx];
 
-				playerX = xMove;
-				playerY = yMove;
-				playerZ = zMove;
+				Controller.playerPxX = xMove;
+				Controller.playerPxY = yMove;
+				Controller.playerPxZ = zMove;
+				Controller.playerX = xMove / TEX_SIZE;
+				Controller.playerY = yMove / TEX_SIZE;
+				Controller.playerZ = zMove / TEX_SIZE;
 			}
 		}
 	}

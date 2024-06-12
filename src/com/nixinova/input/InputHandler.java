@@ -1,7 +1,7 @@
 package com.nixinova.input;
 
 import com.nixinova.main.Display;
-import com.nixinova.main.Game;
+
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.Point;
@@ -24,16 +24,10 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 
 	private Robot robot;
 	private boolean inMotion = false;
-    
-    public static double mouseDX() {
-    	return (centerX - mouseX) / centerX;
-    }
-    
-    public static double mouseDY() {
-    	return (centerY - mouseY) / centerY;
-    }
 
-    public InputHandler() {
+	public InputHandler() {
+		centerX = Display.WIDTH / 2;
+		centerY = Display.HEIGHT / 2;
 
 		try {
 			this.robot = new Robot();
@@ -41,84 +35,92 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 		}
 	}
 
-    @Override
+	public static double mouseDX() {
+		return (centerX - mouseX) / centerX;
+	}
+
+	public static double mouseDY() {
+		return (centerY - mouseY) / centerY;
+	}
+
+	@Override
 	public void mouseDragged(MouseEvent event) {
 	}
 
-    @Override
+	@Override
 	public void mouseMoved(MouseEvent event) {
 		// Avoid recursion as the robot mouseMove() re-triggers this function
 		if (inMotion) {
 			inMotion = false;
 			return;
 		}
-		
+
 		// Get frame pos info
-    	JFrame frame = Display.frame;
-        Point framePos = frame.getContentPane().getLocationOnScreen();
-        
+		JFrame frame = Display.frame;
+		Point framePos = frame.getContentPane().getLocationOnScreen();
+
 		// Recalculate center
-        centerX = (frame.getWidth() + framePos.x) / 2;
-        centerY = (frame.getHeight() + framePos.y) / 2;
+		centerX = (frame.getWidth() + framePos.x) / 2;
+		centerY = (frame.getHeight() + framePos.y) / 2;
 
 		// Mouse movement data
-        int newX = event.getX() + framePos.x;
-        int newY = event.getY() + framePos.y;
-        int deltaX = newX - centerX;
-        int deltaY = newY - centerY;
-        mouseX += deltaX;
-        mouseY += deltaY;
-      
-        // Reset cursor to center of screen to avoid going out of frame
+		int newX = event.getX() + framePos.x;
+		int newY = event.getY() + framePos.y;
+		int deltaX = newX - centerX;
+		int deltaY = newY - centerY;
+		mouseX += deltaX;
+		mouseY += deltaY;
+
+		// Reset cursor to center of screen to avoid going out of frame
 		robot.mouseMove(centerX, centerY);
 		inMotion = true;
 	}
 
-    @Override
+	@Override
 	public void mouseClicked(MouseEvent event) {
 	}
 
-    @Override
+	@Override
 	public void mouseEntered(MouseEvent event) {
 	}
 
-    @Override
+	@Override
 	public void mouseExited(MouseEvent event) {
 	}
 
 	public void mousePressed(MouseEvent event) {
 	}
 
-    @Override
+	@Override
 	public void mouseReleased(MouseEvent event) {
 	}
 
-    @Override
+	@Override
 	public void focusGained(FocusEvent event) {
 	}
 
-    @Override
+	@Override
 	public void focusLost(FocusEvent event) {
 		// Clear all keypresses
 		for (int i = 0; i < this.key.length; i++)
 			this.key[i] = false;
 	}
 
-    @Override
+	@Override
 	public void keyPressed(KeyEvent event) {
 		int keyCode = event.getKeyCode();
 		if (keyCode > 0 && keyCode < this.key.length)
 			this.key[keyCode] = true;
 	}
 
-    @Override
+	@Override
 	public void keyReleased(KeyEvent event) {
 		int keyCode = event.getKeyCode();
 		if (keyCode > 0 && keyCode < this.key.length)
 			this.key[keyCode] = false;
 	}
 
-    @Override
+	@Override
 	public void keyTyped(KeyEvent event) {
 	}
 }

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.7
+*2024-06-12 22:54*
+- Added jumpStrength option (defaults to 0.2)
+- Changed default walkSpeed to 0.5, sprintSpeed to 0.8, jumpHeight to 5.0, and gravity to 0.08
+- Merged moveSpeed and walkSpeed options into walkSpeed
+- Fixed gravity option
+- Normalised coordinate plane
+
 ## 0.0.6
 *2024-06-12 00:18*
 - Added vertical mouse look

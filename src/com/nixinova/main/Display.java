@@ -3,6 +3,7 @@ package com.nixinova.main;
 import com.nixinova.graphics.Render3D;
 import com.nixinova.graphics.Screen;
 import com.nixinova.input.Controller;
+import com.nixinova.input.Game;
 import com.nixinova.input.InputHandler;
 import com.nixinova.readwrite.Options;
 import java.awt.Canvas;
@@ -23,16 +24,16 @@ import javax.swing.JFrame;
 
 public class Display extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
-	
+
 	private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-	public static final String VERSION = "0.0.6";
+	public static final String VERSION = "0.0.7";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	public static int WIDTH = (int) screenSize.getWidth();
 	public static int HEIGHT = (int) screenSize.getHeight();
 	public static JFrame frame;
-	
+
 	public int fps = 0;
 
 	private Thread thread;
@@ -138,9 +139,9 @@ public class Display extends Canvas implements Runnable {
 		int sep = 15;
 		String intLimit = "214748364";
 
-		String playerX = String.format("%01d", Math.round(Render3D.playerX));
-		String playerY = String.format("%01d", Math.round(Render3D.playerY));
-		String playerZ = String.format("%01d", Math.round(Render3D.playerZ));
+		String playerX = String.format("%01d", Math.round(Controller.playerX));
+		String playerY = String.format("%01d", Math.round(Controller.playerY));
+		String playerZ = String.format("%01d", Math.round(Controller.playerZ));
 
 		playerX = playerX.contains(intLimit) ? "infinity" : playerX;
 		playerY = playerY.contains(intLimit) ? "infinity" : playerY;

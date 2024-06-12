@@ -31,6 +31,7 @@ public class Textures {
 	public static Render grass = Texture("grass");
 	public static Render stone = Texture("stone");
 	public static Render sky = Texture("sky");
+	public static Render none = Texture("none"); // missing texture/other
 
 	public static Render loadBitmap(String filename) {
 		try {
