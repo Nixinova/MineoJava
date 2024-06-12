@@ -16,8 +16,8 @@ public class Game {
 
 		boolean forward = key[KeyEvent.VK_W];
 		boolean back = key[KeyEvent.VK_S];
-		boolean left = key[KeyEvent.VK_L];
-		boolean right = key[KeyEvent.VK_R];
+		boolean left = key[KeyEvent.VK_A];
+		boolean right = key[KeyEvent.VK_D];
 		boolean jump = key[KeyEvent.VK_SPACE];
 		boolean sprint = key[KeyEvent.VK_SHIFT];
 		boolean f3 = key[KeyEvent.VK_F3];

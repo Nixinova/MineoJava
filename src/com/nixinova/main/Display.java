@@ -1,6 +1,5 @@
 package com.nixinova.main;
 
-import com.nixinova.graphics.Render3D;
 import com.nixinova.graphics.Screen;
 import com.nixinova.input.Controller;
 import com.nixinova.input.Game;
@@ -27,7 +26,7 @@ public class Display extends Canvas implements Runnable {
 
 	private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-	public static final String VERSION = "0.0.7";
+	public static final String VERSION = "0.0.7_1";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	public static int WIDTH = (int) screenSize.getWidth();
@@ -70,6 +69,7 @@ public class Display extends Canvas implements Runnable {
 		this.thread.start();
 	}
 
+	@SuppressWarnings("unused")
 	private void stop() {
 		if (!this.running)
 			return;

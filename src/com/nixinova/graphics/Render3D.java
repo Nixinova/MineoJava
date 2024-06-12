@@ -60,6 +60,8 @@ public class Render3D extends Render {
 				double depth = (x - this.width / 2.0D) / this.height * z;
 				int xPx = (int) (depth * cosine + z * sine + xMove);
 				int yPx = (int) (z * cosine - depth * sine + zMove);
+				xPx %= TEX_SIZE;
+				yPx %= TEX_SIZE;
 
 				// Store depth in Z buffer
 				this.zBuffer[pixelI] = z;

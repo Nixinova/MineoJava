@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.7_1
+*2024-06-12 23:08*
+- Fixed left and right movement
+
 ## 0.0.7
 *2024-06-12 22:54*
 - Added jumpStrength option (defaults to 0.2)
