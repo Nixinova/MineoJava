@@ -26,7 +26,7 @@ public class Display extends Canvas implements Runnable {
 
 	private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-	public static final String VERSION = "0.0.7_1";
+	public static final String VERSION = "0.0.7_2";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	public static int WIDTH = (int) screenSize.getWidth();
@@ -107,7 +107,7 @@ public class Display extends Canvas implements Runnable {
 					frames = 0;
 				}
 				if (tickCount % 600 == 0) {
-					Options.CreateOptions();
+					Options.createOptions();
 				}
 			}
 
@@ -178,7 +178,7 @@ public class Display extends Canvas implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		Options.CreateOptions();
+		Options.createOptions();
 		BufferedImage cursor = new BufferedImage(16, 16, 2);
 		Cursor blank = Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "blank");
 

@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
+import com.nixinova.graphics.Render3D;
+
 public class Options {
 	public static final String MINEO_FOLDER = ".mineo";
 	public static final String OPTIONS_FILE = "options.txt";
@@ -38,17 +40,17 @@ public class Options {
 
 	public static String texturesFolder = "/textures/";
 
-	public static String WriteValue(String id, String value) {
+	public static String writeValue(String id, String value) {
 		String br = System.getProperty("line.separator");
 
 		return String.valueOf(id) + ":" + br + value + br;
 	}
 
-	public static String WriteValue(String id, double value) {
-		return WriteValue(id, String.valueOf(value));
+	public static String writeValue(String id, double value) {
+		return writeValue(id, String.valueOf(value));
 	}
 
-	public static void CreateOptions() {
+	public static void createOptions() {
 		boolean fileIsNew = false;
 
 		String rootFolder = String.valueOf(System.getenv("APPDATA")) + "/" + MINEO_FOLDER;
@@ -63,88 +65,77 @@ public class Options {
 			try {
 				FileWriter writer = new FileWriter(optionsFilePath);
 
-				writer.write(WriteValue("fileVersion", OPTIONS_VERSION));
+				writer.write(writeValue("fileVersion", OPTIONS_VERSION));
 
-				writer.write(WriteValue("renderDistance", DEFAULT_OPTIONS.renderDistance));
-				writer.write(WriteValue("gamma", DEFAULT_OPTIONS.gamma));
-				writer.write(WriteValue("skyHeight", DEFAULT_OPTIONS.skyHeight));
-				writer.write(WriteValue("groundHeight", DEFAULT_OPTIONS.groundHeight));
-				writer.write(WriteValue("gravity", DEFAULT_OPTIONS.gravity));
-				writer.write(WriteValue("rotationSpeed", DEFAULT_OPTIONS.rotationSpeed));
-				writer.write(WriteValue("walkSpeed", DEFAULT_OPTIONS.walkSpeed));
-				writer.write(WriteValue("sprintSpeed", DEFAULT_OPTIONS.sprintSpeed));
-				writer.write(WriteValue("jumpHeight", DEFAULT_OPTIONS.jumpHeight));
-				writer.write(WriteValue("jumpStrength", DEFAULT_OPTIONS.jumpStrength));
+				writer.write(writeValue("renderDistance", DEFAULT_OPTIONS.renderDistance));
+				writer.write(writeValue("gamma", DEFAULT_OPTIONS.gamma));
+				writer.write(writeValue("skyHeight", DEFAULT_OPTIONS.skyHeight));
+				writer.write(writeValue("groundHeight", DEFAULT_OPTIONS.groundHeight));
+				writer.write(writeValue("gravity", DEFAULT_OPTIONS.gravity));
+				writer.write(writeValue("rotationSpeed", DEFAULT_OPTIONS.rotationSpeed));
+				writer.write(writeValue("walkSpeed", DEFAULT_OPTIONS.walkSpeed));
+				writer.write(writeValue("sprintSpeed", DEFAULT_OPTIONS.sprintSpeed));
+				writer.write(writeValue("jumpHeight", DEFAULT_OPTIONS.jumpHeight));
+				writer.write(writeValue("jumpStrength", DEFAULT_OPTIONS.jumpStrength));
 
 				writer.close();
 			} catch (IOException err) {
+				System.err.println("Could not create options file.");
 			}
 		}
-		int optionsDataCount = 20;
-		String[] optionsDataNames = new String[optionsDataCount];
-		String[] optionsDataValues = new String[optionsDataCount];
-
 		try {
 			Scanner scanner = new Scanner(optionsFile);
-			int j = 0;
 
+			// Load options file values
 			while (scanner.hasNextLine()) {
-				// if (scanner.hasNext())
 				String dataName = scanner.nextLine();
-				optionsDataNames[j] = dataName;
-				String dataValue = scanner.nextLine();
-				optionsDataValues[j] = dataValue;
 
-				j += 2;
+				// Exit if EOF
+				if (!scanner.hasNext())
+					break;
+				// Skip if not a key
+				if (!dataName.contains(":"))
+					continue;
+				
+				String dataValue = scanner.nextLine();
+
+				parseOptionStrs(dataName, dataValue);
 			}
 
 			scanner.close();
 		} catch (FileNotFoundException err) {
-			System.out.println("An error occurred.");
+			System.err.println("Options file not found.");
 			err.printStackTrace();
 		}
+	}
 
-		for (int i = 0; i < optionsDataNames.length; i++) {
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("fileVersion")) {
-				fileVersion = Integer.parseInt(optionsDataValues[i]);
-			}
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("renderDistance")) {
-				renderDistance = Integer.parseInt(optionsDataValues[i]);
-			}
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("gamma")) {
-				gamma = Double.parseDouble(optionsDataValues[i]);
-			}
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("skyHeight")) {
-				skyHeight = Integer.parseInt(optionsDataValues[i]);
-			}
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("groundHeight")) {
-				groundHeight = Integer.parseInt(optionsDataValues[i]);
-			}
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("gravity")) {
-				gravity = Double.parseDouble(optionsDataValues[i]);
-			}
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("rotationSpeed")) {
-				rotationSpeed = Double.parseDouble(optionsDataValues[i]);
-			}
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("walkSpeed")) {
-				walkSpeed = Double.parseDouble(optionsDataValues[i]);
-			}
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("sprintSpeed")) {
-				sprintSpeed = Double.parseDouble(optionsDataValues[i]);
-			}
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("jumpHeight")) {
-				jumpHeight = Double.parseDouble(optionsDataValues[i]);
-			}
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("jumpStrength")) {
-				jumpStrength = Double.parseDouble(optionsDataValues[i]);
-			}
-			if (optionsDataNames[i] != null && optionsDataNames[i].contains("texturesFolder")) {
-				if (optionsDataValues[i].contains("default")) {
-					texturesFolder = "/textures/";
-				} else {
-					texturesFolder = String.valueOf(optionsDataValues[i]) + "/textures/";
-				}
-			}
-		}
+	private static void parseOptionStrs(String name, String val) {
+		if (name == null)
+			return;
+
+		if (name.contains("fileVersion"))
+			fileVersion = Integer.parseInt(val);
+		if (name.contains("renderDistance"))
+			renderDistance = Integer.parseInt(val);
+		if (name.contains("gamma"))
+			gamma = Double.parseDouble(val);
+		if (name.contains("skyHeight"))
+			skyHeight = Integer.parseInt(val);
+		if (name.contains("groundHeight"))
+			groundHeight = Integer.parseInt(val);
+		if (name.contains("gravity"))
+			gravity = Double.parseDouble(val);
+		if (name.contains("rotationSpeed"))
+			rotationSpeed = Double.parseDouble(val);
+		if (name.contains("walkSpeed"))
+			walkSpeed = Double.parseDouble(val);
+		if (name.contains("sprintSpeed"))
+			sprintSpeed = Double.parseDouble(val);
+		if (name.contains("jumpHeight"))
+			jumpHeight = Double.parseDouble(val);
+		if (name.contains("jumpStrength"))
+			jumpStrength = Double.parseDouble(val);
+		if (name.contains("texturesFolder"))
+			texturesFolder = (val.contains("default") ? "" : String.valueOf(val)) + "/textures/";
 	}
 }

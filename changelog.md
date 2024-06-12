@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.7_2
+*2024-06-12 23:52*
+- Fixed crashing when options.txt is malformed
+
 ## 0.0.7_1
 *2024-06-12 23:08*
 - Fixed left and right movement

@@ -5,7 +5,7 @@ import com.nixinova.input.Game;
 import com.nixinova.readwrite.Options;
 
 public class Render3D extends Render {
-	private static final int TEX_SIZE = 8;
+	public static final int TEX_SIZE = 8;
 
 	public double[] zBuffer;
 
@@ -60,13 +60,12 @@ public class Render3D extends Render {
 				double depth = (x - this.width / 2.0D) / this.height * z;
 				int xPx = (int) (depth * cosine + z * sine + xMove);
 				int yPx = (int) (z * cosine - depth * sine + zMove);
-				xPx %= TEX_SIZE;
-				yPx %= TEX_SIZE;
 
 				// Store depth in Z buffer
 				this.zBuffer[pixelI] = z;
 
 				int texPx = (xPx & (TEX_SIZE - 1)) + (yPx & (TEX_SIZE - 1)) * TEX_SIZE;
+
 				Render texture = Textures.none;
 				if (z < this.renderDist && z > Options.skyHeight / -sky) {
 					// Apply grass texture within render distance
@@ -76,13 +75,6 @@ public class Render3D extends Render {
 					texture = Textures.sky;
 				}
 				this.pixels[pixelI] = texture.pixels[texPx];
-
-				Controller.playerPxX = xMove;
-				Controller.playerPxY = yMove;
-				Controller.playerPxZ = zMove;
-				Controller.playerX = xMove / TEX_SIZE;
-				Controller.playerY = yMove / TEX_SIZE;
-				Controller.playerZ = zMove / TEX_SIZE;
 			}
 		}
 	}

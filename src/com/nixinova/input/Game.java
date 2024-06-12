@@ -1,5 +1,6 @@
 package com.nixinova.input;
 
+import com.nixinova.graphics.Render3D;
 import java.awt.event.KeyEvent;
 
 public class Game {
@@ -14,6 +15,7 @@ public class Game {
 	public static void tick(boolean[] key) {
 		time += 0.0005;
 
+		// Player movement
 		boolean forward = key[KeyEvent.VK_W];
 		boolean back = key[KeyEvent.VK_S];
 		boolean left = key[KeyEvent.VK_A];
@@ -24,5 +26,13 @@ public class Game {
 		boolean esc = key[KeyEvent.VK_ESCAPE];
 
 		controls.tick(forward, back, left, right, jump, sprint, f3, esc);
+
+		// Set player coords
+		Controller.playerPxX = controls.x;
+		Controller.playerPxY = controls.y;
+		Controller.playerPxZ = controls.z;
+		Controller.playerX = controls.x / Render3D.TEX_SIZE;
+		Controller.playerY = controls.y / Render3D.TEX_SIZE;
+		Controller.playerZ = controls.z / Render3D.TEX_SIZE;
 	}
 }
