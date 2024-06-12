@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.7_3
+*2024-06-13 00:08*
+- Use grid layout for world
+
 ## 0.0.7_2
 *2024-06-12 23:52*
 - Fixed crashing when options.txt is malformed

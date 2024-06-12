@@ -9,8 +9,6 @@ public class Render3D extends Render {
 
 	public double[] zBuffer;
 
-	public double renderDist = Options.renderDistance;
-
 	public Render3D(int width, int height) {
 		super(width, height);
 		this.zBuffer = new double[width * height];
@@ -67,11 +65,15 @@ public class Render3D extends Render {
 				int texPx = (xPx & (TEX_SIZE - 1)) + (yPx & (TEX_SIZE - 1)) * TEX_SIZE;
 
 				Render texture = Textures.none;
-				if (z < this.renderDist && z > Options.skyHeight / -sky) {
-					// Apply grass texture within render distance
-					texture = Textures.grass;
+				// Apply block texture if in render distance or sky otherwise
+				if (z < Options.renderDistance && z > Options.skyHeight / -sky) {
+					if (xPx == 0 || yPx == 0)
+						texture = Textures.stone;
+					else if (xPx % TEX_SIZE == 0 || yPx % TEX_SIZE == 0)
+						texture = Textures.dirt;
+					else
+						texture = Textures.grass;
 				} else {
-					// Apply sky texture otherwise
 					texture = Textures.sky;
 				}
 				this.pixels[pixelI] = texture.pixels[texPx];
@@ -87,7 +89,7 @@ public class Render3D extends Render {
 			// Get pixel colour
 			int colour = this.pixels[i];
 			// Determine brightness based on depth value from Z buffer
-			int brightness = (int) (this.renderDist * gamma / this.zBuffer[i]);
+			int brightness = (int) (Options.renderDistance * gamma / this.zBuffer[i]);
 
 			// Clamp brightness
 			if (brightness < 0)

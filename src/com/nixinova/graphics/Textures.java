@@ -8,30 +8,16 @@ public class Textures {
 	public static String texturesPath = Options.texturesFolder;
 
 	public static Render Texture(String name) {
-		String result = "";
-		switch (name) {
-			case "sky":
-				result = "env/sky.png";
-				break;
-
-			case "grass":
-				result = "blocks/grass.png";
-				break;
-
-			case "stone":
-				result = "blocks/stone.png";
-				break;
-
-			default:
-				result = "blocks/missing_texture.png";
-		}
-		return loadBitmap(result);
+		String file = name != null ? name : "blocks/missing_texture";
+		return loadBitmap(file + ".png");
 	}
 
-	public static Render grass = Texture("grass");
-	public static Render stone = Texture("stone");
-	public static Render sky = Texture("sky");
-	public static Render none = Texture("none"); // missing texture/other
+	public static Render stone = Texture("blocks/stone");
+	public static Render bedrock = Texture("blocks/bedrock");
+	public static Render grass = Texture("blocks/grass");
+	public static Render dirt = Texture("blocks/dirt");
+	public static Render sky = Texture("env/sky");
+	public static Render none = Texture(null); // missing texture/other
 
 	public static Render loadBitmap(String filename) {
 		try {

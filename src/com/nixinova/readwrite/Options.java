@@ -6,8 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-import com.nixinova.graphics.Render3D;
-
 public class Options {
 	public static final String MINEO_FOLDER = ".mineo";
 	public static final String OPTIONS_FILE = "options.txt";
