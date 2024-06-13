@@ -83,8 +83,9 @@ public class Render3D extends Render {
 						texture = Textures.bedrock;
 					} else {
 						// Random texture for block
-						int absBlockX = Math.abs(blockX % Options.worldRepeat);
-						int absBlockZ = Math.abs(blockZ % Options.worldRepeat);
+						final int wR = Options.worldRepeat;
+						int absBlockX = (blockX % wR) + wR;
+						int absBlockZ = (blockZ % wR) + wR;
 						int textureI = this.blockTextures[absBlockX][absBlockZ];
 						texture = this.groundBlocks[textureI];
 					}
@@ -126,10 +127,11 @@ public class Render3D extends Render {
 	}
 
 	private void mapBlockTextures() {
-		this.blockTextures = new int[Options.worldRepeat][Options.worldRepeat];
+		final int size = Options.worldRepeat * 2;
+		this.blockTextures = new int[size][size];
 		Random random = new Random(Options.seed);
-		for (int i = 0; i < Options.worldRepeat; i++) {
-			for (int j = 0; j < Options.worldRepeat; j++) {
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
 				blockTextures[i][j] = random.nextInt(this.groundBlocks.length);
 			}
 		}

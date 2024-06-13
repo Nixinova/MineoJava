@@ -26,7 +26,7 @@ public class Display extends Canvas implements Runnable {
 
 	private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-	public static final String VERSION = "0.0.8";
+	public static final String VERSION = "0.0.8_1";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	public static int WIDTH = (int) screenSize.getWidth();

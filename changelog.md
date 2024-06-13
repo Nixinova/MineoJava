@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.8_1
+*2024-06-13 12:59*
+- Changed world generation to not be mirrored
+
 ## 0.0.8
 *2024-06-13 12:42*
 - World is now aligned in blocks
