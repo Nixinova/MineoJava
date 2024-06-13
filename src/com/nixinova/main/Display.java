@@ -128,13 +128,12 @@ public class Display extends Canvas implements Runnable {
 		graphics.drawImage(this.img, 0, 0, WIDTH, HEIGHT, null);
 		graphics.setColor(Color.white);
 
-		int sep = 15;
-		String intLimit = "214748364";
 
 		String playerX = String.format("%01d", Math.round(Controller.playerX));
 		String playerY = String.format("%01d", Math.round(Controller.playerY));
 		String playerZ = String.format("%01d", Math.round(Controller.playerZ));
 
+		String intLimit = String.valueOf(Integer.MAX_VALUE);
 		playerX = playerX.contains(intLimit) ? "infinity" : playerX;
 		playerY = playerY.contains(intLimit) ? "infinity" : playerY;
 		playerZ = playerZ.contains(intLimit) ? "infinity" : playerZ;
@@ -154,6 +153,7 @@ public class Display extends Canvas implements Runnable {
 		}
 
 		if (Controller.debugShown) {
+			int sep = 15;
 			graphics.setColor(Color.white);
 			graphics.drawString(Mineo.TITLE, 5, sep);
 			graphics.drawString("FPS: " + String.valueOf(this.fps), 5, sep * 2);

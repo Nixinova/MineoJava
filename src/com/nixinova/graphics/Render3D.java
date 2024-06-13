@@ -35,6 +35,7 @@ public class Render3D extends Render {
 
 		// Loop through pixel rows
 		for (int y = 0; y < this.height; y++) {
+			// Relative sky position
 			double sky = (y - this.height / 2.0D) / this.height;
 			// Apply tilt to sky
 			sky = sky * tiltCosine - tiltSine;
@@ -60,8 +61,8 @@ public class Render3D extends Render {
 				int pixelI = x + (y * this.width);
 
 				double depth = (x - this.width / 2.0D) / this.height * d;
-				int pxX = (int) Math.round(depth * cosine + d * sine + xMove);
-				int pxZ = (int) Math.round(d * cosine - depth * sine + zMove);
+				int pxX = (int) (depth * cosine + d * sine + xMove);
+				int pxZ = (int) (d * cosine - depth * sine + zMove);
 				int blockX = pxX / TEX_SIZE;
 				int blockZ = pxZ / TEX_SIZE;
 
@@ -71,17 +72,11 @@ public class Render3D extends Render {
 				int texPx = (pxX & (TEX_SIZE - 1)) + (pxZ & (TEX_SIZE - 1)) * TEX_SIZE;
 
 				Render texture;
-				// Apply block texture if in render distance or sky otherwise
 				if (d < Options.renderDistance && d > Options.skyHeight / -sky) {
-					texture = Textures.grass;
-					if (blockX == 0 || blockZ == 0) {
-						// World center
-						texture = Textures.bedrock;
-					} else {
-						// Random texture for block
-						texture = Mineo.world.getTextureAt(blockX, blockZ);
-					}
+					// Render block
+					texture = Mineo.world.getTextureAt(blockX, blockZ);
 				} else {
+					// Render sky (out of render distance)
 					texture = Textures.sky;
 				}
 				this.pixels[pixelI] = texture.pixels[texPx];

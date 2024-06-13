@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.9_1
+*2024-06-14 01:23*
+- Allow placing blocks at world origin
+
 ## 0.0.9
 *2024-06-13 13:22*
 - Added block placing with X.

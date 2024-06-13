@@ -29,16 +29,11 @@ public class World {
 	}
 
 	public Render getTextureAt(int blockX, int blockZ) {
-		final int wR = Options.worldRepeat;
-		int absBlockX = (blockX % wR) + wR;
-		int absBlockZ = (blockZ % wR) + wR;
-		return this.blockTextures[absBlockX][absBlockZ];
+		return this.blockTextures[toBlockIndex(blockX)][toBlockIndex(blockZ)];
 	}
 
 	public void setTextureAt(int blockX, int blockZ, Render texture) {
-		int absBlockX = (blockX % wR) + wR;
-		int absBlockZ = (blockZ % wR) + wR;
-		this.blockTextures[absBlockX][absBlockZ] = texture;
+		this.blockTextures[toBlockIndex(blockX)][toBlockIndex(blockZ)] = texture;
 	}
 
 	private void mapBlockTextures() {
@@ -49,10 +44,23 @@ public class World {
 
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				blockTextures[i][j] = this.groundBlocks[random.nextInt(this.groundBlocks.length)];
+				Render texture;
+				if (toBlockCoord(i) == 0 || toBlockCoord(j) == 0)
+					// Bedrock along world origin
+					texture = Textures.bedrock;
+				else
+					texture = this.groundBlocks[random.nextInt(this.groundBlocks.length)];
+				blockTextures[i][j] = texture;
 			}
 		}
+	}
 
+	private int toBlockIndex(int blockCoord) {
+		return (blockCoord % wR) + wR;
+	}
+	
+	private int toBlockCoord(int blockIndex) {
+		return blockIndex - wR;
 	}
 
 }

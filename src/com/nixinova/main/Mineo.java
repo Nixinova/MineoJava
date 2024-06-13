@@ -12,7 +12,7 @@ import com.nixinova.readwrite.Options;
 
 public class Mineo {
 
-	public static final String VERSION = "0.0.9";
+	public static final String VERSION = "0.0.9_1";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	public static JFrame frame;

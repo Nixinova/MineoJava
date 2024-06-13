@@ -6,7 +6,6 @@ import javax.imageio.ImageIO;
 
 public class Textures {
 	public static String texturesPath = Options.texturesFolder;
-	public static Render[] Blocks = new Render[100];
 
 	public static Render Texture(String name) {
 		String file = name != null ? name : "blocks/missing_texture";
