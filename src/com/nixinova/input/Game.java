@@ -1,6 +1,8 @@
 package com.nixinova.input;
 
 import com.nixinova.graphics.Render3D;
+import com.nixinova.main.Mineo;
+
 import java.awt.event.KeyEvent;
 
 public class Game {
@@ -15,17 +17,7 @@ public class Game {
 	public static void tick(boolean[] key) {
 		time += 0.0005;
 
-		// Player movement
-		boolean forward = key[KeyEvent.VK_W];
-		boolean back = key[KeyEvent.VK_S];
-		boolean left = key[KeyEvent.VK_A];
-		boolean right = key[KeyEvent.VK_D];
-		boolean jump = key[KeyEvent.VK_SPACE];
-		boolean sprint = key[KeyEvent.VK_SHIFT];
-		boolean f3 = key[KeyEvent.VK_F3];
-		boolean esc = key[KeyEvent.VK_ESCAPE];
-
-		controls.tick(forward, back, left, right, jump, sprint, f3, esc);
+		controls.tick(key);
 
 		// Set player coords
 		Controller.playerPxX = controls.x;

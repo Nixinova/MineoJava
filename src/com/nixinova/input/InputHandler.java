@@ -1,6 +1,7 @@
 package com.nixinova.input;
 
 import com.nixinova.main.Display;
+import com.nixinova.main.Mineo;
 
 import java.awt.AWTException;
 import java.awt.Robot;
@@ -56,7 +57,7 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 		}
 
 		// Get frame pos info
-		JFrame frame = Display.frame;
+		JFrame frame = Mineo.frame;
 		Point framePos = frame.getContentPane().getLocationOnScreen();
 
 		// Recalculate center

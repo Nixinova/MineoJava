@@ -5,6 +5,8 @@ import java.util.Random;
 
 import com.nixinova.input.Controller;
 import com.nixinova.input.Game;
+import com.nixinova.main.Display;
+import com.nixinova.main.Mineo;
 import com.nixinova.readwrite.Options;
 
 public class Render3D extends Render {
@@ -12,15 +14,9 @@ public class Render3D extends Render {
 
 	public double[] zBuffer;
 
-	private final Render[] groundBlocks = new Render[] { Textures.grass, Textures.dirt, Textures.stone, };
-
-	private int[][] blockTextures;
-
 	public Render3D(int width, int height) {
 		super(width, height);
 		this.zBuffer = new double[width * height];
-
-		this.mapBlockTextures();
 	}
 
 	public void floor(Game game) {
@@ -83,11 +79,7 @@ public class Render3D extends Render {
 						texture = Textures.bedrock;
 					} else {
 						// Random texture for block
-						final int wR = Options.worldRepeat;
-						int absBlockX = (blockX % wR) + wR;
-						int absBlockZ = (blockZ % wR) + wR;
-						int textureI = this.blockTextures[absBlockX][absBlockZ];
-						texture = this.groundBlocks[textureI];
+						texture = Mineo.world.getTextureAt(blockX, blockZ);
 					}
 				} else {
 					texture = Textures.sky;
@@ -124,17 +116,5 @@ public class Render3D extends Render {
 			// Save fog-adjusted colour to pixel
 			this.pixels[i] = r << 16 | g << 8 | b;
 		}
-	}
-
-	private void mapBlockTextures() {
-		final int size = Options.worldRepeat * 2;
-		this.blockTextures = new int[size][size];
-		Random random = new Random(Options.seed);
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
-				blockTextures[i][j] = random.nextInt(this.groundBlocks.length);
-			}
-		}
-
 	}
 }

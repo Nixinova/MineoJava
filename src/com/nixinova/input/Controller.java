@@ -1,5 +1,11 @@
 package com.nixinova.input;
 
+import java.awt.event.KeyEvent;
+
+import com.nixinova.graphics.Render;
+import com.nixinova.graphics.Textures;
+import com.nixinova.graphics.World;
+import com.nixinova.main.Mineo;
 import com.nixinova.readwrite.Options;
 
 public class Controller {
@@ -35,15 +41,42 @@ public class Controller {
 	private double groundBuffer = 0.1D;
 	private boolean isJumping = false;
 	private double jumpY = 0;
+	
+	private int currentBlockID = 0;
+	private Render currentBlock = Textures.bedrock;
 
-	public void tick(boolean forward, boolean back, boolean left, boolean right, boolean jump,
-			boolean sprint, boolean f3, boolean esc) {
+	public void tick(boolean[] key) {
+
+		// Player movement controls
+		boolean place = key[KeyEvent.VK_X];
+		boolean nextBlock = key[KeyEvent.VK_Z];
+		boolean forward = key[KeyEvent.VK_W];
+		boolean back = key[KeyEvent.VK_S];
+		boolean left = key[KeyEvent.VK_A];
+		boolean right = key[KeyEvent.VK_D];
+		boolean jump = key[KeyEvent.VK_SPACE];
+		boolean sprint = key[KeyEvent.VK_SHIFT];
+		boolean f3 = key[KeyEvent.VK_F3];
+		boolean esc = key[KeyEvent.VK_ESCAPE];
+		
+		// Setup movement
 		double yMove = 0.0D;
 		double xMove = 0.0D;
 		double zMove = 0.0D;
 
 		// Controls
 		Game.controls.checkControls();
+		
+		// Placing
+		if (place) {
+			int blockX = (int) Controller.playerX;
+			int blockZ = (int) Controller.playerZ;
+			Mineo.world.setTextureAt(blockX, blockZ, currentBlock);
+		}
+		if (nextBlock) {
+			currentBlock = World.Blocks[currentBlockID++];
+			currentBlockID %= World.Blocks.length;
+		}
 
 		/// Movement
 		double mvChange = sprint ? Options.sprintSpeed : Options.walkSpeed;

@@ -7,10 +7,8 @@ import com.nixinova.input.InputHandler;
 import com.nixinova.readwrite.Options;
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyListener;
@@ -19,19 +17,14 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import javax.swing.JFrame;
 
 public class Display extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
 
 	private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-	public static final String VERSION = "0.0.8_1";
-	public static final String TITLE = "Mineo " + VERSION;
-
 	public static int WIDTH = (int) screenSize.getWidth();
 	public static int HEIGHT = (int) screenSize.getHeight();
-	public static JFrame frame;
 
 	public int fps = 0;
 
@@ -60,7 +53,7 @@ public class Display extends Canvas implements Runnable {
 		addMouseMotionListener((MouseMotionListener) this.input);
 	}
 
-	private void start() {
+	public void start() {
 		if (this.running)
 			return;
 
@@ -69,8 +62,7 @@ public class Display extends Canvas implements Runnable {
 		this.thread.start();
 	}
 
-	@SuppressWarnings("unused")
-	private void stop() {
+	public void stop() {
 		if (!this.running)
 			return;
 
@@ -163,7 +155,7 @@ public class Display extends Canvas implements Runnable {
 
 		if (Controller.debugShown) {
 			graphics.setColor(Color.white);
-			graphics.drawString(TITLE, 5, sep);
+			graphics.drawString(Mineo.TITLE, 5, sep);
 			graphics.drawString("FPS: " + String.valueOf(this.fps), 5, sep * 2);
 			graphics.drawString("Block: " + playerX + " / " + playerY + " / " + playerZ, 5, sep * 3);
 
@@ -175,26 +167,5 @@ public class Display extends Canvas implements Runnable {
 
 		graphics.dispose();
 		buffer.show();
-	}
-
-	public static void main(String[] args) {
-		Options.createOptions();
-		BufferedImage cursor = new BufferedImage(16, 16, 2);
-		Cursor blank = Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "blank");
-
-		frame = new JFrame();
-		Display game = new Display();
-
-		frame.add(game);
-		frame.pack();
-		frame.getContentPane().setCursor(blank);
-		frame.setDefaultCloseOperation(3);
-		frame.setSize(WIDTH, HEIGHT);
-		frame.setTitle(TITLE);
-		frame.setVisible(true);
-		frame.setFocusable(true);
-		frame.requestFocus();
-
-		game.start();
 	}
 }

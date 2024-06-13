@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.9
+*2024-06-13 13:22*
+- Added block placing with X.
+- Added block changing with Z.
+
 ## 0.0.8_1
 *2024-06-13 12:59*
 - Changed world generation to not be mirrored
