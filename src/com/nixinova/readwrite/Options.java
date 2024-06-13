@@ -12,6 +12,8 @@ public class Options {
 	public static final int OPTIONS_VERSION = 4;
 
 	public class DEFAULT_OPTIONS {
+		public static long seed = 100;
+		public static int worldRepeat = 100;
 		public static int renderDistance = 5000;
 		public static double gamma = 4.0;
 		public static int skyHeight = 144;
@@ -25,6 +27,8 @@ public class Options {
 	}
 
 	public static int fileVersion = OPTIONS_VERSION;
+	public static long seed = DEFAULT_OPTIONS.seed;
+	public static int worldRepeat = DEFAULT_OPTIONS.worldRepeat;
 	public static int renderDistance = DEFAULT_OPTIONS.renderDistance;
 	public static double gamma = DEFAULT_OPTIONS.gamma;
 	public static int skyHeight = DEFAULT_OPTIONS.skyHeight;
@@ -65,6 +69,8 @@ public class Options {
 
 				writer.write(writeValue("fileVersion", OPTIONS_VERSION));
 
+				writer.write(writeValue("seed", DEFAULT_OPTIONS.seed));
+				writer.write(writeValue("worldRepeat", DEFAULT_OPTIONS.worldRepeat));
 				writer.write(writeValue("renderDistance", DEFAULT_OPTIONS.renderDistance));
 				writer.write(writeValue("gamma", DEFAULT_OPTIONS.gamma));
 				writer.write(writeValue("skyHeight", DEFAULT_OPTIONS.skyHeight));
@@ -113,6 +119,11 @@ public class Options {
 
 		if (name.contains("fileVersion"))
 			fileVersion = Integer.parseInt(val);
+
+		if (name.contains("seed"))
+			seed = Long.parseLong(val);
+		if (name.contains("worldRepeat"))
+			worldRepeat = Integer.parseInt(val);
 		if (name.contains("renderDistance"))
 			renderDistance = Integer.parseInt(val);
 		if (name.contains("gamma"))

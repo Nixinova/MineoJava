@@ -1,5 +1,8 @@
 package com.nixinova.graphics;
 
+import java.util.HashMap;
+import java.util.Random;
+
 import com.nixinova.input.Controller;
 import com.nixinova.input.Game;
 import com.nixinova.readwrite.Options;
@@ -9,9 +12,15 @@ public class Render3D extends Render {
 
 	public double[] zBuffer;
 
+	private final Render[] groundBlocks = new Render[] { Textures.grass, Textures.dirt, Textures.stone, };
+
+	private int[][] blockTextures;
+
 	public Render3D(int width, int height) {
 		super(width, height);
 		this.zBuffer = new double[width * height];
+
+		this.mapBlockTextures();
 	}
 
 	public void floor(Game game) {
@@ -30,24 +39,23 @@ public class Render3D extends Render {
 
 		// Loop through pixel rows
 		for (int y = 0; y < this.height; y++) {
-			// Relative sky position
 			double sky = (y - this.height / 2.0D) / this.height;
 			// Apply tilt to sky
 			sky = sky * tiltCosine - tiltSine;
 
 			// Calculate depth
-			double z;
+			double d;
 			if (sky < 0.0D) {
 				// If sky
-				z = (Options.skyHeight - yMove) / -sky;
+				d = (Options.skyHeight - yMove) / -sky;
 				if (Controller.walking) {
-					z = (Options.skyHeight - yMove - bobbing) / -sky;
+					d = (Options.skyHeight - yMove - bobbing) / -sky;
 				}
 			} else {
 				// If ground
-				z = (Options.groundHeight + yMove) / sky;
+				d = (Options.groundHeight + yMove) / sky;
 				if (Controller.walking) {
-					z = (Options.groundHeight + yMove) / sky + bobbing;
+					d = (Options.groundHeight + yMove) / sky + bobbing;
 				}
 			}
 
@@ -55,24 +63,31 @@ public class Render3D extends Render {
 			for (int x = 0; x < this.width; x++) {
 				int pixelI = x + (y * this.width);
 
-				double depth = (x - this.width / 2.0D) / this.height * z;
-				int xPx = (int) (depth * cosine + z * sine + xMove);
-				int yPx = (int) (z * cosine - depth * sine + zMove);
+				double depth = (x - this.width / 2.0D) / this.height * d;
+				int pxX = (int) Math.round(depth * cosine + d * sine + xMove);
+				int pxZ = (int) Math.round(d * cosine - depth * sine + zMove);
+				int blockX = pxX / TEX_SIZE;
+				int blockZ = pxZ / TEX_SIZE;
 
 				// Store depth in Z buffer
-				this.zBuffer[pixelI] = z;
+				this.zBuffer[pixelI] = d;
 
-				int texPx = (xPx & (TEX_SIZE - 1)) + (yPx & (TEX_SIZE - 1)) * TEX_SIZE;
+				int texPx = (pxX & (TEX_SIZE - 1)) + (pxZ & (TEX_SIZE - 1)) * TEX_SIZE;
 
-				Render texture = Textures.none;
+				Render texture;
 				// Apply block texture if in render distance or sky otherwise
-				if (z < Options.renderDistance && z > Options.skyHeight / -sky) {
-					if (xPx == 0 || yPx == 0)
-						texture = Textures.stone;
-					else if (xPx % TEX_SIZE == 0 || yPx % TEX_SIZE == 0)
-						texture = Textures.dirt;
-					else
-						texture = Textures.grass;
+				if (d < Options.renderDistance && d > Options.skyHeight / -sky) {
+					texture = Textures.grass;
+					if (blockX == 0 || blockZ == 0) {
+						// World center
+						texture = Textures.bedrock;
+					} else {
+						// Random texture for block
+						int absBlockX = Math.abs(blockX % Options.worldRepeat);
+						int absBlockZ = Math.abs(blockZ % Options.worldRepeat);
+						int textureI = this.blockTextures[absBlockX][absBlockZ];
+						texture = this.groundBlocks[textureI];
+					}
 				} else {
 					texture = Textures.sky;
 				}
@@ -108,5 +123,16 @@ public class Render3D extends Render {
 			// Save fog-adjusted colour to pixel
 			this.pixels[i] = r << 16 | g << 8 | b;
 		}
+	}
+
+	private void mapBlockTextures() {
+		this.blockTextures = new int[Options.worldRepeat][Options.worldRepeat];
+		Random random = new Random(Options.seed);
+		for (int i = 0; i < Options.worldRepeat; i++) {
+			for (int j = 0; j < Options.worldRepeat; j++) {
+				blockTextures[i][j] = random.nextInt(this.groundBlocks.length);
+			}
+		}
+
 	}
 }

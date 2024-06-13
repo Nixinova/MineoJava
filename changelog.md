@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.8
+*2024-06-13 12:42*
+- World is now aligned in blocks
+- Use random textures for each block
+- Added a bedrock line at world origins
+- Added worldRepeat option (defaults to 100)
+- Added seed option (defaults to 100)
+
 ## 0.0.7_3
 *2024-06-13 00:08*
 - Use grid layout for world
