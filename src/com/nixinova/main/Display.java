@@ -2,7 +2,6 @@ package com.nixinova.main;
 
 import com.nixinova.graphics.Screen;
 import com.nixinova.input.Controller;
-import com.nixinova.input.Game;
 import com.nixinova.input.InputHandler;
 import com.nixinova.readwrite.Options;
 import java.awt.Canvas;

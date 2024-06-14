@@ -1,7 +1,7 @@
-package com.nixinova.input;
+package com.nixinova.main;
 
 import com.nixinova.graphics.Render3D;
-import com.nixinova.main.Mineo;
+import com.nixinova.input.Controller;
 
 import java.awt.event.KeyEvent;
 

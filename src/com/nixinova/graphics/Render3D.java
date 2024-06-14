@@ -1,11 +1,7 @@
 package com.nixinova.graphics;
 
-import java.util.HashMap;
-import java.util.Random;
-
 import com.nixinova.input.Controller;
-import com.nixinova.input.Game;
-import com.nixinova.main.Display;
+import com.nixinova.main.Game;
 import com.nixinova.main.Mineo;
 import com.nixinova.readwrite.Options;
 
@@ -14,9 +10,14 @@ public class Render3D extends Render {
 
 	public double[] zBuffer;
 
+	private boolean fogAlrApplied;
+	private double lastXMove, lastYMove, lastZMove, lastRot, lastTilt;
+
 	public Render3D(int width, int height) {
 		super(width, height);
 		this.zBuffer = new double[width * height];
+		this.fogAlrApplied = false;
+		this.lastXMove = this.lastYMove = this.lastZMove = this.lastRot = this.lastTilt = 0;
 	}
 
 	public void floor(Game game) {
@@ -33,26 +34,34 @@ public class Render3D extends Render {
 		double tiltCosine = Math.cos(tilt);
 		double tiltSine = Math.sin(tilt);
 
+		// Early return if player hasn't inputted this tick
+		boolean hasntMoved = xMove == lastXMove && yMove == lastYMove && zMove == lastZMove;
+		boolean hasntLooked = rotation == lastRot && tilt == lastTilt;
+		if (hasntMoved && hasntLooked) {
+			return;
+		}
+		this.fogAlrApplied = false; // reinitialise distance limiter as we are rerendering screen
+
+
 		// Loop through pixel rows
 		for (int y = 0; y < this.height; y++) {
-			// Relative sky position
-			double sky = (y - this.height / 2.0D) / this.height;
-			// Apply tilt to sky
-			sky = sky * tiltCosine - tiltSine;
+			// Relative vertical position
+			double vert = (y - this.height / 2.0D) / this.height;
+			vert = vert * tiltCosine - tiltSine; // apply tilt
 
 			// Calculate depth
-			double d;
-			if (sky < 0.0D) {
+			double depth;
+			if (vert < 0) {
 				// If sky
-				d = (Options.skyHeight - yMove) / -sky;
+				depth = (Options.skyHeight - yMove) / -vert;
 				if (Controller.walking) {
-					d = (Options.skyHeight - yMove - bobbing) / -sky;
+					depth = (Options.skyHeight - yMove - bobbing) / -vert;
 				}
 			} else {
 				// If ground
-				d = (Options.groundHeight + yMove) / sky;
+				depth = (Options.groundHeight + yMove) / vert;
 				if (Controller.walking) {
-					d = (Options.groundHeight + yMove) / sky + bobbing;
+					depth = (Options.groundHeight + yMove) / vert + bobbing;
 				}
 			}
 
@@ -60,33 +69,47 @@ public class Render3D extends Render {
 			for (int x = 0; x < this.width; x++) {
 				int pixelI = x + (y * this.width);
 
-				double depth = (x - this.width / 2.0D) / this.height * d;
-				int pxX = (int) (depth * cosine + d * sine + xMove);
-				int pxZ = (int) (d * cosine - depth * sine + zMove);
+				// Relative horizontal position
+				double horiz = (x - this.width / 2.0D) / this.height;
+				horiz *= depth; // apply depth scale
+
+				// Pixel and block coords
+				int pxX = (int) (horiz * cosine + depth * sine + xMove);
+				int pxZ = (int) (depth * cosine - horiz * sine + zMove);
 				int blockX = pxX / TEX_SIZE;
 				int blockZ = pxZ / TEX_SIZE;
 
 				// Store depth in Z buffer
-				this.zBuffer[pixelI] = d;
+				this.zBuffer[pixelI] = depth;
 
-				int texPx = (pxX & (TEX_SIZE - 1)) + (pxZ & (TEX_SIZE - 1)) * TEX_SIZE;
-
-				Render texture;
-				if (d < Options.renderDistance && d > Options.skyHeight / -sky) {
+				// Get texture for block at this coordinate if within render distance
+				Render texture = Textures.sky;
+				boolean withinRenderDist = depth < Options.renderDistance;
+				boolean isNotSky = depth > Options.skyHeight / -vert;
+				if (withinRenderDist && isNotSky) {
 					// Render block
 					texture = Mineo.world.getTextureAt(blockX, blockZ);
-				} else {
-					// Render sky (out of render distance)
-					texture = Textures.sky;
 				}
+				// Apply texture
+				int texPx = (pxX & (TEX_SIZE - 1)) + (pxZ & (TEX_SIZE - 1)) * TEX_SIZE;
 				this.pixels[pixelI] = texture.pixels[texPx];
 			}
 		}
+
+		// Set last control moves
+		this.lastXMove = xMove;
+		this.lastYMove = yMove;
+		this.lastZMove = zMove;
+		this.lastRot = rotation;
+		this.lastTilt = tilt;
 	}
 
 	/** Adds depth-based fog to the pixels */
 	public void renderDistLimiter() {
 		double gamma = Options.gamma;
+
+		if (this.fogAlrApplied)
+			return;
 
 		for (int i = 0; i < this.width * this.height; i++) {
 			// Get pixel colour
@@ -97,19 +120,20 @@ public class Render3D extends Render {
 			// Clamp brightness
 			if (brightness < 0)
 				brightness = 0;
-			if (brightness > 255)
-				brightness = 255;
+			if (brightness > 0xFF)
+				brightness = 0xFF;
 
 			// Calculate final RGB from pixel colour + fog
 			int r = colour >> 16 & 0xFF;
 			int g = colour >> 8 & 0xFF;
 			int b = colour & 0xFF;
-			r = r * brightness / 255 + 8;
+			r = r * brightness / 255;
 			g = g * brightness / 255;
 			b = b * brightness / 255;
 
 			// Save fog-adjusted colour to pixel
 			this.pixels[i] = r << 16 | g << 8 | b;
+			this.fogAlrApplied = true;
 		}
 	}
 }

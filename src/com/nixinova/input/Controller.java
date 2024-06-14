@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import com.nixinova.graphics.Render;
 import com.nixinova.graphics.Textures;
 import com.nixinova.graphics.World;
+import com.nixinova.main.Game;
 import com.nixinova.main.Mineo;
 import com.nixinova.readwrite.Options;
 
@@ -46,6 +47,7 @@ public class Controller {
 	private Render currentBlock = Textures.bedrock;
 
 	public void tick(boolean[] key) {
+		checkControls();
 
 		// Player movement controls
 		boolean place = key[KeyEvent.VK_X];
@@ -63,9 +65,6 @@ public class Controller {
 		double yMove = 0.0D;
 		double xMove = 0.0D;
 		double zMove = 0.0D;
-
-		// Controls
-		Game.controls.checkControls();
 		
 		// Placing
 		if (place) {
@@ -138,8 +137,8 @@ public class Controller {
 			yMove = 0.001D;
 		}
 
-		// Boundaries of controls
-		double maxTilt = 1;
+		// Mouse look boundaries
+		double maxTilt = 1.0;
 		if (tilt < -maxTilt)
 			tilt = -maxTilt;
 		if (tilt > maxTilt)

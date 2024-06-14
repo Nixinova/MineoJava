@@ -1,6 +1,6 @@
 package com.nixinova.graphics;
 
-import com.nixinova.input.Game;
+import com.nixinova.main.Game;
 
 public class Render extends Game {
 	public final int width;

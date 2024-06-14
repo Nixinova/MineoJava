@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.9_2
+*2024-06-14 15:09*
+- Skip rerendering if player is idle
+
 ## 0.0.9_1
 *2024-06-14 01:23*
 - Allow placing blocks at world origin

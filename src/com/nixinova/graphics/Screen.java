@@ -1,6 +1,6 @@
 package com.nixinova.graphics;
 
-import com.nixinova.input.Game;
+import com.nixinova.main.Game;
 
 public class Screen extends Render {
 	private Render3D render;
