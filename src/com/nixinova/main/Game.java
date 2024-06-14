@@ -1,9 +1,8 @@
 package com.nixinova.main;
 
-import com.nixinova.graphics.Render3D;
 import com.nixinova.input.Controller;
-
-import java.awt.event.KeyEvent;
+import com.nixinova.input.Coord;
+import com.nixinova.world.Blocks;
 
 public class Game {
 	public static double time = 0.0D;
@@ -23,8 +22,9 @@ public class Game {
 		Controller.playerPxX = controls.x;
 		Controller.playerPxY = controls.y;
 		Controller.playerPxZ = controls.z;
-		Controller.playerX = controls.x / Render3D.TEX_SIZE;
-		Controller.playerY = controls.y / Render3D.TEX_SIZE;
-		Controller.playerZ = controls.z / Render3D.TEX_SIZE;
+		Coord blockCoords = Blocks.worldPxToBlockCoords((int) controls.x, (int) controls.y, (int) controls.z);
+		Controller.playerX = blockCoords.x;
+		Controller.playerY = blockCoords.y;
+		Controller.playerZ = blockCoords.z;
 	}
 }

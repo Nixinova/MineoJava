@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.10_1
+*2024-06-14 16:15*
+- Fixed world having two origins
+
 ## 0.0.10
 *2024-06-14 15:49*
 - Added mouse cursor

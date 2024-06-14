@@ -7,12 +7,12 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
-import com.nixinova.graphics.World;
 import com.nixinova.readwrite.Options;
+import com.nixinova.world.World;
 
 public class Mineo {
 
-	public static final String VERSION = "0.0.10";
+	public static final String VERSION = "0.0.10_1";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	public static JFrame frame;

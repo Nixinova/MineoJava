@@ -1,12 +1,13 @@
 package com.nixinova.graphics;
 
 import com.nixinova.input.Controller;
+import com.nixinova.input.Coord;
 import com.nixinova.main.Game;
 import com.nixinova.main.Mineo;
 import com.nixinova.readwrite.Options;
+import com.nixinova.world.Blocks;
 
 public class Render3D extends Render {
-	public static final int TEX_SIZE = 8;
 
 	public double[] zBuffer;
 
@@ -21,6 +22,8 @@ public class Render3D extends Render {
 	}
 
 	public void floor(Game game) {
+		final int TEX_SIZE = Blocks.PX_PER_BLOCK;
+
 		double xMove = Game.controls.x;
 		double yMove = Game.controls.y;
 		double zMove = Game.controls.z;
@@ -75,8 +78,9 @@ public class Render3D extends Render {
 				// Pixel and block coords
 				int pxX = (int) (horiz * cosine + depth * sine + xMove);
 				int pxZ = (int) (depth * cosine - horiz * sine + zMove);
-				int blockX = pxX / TEX_SIZE;
-				int blockZ = pxZ / TEX_SIZE;
+				Coord blockCoord = Blocks.worldPxToBlockCoords(pxX, pxZ);
+				int blockX = blockCoord.x;
+				int blockZ = blockCoord.z;
 
 				// Set looking at block
 				if (pixelI == width * height / 2) {

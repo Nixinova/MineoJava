@@ -1,19 +1,13 @@
-package com.nixinova.graphics;
+package com.nixinova.world;
 
 import java.util.Random;
 
+import com.nixinova.graphics.Render;
+import com.nixinova.graphics.Textures;
 import com.nixinova.input.Coord;
 import com.nixinova.readwrite.Options;
 
 public class World {
-	
-	public static final Render[] Blocks = new Render[] {
-		Textures.sky,
-		Textures.bedrock,
-		Textures.grass,
-		Textures.dirt,
-		Textures.stone,
-	};
 	
 	public Coord lookingAtBlock;
 

@@ -1,12 +1,11 @@
 package com.nixinova.input;
 
-import java.awt.event.KeyEvent;
 
 import com.nixinova.graphics.Render;
 import com.nixinova.graphics.Textures;
-import com.nixinova.graphics.World;
 import com.nixinova.main.Mineo;
 import com.nixinova.readwrite.Options;
+import com.nixinova.world.Blocks;
 
 public class Controller {
 
@@ -70,7 +69,7 @@ public class Controller {
 			currentBlockID = 3;
 		if (kbd.pressed(Keys.NUM_4))
 			currentBlockID = 4;
-		currentBlock = World.Blocks[currentBlockID];
+		currentBlock = Blocks.BLOCKS[currentBlockID];
 
 		/// Movement
 		double mvChange = kbd.pressed(Keys.SPRINT) ? Options.sprintSpeed : Options.walkSpeed;
