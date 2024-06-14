@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.10
+*2024-06-14 15:49*
+- Added mouse cursor
+- Added block selecting using the number row
+- Changed block placing to be at mouse cursor instead of at foot
+- Removed block cycling with Z
+
 ## 0.0.9_2
 *2024-06-14 15:09*
 - Skip rerendering if player is idle

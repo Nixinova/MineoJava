@@ -5,7 +5,6 @@ import java.awt.event.KeyEvent;
 import com.nixinova.graphics.Render;
 import com.nixinova.graphics.Textures;
 import com.nixinova.graphics.World;
-import com.nixinova.main.Game;
 import com.nixinova.main.Mineo;
 import com.nixinova.readwrite.Options;
 
@@ -24,7 +23,7 @@ public class Controller {
 	public static boolean debugShown = true;
 	public static boolean walking = false;
 	public static boolean escapePressed = false;
-	
+
 	public double x;
 	public double y;
 	public double z;
@@ -42,56 +41,52 @@ public class Controller {
 	private double groundBuffer = 0.1D;
 	private boolean isJumping = false;
 	private double jumpY = 0;
-	
-	private int currentBlockID = 0;
+
+	private int currentBlockID = 1;
 	private Render currentBlock = Textures.bedrock;
 
-	public void tick(boolean[] key) {
+	public void tick(boolean[] keys) {
 		checkControls();
 
-		// Player movement controls
-		boolean place = key[KeyEvent.VK_X];
-		boolean nextBlock = key[KeyEvent.VK_Z];
-		boolean forward = key[KeyEvent.VK_W];
-		boolean back = key[KeyEvent.VK_S];
-		boolean left = key[KeyEvent.VK_A];
-		boolean right = key[KeyEvent.VK_D];
-		boolean jump = key[KeyEvent.VK_SPACE];
-		boolean sprint = key[KeyEvent.VK_SHIFT];
-		boolean f3 = key[KeyEvent.VK_F3];
-		boolean esc = key[KeyEvent.VK_ESCAPE];
-		
+		Keys kbd = new Keys(keys);
+
 		// Setup movement
 		double yMove = 0.0D;
 		double xMove = 0.0D;
 		double zMove = 0.0D;
-		
+
 		// Placing
-		if (place) {
-			int blockX = (int) Controller.playerX;
-			int blockZ = (int) Controller.playerZ;
-			Mineo.world.setTextureAt(blockX, blockZ, currentBlock);
-		}
-		if (nextBlock) {
-			currentBlock = World.Blocks[currentBlockID++];
-			currentBlockID %= World.Blocks.length;
+		if (kbd.pressed(Keys.PLACE_BLOCK)) {
+			Coord lookingAt = Mineo.world.lookingAtBlock;
+			Mineo.world.setTextureAt(lookingAt.x, lookingAt.z, currentBlock);
 		}
 
+		// Selecting block
+		if (kbd.pressed(Keys.NUM_1))
+			currentBlockID = 1;
+		if (kbd.pressed(Keys.NUM_2))
+			currentBlockID = 2;
+		if (kbd.pressed(Keys.NUM_3))
+			currentBlockID = 3;
+		if (kbd.pressed(Keys.NUM_4))
+			currentBlockID = 4;
+		currentBlock = World.Blocks[currentBlockID];
+
 		/// Movement
-		double mvChange = sprint ? Options.sprintSpeed : Options.walkSpeed;
-		if (forward) {
+		double mvChange = kbd.pressed(Keys.SPRINT) ? Options.sprintSpeed : Options.walkSpeed;
+		if (kbd.pressed(Keys.FORWARD)) {
 			zMove += mvChange;
 		}
-		if (back) {
+		if (kbd.pressed(Keys.BACK)) {
 			zMove += -mvChange;
 		}
-		if (right) {
+		if (kbd.pressed(Keys.RIGHT)) {
 			xMove += mvChange;
 		}
-		if (left) {
+		if (kbd.pressed(Keys.LEFT)) {
 			xMove += -mvChange;
 		}
-		walking = forward || back || left || right;
+		walking = kbd.pressed(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
 
 		/// Mouse look
 		double mouseDX = Options.rotationSpeed * (1 + InputHandler.mouseDX());
@@ -124,15 +119,11 @@ public class Controller {
 			}
 		}
 		if (onGround()) {
-			if (jump)
+			if (kbd.pressed(Keys.JUMP))
 				isJumping = true;
-		}
-		else 
-		if (aboveGround()) {
+		} else if (aboveGround()) {
 			yMove -= Options.jumpHeight * Options.gravity;
-		}
-		else
-		if (belowGround()) {
+		} else if (belowGround()) {
 			this.y = Options.groundHeight + groundBuffer * 1.01D;
 			yMove = 0.001D;
 		}
@@ -145,10 +136,10 @@ public class Controller {
 			tilt = maxTilt;
 
 		// System keys
-		if (esc) {
+		if (kbd.pressed(Keys.ESCAPE)) {
 			System.exit(1);
 		}
-		if (f3 && this.debugCooldown > 10) {
+		if (kbd.pressed(Keys.DEBUG) && this.debugCooldown > 10) {
 			debugShown = !debugShown;
 			this.debugCooldown = 0;
 		}

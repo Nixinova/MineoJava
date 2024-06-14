@@ -2,16 +2,20 @@ package com.nixinova.graphics;
 
 import java.util.Random;
 
+import com.nixinova.input.Coord;
 import com.nixinova.readwrite.Options;
 
 public class World {
 	
 	public static final Render[] Blocks = new Render[] {
+		Textures.sky,
 		Textures.bedrock,
 		Textures.grass,
 		Textures.dirt,
 		Textures.stone,
 	};
+	
+	public Coord lookingAtBlock;
 
 	private final int wR;
 	private final Render[] groundBlocks = new Render[] {
@@ -26,6 +30,7 @@ public class World {
 		this.wR = Options.worldRepeat;
 
 		this.mapBlockTextures();
+		this.lookingAtBlock = new Coord();
 	}
 
 	public Render getTextureAt(int blockX, int blockZ) {

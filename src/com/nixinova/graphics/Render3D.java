@@ -42,7 +42,6 @@ public class Render3D extends Render {
 		}
 		this.fogAlrApplied = false; // reinitialise distance limiter as we are rerendering screen
 
-
 		// Loop through pixel rows
 		for (int y = 0; y < this.height; y++) {
 			// Relative vertical position
@@ -79,6 +78,12 @@ public class Render3D extends Render {
 				int blockX = pxX / TEX_SIZE;
 				int blockZ = pxZ / TEX_SIZE;
 
+				// Set looking at block
+				if (pixelI == width * height / 2) {
+					Mineo.world.lookingAtBlock.x = blockX;
+					Mineo.world.lookingAtBlock.z = blockZ;
+				}
+
 				// Store depth in Z buffer
 				this.zBuffer[pixelI] = depth;
 
@@ -95,6 +100,9 @@ public class Render3D extends Render {
 				this.pixels[pixelI] = texture.pixels[texPx];
 			}
 		}
+
+		// Mouse cursor
+		this.drawCursor();
 
 		// Set last control moves
 		this.lastXMove = xMove;
@@ -135,5 +143,14 @@ public class Render3D extends Render {
 			this.pixels[i] = r << 16 | g << 8 | b;
 			this.fogAlrApplied = true;
 		}
+	}
+
+	private void drawCursor() {
+		int size = 5;
+		int startX = (width - size) / 2;
+		int startY = (height - size) / 2;
+		for (int x = startX; x < startX + size; x++)
+			for (int y = startY; y < startY + size; y++)
+				pixels[x + (y * width)] = 0;
 	}
 }
