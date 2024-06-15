@@ -5,23 +5,18 @@ import com.nixinova.graphics.Render;
 import com.nixinova.graphics.Textures;
 import com.nixinova.main.Mineo;
 import com.nixinova.readwrite.Options;
+import com.nixinova.types.BlockCoord;
 import com.nixinova.world.Blocks;
 
 public class Controller {
 
-	public static double playerX = 0;
-	public static double playerY = 0;
-	public static double playerZ = 0;
-	public static double playerPxX = 0;
-	public static double playerPxY = 0;
-	public static double playerPxZ = 0;
-	public static boolean panLeft = false;
-	public static boolean panRight = false;
-	public static boolean tiltUp = false;
-	public static boolean tiltDown = false;
 	public static boolean debugShown = true;
-	public static boolean walking = false;
-	public static boolean escapePressed = false;
+	public static boolean isWalking = false;
+
+	private boolean panLeft = false;
+	private boolean panRight = false;
+	private boolean tiltUp = false;
+	private boolean tiltDown = false;
 
 	public double x;
 	public double y;
@@ -56,7 +51,7 @@ public class Controller {
 
 		// Placing
 		if (kbd.pressed(Keys.PLACE_BLOCK)) {
-			Coord lookingAt = Mineo.world.lookingAtBlock;
+			BlockCoord lookingAt = Mineo.world.getLookingAt();
 			Mineo.world.setTextureAt(lookingAt.x, lookingAt.z, currentBlock);
 		}
 
@@ -85,7 +80,7 @@ public class Controller {
 		if (kbd.pressed(Keys.LEFT)) {
 			xMove += -mvChange;
 		}
-		walking = kbd.pressed(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
+		isWalking = kbd.pressed(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
 
 		/// Mouse look
 		double mouseDX = Options.rotationSpeed * (1 + InputHandler.mouseDX());

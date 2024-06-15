@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.10_2
+*2024-06-16 11:21*
+- Normalised all coordinate planes
+
 ## 0.0.10_1
 *2024-06-14 16:15*
 - Fixed world having two origins
@@ -83,7 +87,7 @@
 - Game now exits on Escape
 - Lowered options version to 4
 
-## v0.0.3_2
+## 0.0.3_2
 *2019-06-11 19:34*
 - Added data version (15)
 - Added warning when options.txt is outdated

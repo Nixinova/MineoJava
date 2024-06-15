@@ -1,16 +1,16 @@
-package com.nixinova.input;
+package com.nixinova.types;
 
-public class Coord {
+public class BlockCoord {
 	
 	public int x;
 	public int y;
 	public int z;
 	
-	public Coord() {
+	public BlockCoord() {
 		this.x = this.y = this.z = 0;
 	}
 	
-	public Coord(int x, int y, int z) {
+	public BlockCoord(int x, int y, int z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;

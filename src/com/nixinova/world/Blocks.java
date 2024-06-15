@@ -2,7 +2,8 @@ package com.nixinova.world;
 
 import com.nixinova.graphics.Render;
 import com.nixinova.graphics.Textures;
-import com.nixinova.input.Coord;
+import com.nixinova.types.BlockCoord;
+import com.nixinova.types.Coord;
 
 public class Blocks {
 	public static final int PX_PER_BLOCK = 8;
@@ -20,18 +21,24 @@ public class Blocks {
 		return px >= 0 ? px / PX_PER_BLOCK : (px - PX_PER_BLOCK + 1) / PX_PER_BLOCK;
 	}
 
-	public static Coord worldPxToBlockCoords(int pxX, int pxY, int pxZ) {
-	    return new Coord(pxToCoord(pxX), pxToCoord(pxY), pxToCoord(pxZ));
+	public static BlockCoord worldPxToBlockCoords(int pxX, int pxY, int pxZ) {
+	    return new BlockCoord(pxToCoord(pxX), pxToCoord(pxY), pxToCoord(pxZ));
 	}
-
-	public static Coord worldPxToBlockCoords(int pxX, int pxZ) {
+	public static BlockCoord worldPxToBlockCoords(int pxX, int pxZ) {
 		return worldPxToBlockCoords(pxX, 0, pxZ);
 	}
+	public static BlockCoord worldPxToBlockCoords(Coord coords) {
+		return worldPxToBlockCoords((int) coords.x, (int) coords.y, (int) coords.z);
+	}
 
-	public static Coord blockCoordsToWorldPx(int blockX, int blockZ) {
+	public static Coord blockCoordsToWorldPx(int blockX, int blockY, int blockZ) {
         int pxX = blockX * PX_PER_BLOCK + PX_PER_BLOCK / 2;
+        int pxY = blockY * PX_PER_BLOCK + PX_PER_BLOCK / 2;
         int pxZ = blockZ * PX_PER_BLOCK + PX_PER_BLOCK / 2;
-        return new Coord(pxX, 0, pxZ);
+        return new Coord(pxX, pxY, pxZ);
+	}
+	public static Coord blockCoordsToWorldPx(int blockX, int blockZ) {
+        return blockCoordsToWorldPx(blockX, 0, blockZ);
 	}
 
 }

@@ -4,6 +4,8 @@ import com.nixinova.graphics.Screen;
 import com.nixinova.input.Controller;
 import com.nixinova.input.InputHandler;
 import com.nixinova.readwrite.Options;
+import com.nixinova.types.BlockCoord;
+
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -127,9 +129,10 @@ public class Display extends Canvas implements Runnable {
 		graphics.drawImage(this.img, 0, 0, WIDTH, HEIGHT, null);
 		graphics.setColor(Color.white);
 
-		String playerX = String.format("%01d", Math.round(Controller.playerX));
-		String playerY = String.format("%01d", Math.round(Controller.playerY));
-		String playerZ = String.format("%01d", Math.round(Controller.playerZ));
+		BlockCoord playerBlockPos = Mineo.world.getPlayerBlockPos();
+		String playerX = String.format("%d", playerBlockPos.x);
+		String playerY = String.format("%d", playerBlockPos.y);
+		String playerZ = String.format("%d", playerBlockPos.z);
 
 		String msg1 = "", msg2 = "", msg3 = "";
 		final int OPTIONS_VERSION = Options.OPTIONS_VERSION;
