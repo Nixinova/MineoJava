@@ -50,7 +50,7 @@ public class Controller {
 		double zMove = 0.0D;
 
 		// Placing
-		if (kbd.pressed(Keys.PLACE_BLOCK)) {
+		if (kbd.clickedButton(Keys.LCLICK)) {
 			BlockCoord lookingAt = Mineo.world.getLookingAt();
 			Mineo.world.setTextureAt(lookingAt.x, lookingAt.z, currentBlock);
 		}

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.10_4
+*2024-06-17 01:17*
+- Changed block placement key from X to left click
+
 ## 0.0.10_3
 *2024-06-17 00:53*
 - Fixed block placing not causing a rerender

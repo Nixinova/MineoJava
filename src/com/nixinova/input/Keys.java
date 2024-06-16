@@ -1,8 +1,12 @@
 package com.nixinova.input;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
+// Keyboard and mouse
 public class Keys {
+
+	// Keyboard
 	public static int ESCAPE = KeyEvent.VK_ESCAPE;
 	public static int DEBUG = KeyEvent.VK_F3;
 
@@ -25,6 +29,10 @@ public class Keys {
 	public static final int NUM_8 = KeyEvent.VK_8;
 	public static final int NUM_9 = KeyEvent.VK_9;
 
+	// Mouse
+	public static int LCLICK = MouseEvent.BUTTON1;
+	public static int RCLICK = MouseEvent.BUTTON3;
+
 	private boolean[] keys;
 
 	public Keys(boolean[] keys) {
@@ -41,5 +49,9 @@ public class Keys {
 				return true;
 		}
 		return false;
+	}
+
+	public boolean clickedButton(int key) {
+		return this.keys[InputHandler.MOUSE_OFFSET + key];
 	}
 }

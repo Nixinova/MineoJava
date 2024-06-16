@@ -18,7 +18,11 @@ import javax.swing.JFrame;
 
 // Input handler: absolute mouse movement, regardless of sensitivity etc
 public class InputHandler implements KeyListener, FocusListener, MouseListener, MouseMotionListener {
-	public boolean[] key = new boolean[68836];
+	public static final int MOUSE_OFFSET = 10000;
+
+	private static final int KEYS_ARR_SIZE = 10100; // to fit both keyboard and mouse
+
+	public boolean[] keys = new boolean[KEYS_ARR_SIZE];
 
 	public static int mouseX, mouseY;
 	public static int centerX, centerY;
@@ -46,6 +50,8 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 
 	@Override
 	public void mouseDragged(MouseEvent event) {
+		// Treat dragging the mouse the same as moving the mouse
+		this.mouseMoved(event);
 	}
 
 	@Override
@@ -89,11 +95,17 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 	public void mouseExited(MouseEvent event) {
 	}
 
+	@Override
 	public void mousePressed(MouseEvent event) {
+		int button = event.getButton();
+		this.keys[MOUSE_OFFSET + button] = true;
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent event) {
+		// Reset all mouse buttons
+		this.keys[MOUSE_OFFSET + Keys.LCLICK] = false;
+		this.keys[MOUSE_OFFSET + Keys.RCLICK] = false;
 	}
 
 	@Override
@@ -103,22 +115,22 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 	@Override
 	public void focusLost(FocusEvent event) {
 		// Clear all keypresses
-		for (int i = 0; i < this.key.length; i++)
-			this.key[i] = false;
+		for (int i = 0; i < this.keys.length; i++)
+			this.keys[i] = false;
 	}
 
 	@Override
 	public void keyPressed(KeyEvent event) {
 		int keyCode = event.getKeyCode();
-		if (keyCode > 0 && keyCode < this.key.length)
-			this.key[keyCode] = true;
+		if (keyCode > 0 && keyCode < this.keys.length)
+			this.keys[keyCode] = true;
 	}
 
 	@Override
 	public void keyReleased(KeyEvent event) {
 		int keyCode = event.getKeyCode();
-		if (keyCode > 0 && keyCode < this.key.length)
-			this.key[keyCode] = false;
+		if (keyCode > 0 && keyCode < this.keys.length)
+			this.keys[keyCode] = false;
 	}
 
 	@Override
