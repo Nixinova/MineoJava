@@ -6,18 +6,21 @@ import com.nixinova.types.Coord;
 import com.nixinova.world.Blocks;
 
 public class Game {
-	public static double time = 0.0D;
+	public double time = 0.0D;
 
-	public static Controller controls;
+	public Controller controls;
+	public boolean[] kbdInput;
 
 	public Game() {
-		controls = new Controller();
+		this.controls = new Controller();
+		this.time = 0;
 	}
 
-	public static void tick(boolean[] key) {
-		time += 0.0005;
+	public  void tick(boolean[] keys) {
+		this.time += 0.0005;
 
-		controls.tick(key);
+		kbdInput = keys;
+		controls.tick(keys);
 
 		// Set player coords
 		Coord pxCoords = new Coord(controls.x, controls.y, controls.z);

@@ -46,6 +46,7 @@ public class Display extends Canvas implements Runnable {
 		this.screen = new Screen(WIDTH, HEIGHT);
 		this.img = new BufferedImage(WIDTH, HEIGHT, 1);
 		this.pixels = ((DataBufferInt) this.img.getRaster().getDataBuffer()).getData();
+		this.game = new Game();
 		this.input = new InputHandler();
 
 		addKeyListener((KeyListener) this.input);
@@ -110,7 +111,7 @@ public class Display extends Canvas implements Runnable {
 	}
 
 	private void tick() {
-		Game.tick(this.input.key);
+		this.game.tick(this.input.key);
 	}
 
 	private void render() {

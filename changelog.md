@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.10_3
+*2024-06-17 00:53*
+- Fixed block placing not causing a rerender
+
 ## 0.0.10_2
 *2024-06-16 11:21*
 - Normalised all coordinate planes

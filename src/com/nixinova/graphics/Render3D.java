@@ -1,5 +1,8 @@
 package com.nixinova.graphics;
 
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
 import com.nixinova.input.Controller;
 import com.nixinova.main.Game;
 import com.nixinova.main.Mineo;
@@ -13,6 +16,7 @@ public class Render3D extends Render {
 
 	private boolean fogAlrApplied;
 	private double lastXMove, lastYMove, lastZMove, lastRot, lastTilt;
+	private boolean[] lastKbdInput;
 
 	public Render3D(int width, int height) {
 		super(width, height);
@@ -21,28 +25,31 @@ public class Render3D extends Render {
 		this.lastXMove = this.lastYMove = this.lastZMove = this.lastRot = this.lastTilt = 0;
 	}
 
-	public void floor(Game game) {
+	public void renderWorld(Game game) {
 		final int TEX_SIZE = Blocks.PX_PER_BLOCK;
 
-		double xMove = Game.controls.x;
-		double yMove = Game.controls.y;
-		double zMove = Game.controls.z;
-		double bobbing = Math.sin(Game.time) / 10.0;
+		double xMove = game.controls.x;
+		double yMove = game.controls.y;
+		double zMove = game.controls.z;
+		double bobbing = Math.sin(game.time) / 10.0;
 
-		double rotation = Game.controls.rot;
+		double rotation = game.controls.rot;
 		double cosine = Math.cos(rotation);
 		double sine = Math.sin(rotation);
 
-		double tilt = Game.controls.tilt;
+		double tilt = game.controls.tilt;
 		double tiltCosine = Math.cos(tilt);
 		double tiltSine = Math.sin(tilt);
 
 		// Early return if player hasn't inputted this tick
+		IntStream indicesRange = IntStream.range(0, this.lastKbdInput != null ? this.lastKbdInput.length : 0);
+		boolean hasntPressed = indicesRange.allMatch(i -> game.kbdInput[i] == this.lastKbdInput[i]); // check all array items are equal
 		boolean hasntMoved = xMove == lastXMove && yMove == lastYMove && zMove == lastZMove;
 		boolean hasntLooked = rotation == lastRot && tilt == lastTilt;
-		if (hasntMoved && hasntLooked) {
+		if (hasntPressed && hasntMoved && hasntLooked) {
 			return;
 		}
+
 		this.fogAlrApplied = false; // reinitialise distance limiter as we are rerendering screen
 
 		// Loop through pixel rows
@@ -113,6 +120,7 @@ public class Render3D extends Render {
 		this.lastZMove = zMove;
 		this.lastRot = rotation;
 		this.lastTilt = tilt;
+		this.lastKbdInput = Arrays.copyOf(game.kbdInput, game.kbdInput.length);
 	}
 
 	/** Adds depth-based fog to the pixels */
