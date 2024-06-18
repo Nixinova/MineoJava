@@ -74,6 +74,7 @@ public class Controller {
 		isWalking = kbd.pressed(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
 
 		/// Mouse look
+		System.out.println(input.deltaX + " " + input.deltaY);
 		double mouseDX = Options.rotationSpeed * input.getDeltaX();
 		double mouseDY = Options.rotationSpeed * input.getDeltaY();
 		if (mouseDX != 0) {
@@ -137,9 +138,9 @@ public class Controller {
 		this.tilt += this.tilt2;
 
 		// decel/interpolate
-		this.x2 *= 0.1D;
-		this.y2 *= 0.1D;
-		this.z2 *= 0.1D;
+		this.x2 *= 0.6D;
+		this.y2 *= 0.3D;
+		this.z2 *= 0.6D;
 		this.rot2 *= 0.8D;
 		this.tilt2 *= 0.8D;
 	}

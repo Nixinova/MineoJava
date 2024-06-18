@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.10_6
+*2024-06-18 19:20*
+- Made walking smoother
+- Changed default walkSpeed to 0.5 and sprintSpeed to 0.7
+- Fixed large mouse movement occurring on load
+
 ## 0.0.10_5
 *2024-06-18 19:04*
 - Improved mouse look

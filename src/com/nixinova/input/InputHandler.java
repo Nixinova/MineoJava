@@ -28,7 +28,7 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 	public int deltaX, deltaY;
 
 	private Robot robot;
-	private boolean inMotion = false;
+	private boolean inMotion = true;
 
 	public InputHandler() {
 		this.centerX = Display.WIDTH / 2;
@@ -43,13 +43,13 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 		} catch (AWTException err) {
 		}
 	}
-	
+
 	public int getDeltaX() {
 		int value = this.deltaX;
 		this.deltaX = 0;
 		return value;
 	}
-	
+
 	public int getDeltaY() {
 		int value = this.deltaY;
 		this.deltaY = 0;
