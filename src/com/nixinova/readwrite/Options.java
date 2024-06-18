@@ -19,7 +19,7 @@ public class Options {
 		public static int skyHeight = 144;
 		public static int groundHeight = 16;
 		public static double gravity = 0.08;
-		public static double rotationSpeed = 0.011;
+		public static double rotationSpeed = 0.005;
 		public static double walkSpeed = 0.6;
 		public static double sprintSpeed = 0.8;
 		public static double jumpHeight = 5.0;

@@ -23,29 +23,37 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 	private static final int KEYS_ARR_SIZE = 10100; // to fit both keyboard and mouse
 
 	public boolean[] keys = new boolean[KEYS_ARR_SIZE];
-
-	public static int mouseX, mouseY;
-	public static int centerX, centerY;
+	public int mouseX, mouseY;
+	public int centerX, centerY;
+	public int deltaX, deltaY;
 
 	private Robot robot;
 	private boolean inMotion = false;
 
 	public InputHandler() {
-		centerX = Display.WIDTH / 2;
-		centerY = Display.HEIGHT / 2;
+		this.centerX = Display.WIDTH / 2;
+		this.centerY = Display.HEIGHT / 2;
+		this.mouseX = this.centerX;
+		this.mouseY = this.centerY;
+		this.deltaX = 0;
+		this.deltaY = 0;
 
 		try {
 			this.robot = new Robot();
 		} catch (AWTException err) {
 		}
 	}
-
-	public static double mouseDX() {
-		return (centerX - mouseX) / centerX;
+	
+	public int getDeltaX() {
+		int value = this.deltaX;
+		this.deltaX = 0;
+		return value;
 	}
-
-	public static double mouseDY() {
-		return (centerY - mouseY) / centerY;
+	
+	public int getDeltaY() {
+		int value = this.deltaY;
+		this.deltaY = 0;
+		return value;
 	}
 
 	@Override
@@ -67,19 +75,19 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 		Point framePos = frame.getContentPane().getLocationOnScreen();
 
 		// Recalculate center
-		centerX = (frame.getWidth() + framePos.x) / 2;
-		centerY = (frame.getHeight() + framePos.y) / 2;
+		this.centerX = (frame.getWidth() + framePos.x) / 2;
+		this.centerY = (frame.getHeight() + framePos.y) / 2;
 
 		// Mouse movement data
 		int newX = event.getX() + framePos.x;
 		int newY = event.getY() + framePos.y;
-		int deltaX = newX - centerX;
-		int deltaY = newY - centerY;
-		mouseX += deltaX;
-		mouseY += deltaY;
+		this.deltaX = newX - this.centerX;
+		this.deltaY = newY - this.centerY;
+		this.mouseX += this.deltaX;
+		this.mouseY += this.deltaY;
 
 		// Reset cursor to center of screen to avoid going out of frame
-		robot.mouseMove(centerX, centerY);
+		robot.mouseMove(this.centerX, this.centerY);
 		inMotion = true;
 	}
 

@@ -46,8 +46,8 @@ public class Display extends Canvas implements Runnable {
 		this.screen = new Screen(WIDTH, HEIGHT);
 		this.img = new BufferedImage(WIDTH, HEIGHT, 1);
 		this.pixels = ((DataBufferInt) this.img.getRaster().getDataBuffer()).getData();
-		this.game = new Game();
 		this.input = new InputHandler();
+		this.game = new Game(this.input);
 
 		addKeyListener((KeyListener) this.input);
 		addFocusListener((FocusListener) this.input);

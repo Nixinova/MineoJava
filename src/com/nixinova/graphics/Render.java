@@ -1,8 +1,6 @@
 package com.nixinova.graphics;
 
-import com.nixinova.main.Game;
-
-public class Render extends Game {
+public class Render {
 	public final int width;
 	public final int height;
 	public final int[] pixels;

@@ -9,14 +9,8 @@ import com.nixinova.types.BlockCoord;
 import com.nixinova.world.Blocks;
 
 public class Controller {
-
 	public static boolean debugShown = true;
 	public static boolean isWalking = false;
-
-	private boolean panLeft = false;
-	private boolean panRight = false;
-	private boolean tiltUp = false;
-	private boolean tiltDown = false;
 
 	public double x;
 	public double y;
@@ -30,18 +24,15 @@ public class Controller {
 	private double z2;
 	private double rot2;
 	private double tilt2;
-	private int oldX, oldY;
+
 	private int debugCooldown = 0;
 	private double groundBuffer = 0.1D;
 	private boolean isJumping = false;
 	private double jumpY = 0;
-
 	private int currentBlockID = 1;
 	private Render currentBlock = Textures.bedrock;
 
-	public void tick(boolean[] keys) {
-		checkControls();
-
+	public void tick(InputHandler input, boolean[] keys) {
 		Keys kbd = new Keys(keys);
 
 		// Setup movement
@@ -83,18 +74,12 @@ public class Controller {
 		isWalking = kbd.pressed(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
 
 		/// Mouse look
-		double mouseDX = Options.rotationSpeed * (1 + InputHandler.mouseDX());
-		double mouseDY = Options.rotationSpeed * (1 + InputHandler.mouseDY());
-		if (panLeft) {
-			this.rot2 += -mouseDX;
-		}
-		if (panRight) {
+		double mouseDX = Options.rotationSpeed * input.getDeltaX();
+		double mouseDY = Options.rotationSpeed * input.getDeltaY();
+		if (mouseDX != 0) {
 			this.rot2 += mouseDX;
 		}
-		if (tiltUp) {
-			this.tilt2 += mouseDY;
-		}
-		if (tiltDown) {
+		if (mouseDY != 0) {
 			this.tilt2 += -mouseDY;
 		}
 
@@ -155,32 +140,8 @@ public class Controller {
 		this.x2 *= 0.1D;
 		this.y2 *= 0.1D;
 		this.z2 *= 0.1D;
-		this.rot2 *= 0.5D;
-		this.tilt2 *= 0.5D;
-	}
-
-	public void checkControls() {
-		this.curX = InputHandler.mouseX;
-		if (this.curX > this.oldX) {
-			panRight = true;
-		} else if (this.curX < this.oldX) {
-			panLeft = true;
-		} else {
-			panRight = false;
-			panLeft = false;
-		}
-		this.oldX = this.curX;
-
-		this.curY = InputHandler.mouseY;
-		if (this.curY > this.oldY) {
-			tiltDown = true;
-		} else if (this.curY < this.oldY) {
-			tiltUp = true;
-		} else {
-			tiltUp = false;
-			tiltDown = false;
-		}
-		this.oldY = this.curY;
+		this.rot2 *= 0.8D;
+		this.tilt2 *= 0.8D;
 	}
 
 	public boolean onGround() {

@@ -12,7 +12,7 @@ import com.nixinova.world.World;
 
 public class Mineo {
 
-	public static final String VERSION = "0.0.10_4";
+	public static final String VERSION = "0.0.10_5";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	public static JFrame frame;

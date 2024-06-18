@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.10_5
+*2024-06-18 19:04*
+- Improved mouse look
+- Changed default rotationSpeed to 0.005
+
 ## 0.0.10_4
 *2024-06-17 01:17*
 - Changed block placement key from X to left click
