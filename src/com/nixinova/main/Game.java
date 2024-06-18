@@ -24,6 +24,7 @@ public class Game {
 
 		kbdInput = keys;
 		controls.tick(this.input, keys);
+		this.input.tick();
 
 		// Set player coords
 		Coord pxCoords = new Coord(controls.x, controls.y, controls.z);

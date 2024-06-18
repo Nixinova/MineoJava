@@ -71,12 +71,11 @@ public class Controller {
 		if (kbd.pressed(Keys.LEFT)) {
 			xMove += -mvChange;
 		}
-		isWalking = kbd.pressed(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
+		isWalking = kbd.pressedAny(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
 
 		/// Mouse look
-		System.out.println(input.deltaX + " " + input.deltaY);
-		double mouseDX = Options.rotationSpeed * input.getDeltaX();
-		double mouseDY = Options.rotationSpeed * input.getDeltaY();
+		double mouseDX = Options.rotationSpeed * input.deltaX;
+		double mouseDY = Options.rotationSpeed * input.deltaY;
 		if (mouseDX != 0) {
 			this.rot2 += mouseDX;
 		}

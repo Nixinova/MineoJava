@@ -7,17 +7,15 @@ import java.awt.event.MouseEvent;
 public class Keys {
 
 	// Keyboard
-	public static int ESCAPE = KeyEvent.VK_ESCAPE;
-	public static int DEBUG = KeyEvent.VK_F3;
+	public static final int ESCAPE = KeyEvent.VK_ESCAPE;
+	public static final int DEBUG = KeyEvent.VK_F3;
 
-	public static int FORWARD = KeyEvent.VK_W;
-	public static int BACK = KeyEvent.VK_S;
-	public static int LEFT = KeyEvent.VK_A;
-	public static int RIGHT = KeyEvent.VK_D;
-	public static int JUMP = KeyEvent.VK_SPACE;
-	public static int SPRINT = KeyEvent.VK_SHIFT;
-
-	public static int PLACE_BLOCK = KeyEvent.VK_X;
+	public static final int FORWARD = KeyEvent.VK_W;
+	public static final int BACK = KeyEvent.VK_S;
+	public static final int LEFT = KeyEvent.VK_A;
+	public static final int RIGHT = KeyEvent.VK_D;
+	public static final int JUMP = KeyEvent.VK_SPACE;
+	public static final int SPRINT = KeyEvent.VK_SHIFT;
 
 	public static final int NUM_1 = KeyEvent.VK_1;
 	public static final int NUM_2 = KeyEvent.VK_2;
@@ -30,8 +28,8 @@ public class Keys {
 	public static final int NUM_9 = KeyEvent.VK_9;
 
 	// Mouse
-	public static int LCLICK = MouseEvent.BUTTON1;
-	public static int RCLICK = MouseEvent.BUTTON3;
+	public static final int LCLICK = MouseEvent.BUTTON1;
+	public static final int RCLICK = MouseEvent.BUTTON3;
 
 	private boolean[] keys;
 
@@ -39,13 +37,13 @@ public class Keys {
 		this.keys = keys;
 	}
 
-	public boolean pressedKey(int key) {
+	public boolean pressed(int key) {
 		return this.keys[key];
 	}
 
-	public boolean pressed(int... keyN) {
-		for (int i = 0; i < keyN.length; i++) {
-			if (this.pressedKey(keyN[i]))
+	public boolean pressedAny(int... keys) {
+		for (int i = 0; i < keys.length; i++) {
+			if (this.pressed(keys[i]))
 				return true;
 		}
 		return false;

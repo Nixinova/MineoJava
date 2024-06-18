@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.10_7
+*2024-06-18 23:54*
+- Properly fixed large mouse movement occurring on load
+- Game window is now fully focused on load
+
 ## 0.0.10_6
 *2024-06-18 19:20*
 - Made walking smoother

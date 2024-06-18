@@ -28,7 +28,7 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 	public int deltaX, deltaY;
 
 	private Robot robot;
-	private boolean inMotion = true;
+	private boolean inMotion = false;
 
 	public InputHandler() {
 		this.centerX = Display.WIDTH / 2;
@@ -43,17 +43,11 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 		} catch (AWTException err) {
 		}
 	}
-
-	public int getDeltaX() {
-		int value = this.deltaX;
+	
+	public void tick() {
+		System.out.println(deltaX+","+deltaY);
 		this.deltaX = 0;
-		return value;
-	}
-
-	public int getDeltaY() {
-		int value = this.deltaY;
 		this.deltaY = 0;
-		return value;
 	}
 
 	@Override
@@ -118,6 +112,8 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 
 	@Override
 	public void focusGained(FocusEvent event) {
+		// retick when focus obtained
+		this.tick();
 	}
 
 	@Override
