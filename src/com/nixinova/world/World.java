@@ -3,7 +3,6 @@ package com.nixinova.world;
 import java.util.Random;
 
 import com.nixinova.graphics.Render;
-import com.nixinova.graphics.Textures;
 import com.nixinova.readwrite.Options;
 import com.nixinova.types.BlockCoord;
 import com.nixinova.types.Coord;
@@ -16,12 +15,12 @@ public class World {
 
 	private final int wR;
 	private final Render[] groundBlocks = new Render[] {
-		Textures.grass,
-		Textures.dirt,
-		Textures.stone,
+		Block.GRASS.getTexture(),
+		Block.DIRT.getTexture(),
+		Block.STONE.getTexture(),
 	};
 
-	private Render[][] blockTextures;
+	private Render[][][] blockTextures;
 
 	public World() {
 		this.wR = Options.worldRepeat;
@@ -67,32 +66,38 @@ public class World {
 	public void setLookingAt(int x, int y, int z) {
 		this.lookingAtBlock = new BlockCoord(x, y, z);
 	}
-	public void setLookingAt(int x, int z) {
-		this.setLookingAt(x, 0, z);
-	}
 
-	public Render getTextureAt(int blockX, int blockZ) {
-		return this.blockTextures[toBlockIndex(blockX)][toBlockIndex(blockZ)];
+	public Render getTextureAt(int blockX, int blockY, int blockZ) {
+		BlockCoord coordI = toBlockIndex(new BlockCoord(blockX, blockY, blockZ));
+		Render texture = this.blockTextures[coordI.x][coordI.y][coordI.z];
+		return texture;
 	}
-	public void setTextureAt(int blockX, int blockZ, Render texture) {
-		this.blockTextures[toBlockIndex(blockX)][toBlockIndex(blockZ)] = texture;
+	public void setTextureAt(int blockX, int blockY, int blockZ, Render texture) {
+		BlockCoord coordI = toBlockIndex(new BlockCoord(blockX, blockY, blockZ));
+		this.blockTextures[coordI.x][coordI.y][coordI.z] = texture;
 	}
 
 	private void mapBlockTextures() {
 		final int size = Options.worldRepeat * 2;
-		this.blockTextures = new Render[size][size];
+		this.blockTextures = new Render[size][size][size];
 
 		Random random = new Random(Options.seed);
 
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
-				Render texture;
-				if (toBlockCoord(i) == 0 || toBlockCoord(j) == 0)
-					// Bedrock along world origin
-					texture = Textures.bedrock;
-				else
-					texture = this.groundBlocks[random.nextInt(this.groundBlocks.length)];
-				blockTextures[i][j] = texture;
+		// TODO: 3D coord-based: y=0 place block, otherwise AIR
+		for (int x = 0; x < size; x++) {
+			for (int y = 0; y < size; y++) {
+				for (int z = 0; z < size; z++) {
+					BlockCoord coordI = toBlockCoord(new BlockCoord(x, y, z));
+					Render texture;
+					
+					if (coordI.x == 0 || coordI.z == 0)
+						// Bedrock along world origin
+						texture = Block.BEDROCK.getTexture();
+					else
+						texture = this.groundBlocks[random.nextInt(this.groundBlocks.length)];
+
+					blockTextures[x][y][z] = texture;
+				}
 			}
 		}
 	}
@@ -100,9 +105,15 @@ public class World {
 	private int toBlockIndex(int blockCoord) {
 		return (blockCoord % wR) + wR;
 	}
+	private BlockCoord toBlockIndex(BlockCoord blockCoord) {
+		return new BlockCoord(toBlockIndex(blockCoord.x), toBlockIndex(blockCoord.y), toBlockIndex(blockCoord.z));
+	}
 	
 	private int toBlockCoord(int blockIndex) {
 		return blockIndex - wR;
+	}
+	private BlockCoord toBlockCoord(BlockCoord indexCoord) {
+		return new BlockCoord(toBlockCoord(indexCoord.x), toBlockCoord(indexCoord.y), toBlockCoord(indexCoord.z));
 	}
 
 }

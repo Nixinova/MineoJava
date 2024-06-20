@@ -1,21 +1,12 @@
 package com.nixinova.world;
 
-import com.nixinova.graphics.Render;
 import com.nixinova.graphics.Textures;
 import com.nixinova.types.BlockCoord;
 import com.nixinova.types.Coord;
 
 public class Blocks {
-	public static final int PX_PER_BLOCK = 8;
+	private static int PX_PER_BLOCK = Textures.PX_PER_BLOCK;
 
-	public static final Render[] BLOCKS = new Render[] {
-		Textures.sky,
-		Textures.bedrock,
-		Textures.grass,
-		Textures.dirt,
-		Textures.stone,
-	};
-	
 	public static int pxToCoord(int px) {
 		// Implement two's complement to make mapping of 0..7->0, -1..-8->-1
 		return px >= 0 ? px / PX_PER_BLOCK : (px - PX_PER_BLOCK + 1) / PX_PER_BLOCK;

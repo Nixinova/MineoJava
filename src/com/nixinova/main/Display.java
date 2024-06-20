@@ -149,7 +149,7 @@ public class Display extends Canvas implements Runnable {
 			msg3 = "Delete options.txt in %appdata%\\.mineo to refresh the options file.";
 		}
 
-		if (Controller.debugShown) {
+		if (game.controls.debugShown) {
 			final int sep = 15;
 			graphics.setColor(Color.white);
 			graphics.drawString(Mineo.TITLE, 5, sep);

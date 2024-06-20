@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class Options {
 	public static final String MINEO_FOLDER = ".mineo";
 	public static final String OPTIONS_FILE = "options.txt";
-	public static final int OPTIONS_VERSION = 4;
+	public static final int OPTIONS_VERSION = 5;
 
 	public class DEFAULT_OPTIONS {
 		public static long seed = 100;
@@ -48,13 +48,11 @@ public class Options {
 		return String.valueOf(id) + ":" + br + value + br;
 	}
 
-	public static String writeValue(String id, double value) {
+	public static String writeValue(String id, Object value) {
 		return writeValue(id, String.valueOf(value));
 	}
 
 	public static void createOptions() {
-		boolean fileIsNew = false;
-
 		String rootFolder = String.valueOf(System.getenv("APPDATA")) + "/" + MINEO_FOLDER;
 		String optionsFilePath = String.valueOf(rootFolder) + "/" + OPTIONS_FILE;
 
@@ -63,7 +61,7 @@ public class Options {
 
 		File optionsFile = new File(optionsFilePath);
 
-		if (fileIsNew) {
+		if (!optionsFile.exists()) {
 			try {
 				FileWriter writer = new FileWriter(optionsFilePath);
 
@@ -100,7 +98,7 @@ public class Options {
 				// Skip if not a key
 				if (!dataName.contains(":"))
 					continue;
-				
+
 				String dataValue = scanner.nextLine();
 
 				parseOptionStrs(dataName, dataValue);
@@ -109,7 +107,6 @@ public class Options {
 			scanner.close();
 		} catch (FileNotFoundException err) {
 			System.err.println("Options file not found.");
-			err.printStackTrace();
 		}
 	}
 

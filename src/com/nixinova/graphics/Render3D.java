@@ -8,6 +8,7 @@ import com.nixinova.main.Game;
 import com.nixinova.main.Mineo;
 import com.nixinova.readwrite.Options;
 import com.nixinova.types.BlockCoord;
+import com.nixinova.world.Block;
 import com.nixinova.world.Blocks;
 
 public class Render3D extends Render {
@@ -26,7 +27,7 @@ public class Render3D extends Render {
 	}
 
 	public void renderWorld(Game game) {
-		final int TEX_SIZE = Blocks.PX_PER_BLOCK;
+		final int TEX_SIZE = Textures.PX_PER_BLOCK;
 
 		double xMove = game.controls.x;
 		double yMove = game.controls.y;
@@ -63,13 +64,13 @@ public class Render3D extends Render {
 			if (vert < 0) {
 				// If sky
 				depth = (Options.skyHeight - yMove) / -vert;
-				if (Controller.isWalking) {
+				if (game.controls.isWalking) {
 					depth = (Options.skyHeight - yMove - bobbing) / -vert;
 				}
 			} else {
 				// If ground
 				depth = (Options.groundHeight + yMove) / vert;
-				if (Controller.isWalking) {
+				if (game.controls.isWalking) {
 					depth = (Options.groundHeight + yMove) / vert + bobbing;
 				}
 			}
@@ -82,28 +83,32 @@ public class Render3D extends Render {
 				double horiz = (x - this.width / 2.0D) / this.height;
 				horiz *= depth; // apply depth scale
 
-				// Pixel and block coords
+				// World pixel coords
 				int pxX = (int) (horiz * cosine + depth * sine + xMove);
+				//int pxY = (int) (depth * vert + yMove);
 				int pxZ = (int) (depth * cosine - horiz * sine + zMove);
-				BlockCoord blockCoord = Blocks.worldPxToBlockCoords(pxX, pxZ);
+				
+				// World block coords
+				BlockCoord blockCoord = Blocks.worldPxToBlockCoords(pxX, 0, pxZ);
 				int blockX = blockCoord.x;
+				int blockY = blockCoord.y;
 				int blockZ = blockCoord.z;
 
 				// Set looking at block
 				if (pixelI == width * height / 2) {
-					Mineo.world.setLookingAt(blockX, blockZ);
+					Mineo.world.setLookingAt(blockX, blockY, blockZ);
 				}
 
 				// Store depth in Z buffer
 				this.zBuffer[pixelI] = depth;
 
 				// Get texture for block at this coordinate if within render distance
-				Render texture = Textures.sky;
+				Render texture = Block.SKY.getTexture();
 				boolean withinRenderDist = depth < Options.renderDistance;
 				boolean isNotSky = depth > Options.skyHeight / -vert;
 				if (withinRenderDist && isNotSky) {
 					// Render block
-					texture = Mineo.world.getTextureAt(blockX, blockZ);
+					texture = Mineo.world.getTextureAt(blockX, blockY, blockZ);
 				}
 				// Apply texture
 				int texPx = (pxX & (TEX_SIZE - 1)) + (pxZ & (TEX_SIZE - 1)) * TEX_SIZE;

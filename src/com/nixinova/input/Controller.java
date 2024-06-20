@@ -1,16 +1,11 @@
 package com.nixinova.input;
 
 
-import com.nixinova.graphics.Render;
-import com.nixinova.graphics.Textures;
 import com.nixinova.main.Mineo;
 import com.nixinova.readwrite.Options;
 import com.nixinova.types.BlockCoord;
-import com.nixinova.world.Blocks;
 
 public class Controller {
-	public static boolean debugShown = true;
-	public static boolean isWalking = false;
 
 	public double x;
 	public double y;
@@ -18,6 +13,9 @@ public class Controller {
 	public double rot;
 	public double tilt;
 	public int curX, curY;
+
+	public boolean debugShown = true;
+	public boolean isWalking = false;
 
 	private double x2;
 	private double y2;
@@ -29,8 +27,6 @@ public class Controller {
 	private double groundBuffer = 0.1D;
 	private boolean isJumping = false;
 	private double jumpY = 0;
-	private int currentBlockID = 1;
-	private Render currentBlock = Textures.bedrock;
 
 	public void tick(InputHandler input, boolean[] keys) {
 		Keys kbd = new Keys(keys);
@@ -43,19 +39,11 @@ public class Controller {
 		// Placing
 		if (kbd.clickedButton(Keys.LCLICK)) {
 			BlockCoord lookingAt = Mineo.world.getLookingAt();
-			Mineo.world.setTextureAt(lookingAt.x, lookingAt.z, currentBlock);
+			Mineo.world.setTextureAt(lookingAt.x, lookingAt.y, lookingAt.z, Hotbar.getCurrentBlock());
 		}
 
 		// Selecting block
-		if (kbd.pressed(Keys.NUM_1))
-			currentBlockID = 1;
-		if (kbd.pressed(Keys.NUM_2))
-			currentBlockID = 2;
-		if (kbd.pressed(Keys.NUM_3))
-			currentBlockID = 3;
-		if (kbd.pressed(Keys.NUM_4))
-			currentBlockID = 4;
-		currentBlock = Blocks.BLOCKS[currentBlockID];
+		Hotbar.updateFromKbd(kbd);
 
 		/// Movement
 		double mvChange = kbd.pressed(Keys.SPRINT) ? Options.sprintSpeed : Options.walkSpeed;

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.10_8
+*2024-06-20 20:16*
+- Store blocks in world as 3D
+- Fixed options file initialisation
+- Changed options file version to 5
+
 ## 0.0.10_7
 *2024-06-18 23:54*
 - Properly fixed large mouse movement occurring on load

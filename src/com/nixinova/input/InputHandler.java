@@ -45,7 +45,6 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 	}
 	
 	public void tick() {
-		System.out.println(deltaX+","+deltaY);
 		this.deltaX = 0;
 		this.deltaY = 0;
 	}
