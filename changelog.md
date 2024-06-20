@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.11_1
+*2024-06-21 02:24*
+- Changed options file format
+- Reset options version to 1.0
+- Changed options incompatibility warning message
+
 ## 0.0.11
 *2024-06-21 01:58*
 - World no longer repeats infinitely

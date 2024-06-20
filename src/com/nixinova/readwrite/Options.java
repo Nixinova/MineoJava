@@ -9,10 +9,12 @@ import java.util.Scanner;
 public class Options {
 	public static final String MINEO_FOLDER = ".mineo";
 	public static final String OPTIONS_FILE = "options.txt";
-	public static final int OPTIONS_VERSION = 6;
+
+	public static final float OPTIONS_VERSION = 1.0F;
+	// Increment options version by +1.0 for file format changes and by +0.1 for value implementation changes
 
 	private final class DEFAULT_OPTIONS {
-		public static long seed = 100;
+		public static long seed = 100L;
 		public static int worldSize = 100;
 		public static int renderDistance = 5000;
 		public static double gamma = 4.0;
@@ -40,7 +42,7 @@ public class Options {
 		public static String texturesFolder = "texturesFolder";
 	}
 
-	public static int fileVersion = OPTIONS_VERSION;
+	public static float fileVersion = OPTIONS_VERSION;
 	public static long seed = DEFAULT_OPTIONS.seed;
 	public static int worldSize = DEFAULT_OPTIONS.worldSize;
 	public static int renderDistance = DEFAULT_OPTIONS.renderDistance;
@@ -55,8 +57,7 @@ public class Options {
 
 	public static String writeValue(String id, String value) {
 		String br = System.getProperty("line.separator");
-
-		return String.valueOf(id) + ":" + br + value + br;
+		return String.valueOf(id) + "=" + value + br;
 	}
 
 	public static String writeValue(String id, Object value) {
@@ -99,16 +100,15 @@ public class Options {
 
 			// Load options file values
 			while (scanner.hasNextLine()) {
-				String dataName = scanner.nextLine();
-
-				// Exit if EOF
-				if (!scanner.hasNext())
-					break;
-				// Skip if not a key
-				if (!dataName.contains(":"))
+				String data = scanner.nextLine();
+				String[] lineParts = data.split("=");
+				
+				// Skip if not a key=value pair
+				if (lineParts.length != 2)
 					continue;
-
-				String dataValue = scanner.nextLine();
+				
+				String dataName = lineParts[0].trim();
+				String dataValue = lineParts[1].trim();
 
 				parseOptionStrs(dataName, dataValue);
 			}
@@ -124,7 +124,7 @@ public class Options {
 			return;
 
 		if (name.contains(OPTION_STRINGS.fileVersion))
-			fileVersion = Integer.parseInt(val);
+			fileVersion = Float.parseFloat(val);
 		if (name.contains(OPTION_STRINGS.seed))
 			seed = Long.parseLong(val);
 		if (name.contains(OPTION_STRINGS.worldSize))
