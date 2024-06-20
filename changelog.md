@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.0.11
+*2024-06-21 01:58*
+- World no longer repeats infinitely
+- Added the void
+- Changed options file version to 6
+- Changed default sprintSpeed to 0.8
+- Renamed rotationSpeed option to sensitivity
+- Removed skyHeight and groundHeight options
+- Fixed world origin being off-center
+
 ## 0.0.10_8
 *2024-06-20 20:16*
 - Store blocks in world as 3D

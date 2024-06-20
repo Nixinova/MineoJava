@@ -1,11 +1,5 @@
 package com.nixinova.main;
 
-import com.nixinova.graphics.Screen;
-import com.nixinova.input.Controller;
-import com.nixinova.input.InputHandler;
-import com.nixinova.readwrite.Options;
-import com.nixinova.types.BlockCoord;
-
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -18,6 +12,11 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+
+import com.nixinova.graphics.Screen;
+import com.nixinova.input.InputHandler;
+import com.nixinova.readwrite.Options;
+import com.nixinova.types.BlockCoord;
 
 public class Display extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
@@ -130,7 +129,7 @@ public class Display extends Canvas implements Runnable {
 		graphics.drawImage(this.img, 0, 0, WIDTH, HEIGHT, null);
 		graphics.setColor(Color.white);
 
-		BlockCoord playerBlockPos = Mineo.world.getPlayerBlockPos();
+		BlockCoord playerBlockPos = Mineo.player.getPlayerBlockPos();
 		String playerX = String.format("%d", playerBlockPos.x);
 		String playerY = String.format("%d", playerBlockPos.y);
 		String playerZ = String.format("%d", playerBlockPos.z);

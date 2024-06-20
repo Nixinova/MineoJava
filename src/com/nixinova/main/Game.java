@@ -3,8 +3,8 @@ package com.nixinova.main;
 import com.nixinova.input.Controller;
 import com.nixinova.input.InputHandler;
 import com.nixinova.types.BlockCoord;
+import com.nixinova.types.Conversion;
 import com.nixinova.types.Coord;
-import com.nixinova.world.Blocks;
 
 public class Game {
 	public double time = 0.0D;
@@ -28,8 +28,8 @@ public class Game {
 
 		// Set player coords
 		Coord pxCoords = new Coord(controls.x, controls.y, controls.z);
-		BlockCoord blockCoords = Blocks.worldPxToBlockCoords(pxCoords);
-		Mineo.world.setPlayerBlockPos(blockCoords);
-		Mineo.world.setPlayerPxPos(pxCoords);
+		BlockCoord blockCoords = Conversion.worldPxToBlockCoords(pxCoords);
+		Mineo.player.setPlayerBlockPos(blockCoords);
+		Mineo.player.setPlayerPxPos(pxCoords);
 	}
 }

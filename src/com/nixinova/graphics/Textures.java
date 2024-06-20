@@ -7,8 +7,6 @@ import javax.imageio.ImageIO;
 import com.nixinova.readwrite.Options;
 
 public class Textures {
-	public static final int PX_PER_BLOCK = 8;
-
 	public static Render loadTexture(String name) {
 		return loadBitmap(name + ".png");
 	}

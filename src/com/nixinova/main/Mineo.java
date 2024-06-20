@@ -12,11 +12,12 @@ import com.nixinova.world.World;
 
 public class Mineo {
 
-	public static final String VERSION = "0.0.10_8";
+	public static final String VERSION = "0.0.11";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	public static JFrame frame;
 	public static World world;
+	public static Player player;
 
 	public static void main(String[] args) {
 		Options.createOptions();
@@ -26,6 +27,7 @@ public class Mineo {
 		frame = new JFrame();
 		Display game = new Display();
 		world = new World();
+		player = new Player();
 
 		frame.add(game);
 		frame.pack();

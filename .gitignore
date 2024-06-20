@@ -1,0 +1,5 @@
+bin/
+jars/
+.classpath
+.project
+module-info.java

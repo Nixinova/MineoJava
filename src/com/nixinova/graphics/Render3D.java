@@ -3,13 +3,13 @@ package com.nixinova.graphics;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-import com.nixinova.input.Controller;
 import com.nixinova.main.Game;
 import com.nixinova.main.Mineo;
 import com.nixinova.readwrite.Options;
 import com.nixinova.types.BlockCoord;
+import com.nixinova.types.Conversion;
 import com.nixinova.world.Block;
-import com.nixinova.world.Blocks;
+import com.nixinova.world.World;
 
 public class Render3D extends Render {
 
@@ -27,7 +27,7 @@ public class Render3D extends Render {
 	}
 
 	public void renderWorld(Game game) {
-		final int TEX_SIZE = Textures.PX_PER_BLOCK;
+		final int TEX_SIZE = Conversion.PX_PER_BLOCK;
 
 		double xMove = game.controls.x;
 		double yMove = game.controls.y;
@@ -55,23 +55,23 @@ public class Render3D extends Render {
 
 		// Loop through pixel rows
 		for (int y = 0; y < this.height; y++) {
-			// Relative vertical position
+			// Relative vertical position to player
 			double vert = (y - this.height / 2.0D) / this.height;
 			vert = vert * tiltCosine - tiltSine; // apply tilt
 
 			// Calculate depth
 			double depth;
-			if (vert < 0) {
-				// If sky
-				depth = (Options.skyHeight - yMove) / -vert;
+			if (vert > 0 || yMove < 0) {
+				// If is ground or player is below world
+				depth = (World.PLAYER_HEIGHT + yMove) / vert;
 				if (game.controls.isWalking) {
-					depth = (Options.skyHeight - yMove - bobbing) / -vert;
+					depth = (World.PLAYER_HEIGHT + yMove) / vert + bobbing;
 				}
 			} else {
-				// If ground
-				depth = (Options.groundHeight + yMove) / vert;
+				// If is sky
+				depth = (World.SKY_HEIGHT - yMove) / -vert;
 				if (game.controls.isWalking) {
-					depth = (Options.groundHeight + yMove) / vert + bobbing;
+					depth = (World.SKY_HEIGHT - yMove - bobbing) / -vert;
 				}
 			}
 
@@ -79,24 +79,24 @@ public class Render3D extends Render {
 			for (int x = 0; x < this.width; x++) {
 				int pixelI = x + (y * this.width);
 
-				// Relative horizontal position
+				// Relative horizontal position to player
 				double horiz = (x - this.width / 2.0D) / this.height;
 				horiz *= depth; // apply depth scale
 
 				// World pixel coords
 				int pxX = (int) (horiz * cosine + depth * sine + xMove);
-				//int pxY = (int) (depth * vert + yMove);
+				// int pxY = (int) (depth * vert + yMove);
 				int pxZ = (int) (depth * cosine - horiz * sine + zMove);
-				
+
 				// World block coords
-				BlockCoord blockCoord = Blocks.worldPxToBlockCoords(pxX, 0, pxZ);
+				BlockCoord blockCoord = Conversion.worldPxToBlockCoords(pxX, 0, pxZ);
 				int blockX = blockCoord.x;
 				int blockY = blockCoord.y;
 				int blockZ = blockCoord.z;
 
 				// Set looking at block
 				if (pixelI == width * height / 2) {
-					Mineo.world.setLookingAt(blockX, blockY, blockZ);
+					Mineo.player.setLookingAt(blockX, blockY, blockZ);
 				}
 
 				// Store depth in Z buffer
@@ -105,8 +105,9 @@ public class Render3D extends Render {
 				// Get texture for block at this coordinate if within render distance
 				Render texture = Block.SKY.getTexture();
 				boolean withinRenderDist = depth < Options.renderDistance;
-				boolean isNotSky = depth > Options.skyHeight / -vert;
-				if (withinRenderDist && isNotSky) {
+				boolean isNotSky = depth > World.SKY_HEIGHT / -vert;
+				boolean isBelowWorld = yMove < 0;
+				if (withinRenderDist && (isNotSky || isBelowWorld)) {
 					// Render block
 					texture = Mineo.world.getTextureAt(blockX, blockY, blockZ);
 				}

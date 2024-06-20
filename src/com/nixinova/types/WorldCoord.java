@@ -1,7 +1,5 @@
 package com.nixinova.types;
 
-import com.nixinova.world.Blocks;
-
 public class WorldCoord {
 	
 	private Coord worldPos;
@@ -19,7 +17,7 @@ public class WorldCoord {
 	}
 	
 	public void setBlockCoords(int x, int y, int z) {
-		Coord pxCoord = Blocks.blockCoordsToWorldPx(x, y, z);
+		Coord pxCoord = Conversion.blockCoordsToWorldPx(x, y, z);
 		this.worldPos = new Coord(pxCoord.x, pxCoord.y, pxCoord.z);
 	}
 	
@@ -32,7 +30,7 @@ public class WorldCoord {
 	}
 	
 	public BlockCoord getBlockCoords() {
-		return Blocks.worldPxToBlockCoords(worldPos);
+		return Conversion.worldPxToBlockCoords(worldPos);
 	}
 
 }

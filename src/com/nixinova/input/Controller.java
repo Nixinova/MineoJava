@@ -1,9 +1,10 @@
 package com.nixinova.input;
 
-
 import com.nixinova.main.Mineo;
 import com.nixinova.readwrite.Options;
 import com.nixinova.types.BlockCoord;
+import com.nixinova.world.Block;
+import com.nixinova.world.World;
 
 public class Controller {
 
@@ -38,8 +39,10 @@ public class Controller {
 
 		// Placing
 		if (kbd.clickedButton(Keys.LCLICK)) {
-			BlockCoord lookingAt = Mineo.world.getLookingAt();
-			Mineo.world.setTextureAt(lookingAt.x, lookingAt.y, lookingAt.z, Hotbar.getCurrentBlock());
+			BlockCoord lookingAt = Mineo.player.getLookingAt();
+			if (Block.isInsideWorld(lookingAt)) {
+				Mineo.world.setTextureAt(lookingAt.x, lookingAt.y, lookingAt.z, Hotbar.getCurrentBlock());
+			}
 		}
 
 		// Selecting block
@@ -62,8 +65,8 @@ public class Controller {
 		isWalking = kbd.pressedAny(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
 
 		/// Mouse look
-		double mouseDX = Options.rotationSpeed * input.deltaX;
-		double mouseDY = Options.rotationSpeed * input.deltaY;
+		double mouseDX = Options.sensitivity * input.deltaX;
+		double mouseDY = Options.sensitivity * input.deltaY;
 		if (mouseDX != 0) {
 			this.rot2 += mouseDX;
 		}
@@ -85,14 +88,21 @@ public class Controller {
 				this.jumpY = 0;
 			}
 		}
-		if (onGround()) {
-			if (kbd.pressed(Keys.JUMP))
-				isJumping = true;
-		} else if (aboveGround()) {
-			yMove -= Options.jumpHeight * Options.gravity;
-		} else if (belowGround()) {
-			this.y = Options.groundHeight + groundBuffer * 1.01D;
-			yMove = 0.001D;
+		if (Mineo.player.isWithinWorld()) {
+			if (onGround()) {
+				if (kbd.pressed(Keys.JUMP))
+					isJumping = true;
+			} else if (aboveGround()) {
+				yMove -= Options.jumpHeight * Options.gravity;
+			} else if (belowGround()) {
+				this.y = World.PLAYER_HEIGHT + groundBuffer * 1.01D;
+				yMove = 0.001D;
+			}
+		} else {
+			// Fall when outside of world
+			if (yMove == 0)
+				yMove = -0.5;
+			yMove *= 1 + Options.gravity; // acceleration due to gravity
 		}
 
 		// Mouse look boundaries
@@ -133,14 +143,14 @@ public class Controller {
 	}
 
 	public boolean onGround() {
-		return Math.abs(this.y - Options.groundHeight) < groundBuffer;
+		return Math.abs(this.y - World.PLAYER_HEIGHT) < groundBuffer;
 	}
 
 	public boolean aboveGround() {
-		return this.y > Options.groundHeight;
+		return this.y > World.PLAYER_HEIGHT;
 	}
 
 	public boolean belowGround() {
-		return this.y < Options.groundHeight;
+		return this.y < World.PLAYER_HEIGHT;
 	}
 }

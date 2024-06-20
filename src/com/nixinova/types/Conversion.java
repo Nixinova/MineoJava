@@ -1,11 +1,7 @@
-package com.nixinova.world;
+package com.nixinova.types;
 
-import com.nixinova.graphics.Textures;
-import com.nixinova.types.BlockCoord;
-import com.nixinova.types.Coord;
-
-public class Blocks {
-	private static int PX_PER_BLOCK = Textures.PX_PER_BLOCK;
+public class Conversion {
+	public static final int PX_PER_BLOCK = 8;
 
 	public static int pxToCoord(int px) {
 		// Implement two's complement to make mapping of 0..7->0, -1..-8->-1
