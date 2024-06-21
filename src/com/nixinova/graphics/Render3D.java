@@ -52,10 +52,12 @@ public class Render3D extends Render {
 		}
 
 		this.fogAlrApplied = false; // reinitialise distance limiter as we are rerendering screen
+		int worldPositionTEMP = (int) yMove + game.controls.newgroundTEMP;
+		int topWorldLayerTEMP = game.controls.groundDistTEMP;
 
 		// Loop through pixel rows
 		for (int y = 0; y < this.height; y++) {
-			// Relative vertical position to player
+			// Relative vertical position of screen pixel
 			double vert = (y - this.height / 2.0D) / this.height;
 			vert = vert * tiltCosine - tiltSine; // apply tilt
 
@@ -63,15 +65,15 @@ public class Render3D extends Render {
 			double depth;
 			if (vert > 0 || yMove < 0) {
 				// If is ground or player is below world
-				depth = (World.PLAYER_HEIGHT + yMove) / vert;
+				depth = (World.PLAYER_HEIGHT + worldPositionTEMP) / vert;
 				if (game.controls.isWalking) {
-					depth = (World.PLAYER_HEIGHT + yMove) / vert + bobbing;
+					depth = (World.PLAYER_HEIGHT + worldPositionTEMP) / vert + bobbing;
 				}
 			} else {
 				// If is sky
-				depth = (World.SKY_HEIGHT - yMove) / -vert;
+				depth = (World.SKY_HEIGHT - worldPositionTEMP) / -vert;
 				if (game.controls.isWalking) {
-					depth = (World.SKY_HEIGHT - yMove - bobbing) / -vert;
+					depth = (World.SKY_HEIGHT - worldPositionTEMP - bobbing) / -vert;
 				}
 			}
 
@@ -79,7 +81,7 @@ public class Render3D extends Render {
 			for (int x = 0; x < this.width; x++) {
 				int pixelI = x + (y * this.width);
 
-				// Relative horizontal position to player
+				// Relative horizontal position of screen pixel
 				double horiz = (x - this.width / 2.0D) / this.height;
 				horiz *= depth; // apply depth scale
 
@@ -89,9 +91,9 @@ public class Render3D extends Render {
 				int pxZ = (int) (depth * cosine - horiz * sine + zMove);
 
 				// World block coords
-				BlockCoord blockCoord = Conversion.worldPxToBlockCoords(pxX, 0, pxZ);
+				BlockCoord blockCoord = Conversion.worldPxToBlockCoords(pxX, topWorldLayerTEMP, pxZ);
 				int blockX = blockCoord.x;
-				int blockY = blockCoord.y;
+				int blockY = blockCoord.y > World.SURFACE_Y ? World.SURFACE_Y : blockCoord.y;
 				int blockZ = blockCoord.z;
 
 				// Set looking at block

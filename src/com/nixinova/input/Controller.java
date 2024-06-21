@@ -17,6 +17,8 @@ public class Controller {
 
 	public boolean debugShown = true;
 	public boolean isWalking = false;
+	public int newgroundTEMP = 0;
+	public int groundDistTEMP = 0;
 
 	private double x2;
 	private double y2;
@@ -36,6 +38,13 @@ public class Controller {
 		double yMove = 0.0D;
 		double xMove = 0.0D;
 		double zMove = 0.0D;
+
+		if (kbd.pressed(Keys.DEBUG1))
+			this.newgroundTEMP++;
+		if (kbd.pressed(Keys.DEBUG2)) {
+			this.newgroundTEMP--;
+			this.groundDistTEMP++;
+		}
 
 		// Placing
 		if (kbd.clickedButton(Keys.LCLICK)) {
@@ -143,14 +152,14 @@ public class Controller {
 	}
 
 	public boolean onGround() {
-		return Math.abs(this.y - World.PLAYER_HEIGHT) < groundBuffer;
+		return Math.abs(this.y - (World.PLAYER_HEIGHT + newgroundTEMP)) < groundBuffer;
 	}
 
 	public boolean aboveGround() {
-		return this.y > World.PLAYER_HEIGHT;
+		return this.y > World.PLAYER_HEIGHT + newgroundTEMP;
 	}
 
 	public boolean belowGround() {
-		return this.y < World.PLAYER_HEIGHT;
+		return this.y < World.PLAYER_HEIGHT + newgroundTEMP;
 	}
 }

@@ -27,6 +27,9 @@ public class Keys {
 	public static final int NUM_8 = KeyEvent.VK_8;
 	public static final int NUM_9 = KeyEvent.VK_9;
 
+	public static final int DEBUG1 = KeyEvent.VK_J;
+	public static final int DEBUG2 = KeyEvent.VK_K;
+
 	// Mouse
 	public static final int LCLICK = MouseEvent.BUTTON1;
 	public static final int RCLICK = MouseEvent.BUTTON3;

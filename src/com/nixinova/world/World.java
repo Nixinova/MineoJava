@@ -11,6 +11,7 @@ public class World {
 	
 	public static final int PLAYER_HEIGHT = 2 * Conversion.PX_PER_BLOCK;
 	public static final int SKY_HEIGHT = 18 * Conversion.PX_PER_BLOCK;
+	public static final int SURFACE_Y = 10;
 
 	private final int arrSize;
 	private final Render[] groundBlocks = new Render[] {
@@ -61,7 +62,17 @@ public class World {
 					BlockCoord coordI = toBlockCoord(new BlockCoord(x, y, z));
 					Render texture;
 
-					if (coordI.x == 0 || coordI.z == 0)
+					if (coordI.y == 0)
+						texture = Block.BEDROCK.getTexture();
+					else if (coordI.y <= 5)
+						texture = Block.STONE.getTexture();
+					else if (coordI.y <= 8)
+						texture = Block.DIRT.getTexture();
+					else if (coordI.y <= 9)
+						texture = Block.GRASS.getTexture();
+					else if (coordI.y > SURFACE_Y)
+						texture = null;
+					else if (coordI.x == 0 || coordI.z == 0)
 						// Bedrock along world origin
 						texture = Block.BEDROCK.getTexture();
 					else
