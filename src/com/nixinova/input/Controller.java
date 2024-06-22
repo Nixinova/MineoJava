@@ -1,6 +1,7 @@
 package com.nixinova.input;
 
 import com.nixinova.main.Mineo;
+import com.nixinova.main.Player;
 import com.nixinova.readwrite.Options;
 import com.nixinova.types.BlockCoord;
 import com.nixinova.world.Block;
@@ -95,7 +96,7 @@ public class Controller {
 			} else if (aboveGround()) {
 				yMove -= Options.jumpHeight * Options.gravity;
 			} else if (belowGround()) {
-				this.y = World.PLAYER_HEIGHT + groundBuffer * 1.01D;
+				this.y = Player.PLAYER_HEIGHT + groundBuffer * 1.01D;
 				yMove = 0.001D;
 			}
 		} else {
@@ -143,14 +144,14 @@ public class Controller {
 	}
 
 	public boolean onGround() {
-		return Math.abs(this.y - World.PLAYER_HEIGHT) < groundBuffer;
+		return Math.abs(this.y - Player.PLAYER_HEIGHT) < groundBuffer;
 	}
 
 	public boolean aboveGround() {
-		return this.y > World.PLAYER_HEIGHT;
+		return this.y > Player.PLAYER_HEIGHT;
 	}
 
 	public boolean belowGround() {
-		return this.y < World.PLAYER_HEIGHT;
+		return this.y < Player.PLAYER_HEIGHT;
 	}
 }

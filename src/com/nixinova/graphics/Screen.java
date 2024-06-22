@@ -15,7 +15,6 @@ public class Screen extends Render {
 			this.pixels[i] = 0;
 		
 		this.render.renderWorld(game);
-		this.render.renderDistLimiter();
 		draw(this.render, 0, 0);
 	}
 }

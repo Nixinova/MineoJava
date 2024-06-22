@@ -12,7 +12,7 @@ import com.nixinova.world.World;
 
 public class Mineo {
 
-	public static final String VERSION = "0.0.11_1";
+	public static final String VERSION = "0.0.11_2";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	public static JFrame frame;
@@ -25,11 +25,11 @@ public class Mineo {
 		Cursor blank = Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "blank");
 
 		frame = new JFrame();
-		Display game = new Display();
+		Display display = new Display();
 		world = new World();
 		player = new Player();
 
-		frame.add(game);
+		frame.add(display);
 		frame.pack();
 		frame.getContentPane().setCursor(blank);
 		frame.setDefaultCloseOperation(3);
@@ -39,7 +39,7 @@ public class Mineo {
 		frame.setFocusable(true);
 		frame.requestFocus();
 
-		game.start();
-		game.requestFocusInWindow();
+		display.start();
+		display.requestFocusInWindow();
 	}
 }

@@ -8,8 +8,6 @@ import com.nixinova.types.BlockCoord;
 import com.nixinova.types.Conversion;
 
 public class World {
-	
-	public static final int PLAYER_HEIGHT = 2 * Conversion.PX_PER_BLOCK;
 	public static final int SKY_HEIGHT = 18 * Conversion.PX_PER_BLOCK;
 
 	private final int arrSize;

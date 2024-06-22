@@ -5,15 +5,17 @@ import java.util.stream.IntStream;
 
 import com.nixinova.main.Game;
 import com.nixinova.main.Mineo;
+import com.nixinova.main.Player;
 import com.nixinova.readwrite.Options;
 import com.nixinova.types.BlockCoord;
 import com.nixinova.types.Conversion;
+import com.nixinova.types.Coord;
 import com.nixinova.world.Block;
 import com.nixinova.world.World;
 
 public class Render3D extends Render {
 
-	public double[] zBuffer;
+	public double[] depthStore;
 
 	private boolean fogAlrApplied;
 	private double lastXMove, lastYMove, lastZMove, lastRot, lastTilt;
@@ -21,7 +23,7 @@ public class Render3D extends Render {
 
 	public Render3D(int width, int height) {
 		super(width, height);
-		this.zBuffer = new double[width * height];
+		this.depthStore = new double[width * height];
 		this.fogAlrApplied = false;
 		this.lastXMove = this.lastYMove = this.lastZMove = this.lastRot = this.lastTilt = 0;
 	}
@@ -29,23 +31,19 @@ public class Render3D extends Render {
 	public void renderWorld(Game game) {
 		final int TEX_SIZE = Conversion.PX_PER_BLOCK;
 
-		double xMove = game.controls.x;
-		double yMove = game.controls.y;
-		double zMove = game.controls.z;
+		Coord pos = new Coord(game.controls.x, game.controls.y, game.controls.z);
 		double bobbing = Math.sin(game.time) / 10.0;
-
 		double rotation = game.controls.rot;
-		double cosine = Math.cos(rotation);
-		double sine = Math.sin(rotation);
-
+		double rotCos = Math.cos(rotation);
+		double rotSin = Math.sin(rotation);
 		double tilt = game.controls.tilt;
-		double tiltCosine = Math.cos(tilt);
-		double tiltSine = Math.sin(tilt);
+		double tiltCos = Math.cos(tilt);
+		double tiltSin = Math.sin(tilt);
 
 		// Early return if player hasn't inputted this tick
 		IntStream indicesRange = IntStream.range(0, this.lastKbdInput != null ? this.lastKbdInput.length : 0);
 		boolean hasntPressed = indicesRange.allMatch(i -> game.kbdInput[i] == this.lastKbdInput[i]); // check all array items are equal
-		boolean hasntMoved = xMove == lastXMove && yMove == lastYMove && zMove == lastZMove;
+		boolean hasntMoved = pos.x == lastXMove && pos.y == lastYMove && pos.z == lastZMove;
 		boolean hasntLooked = rotation == lastRot && tilt == lastTilt;
 		if (hasntPressed && hasntMoved && hasntLooked) {
 			return;
@@ -54,42 +52,43 @@ public class Render3D extends Render {
 		this.fogAlrApplied = false; // reinitialise distance limiter as we are rerendering screen
 
 		// Loop through pixel rows
-		for (int y = 0; y < this.height; y++) {
-			// Relative vertical position to player
-			double vert = (y - this.height / 2.0D) / this.height;
-			vert = vert * tiltCosine - tiltSine; // apply tilt
+		for (int yPx = 0; yPx < this.height; yPx++) {
+			// Relative vertical position of screen pixel
+			double vert = (yPx - this.height / 2.0D) / this.height;
+			vert = vert * tiltCos - tiltSin; // apply tilt
 
-			// Calculate depth
-			double depth;
-			if (vert > 0 || yMove < 0) {
-				// If is ground or player is below world
-				depth = (World.PLAYER_HEIGHT + yMove) / vert;
-				if (game.controls.isWalking) {
-					depth = (World.PLAYER_HEIGHT + yMove) / vert + bobbing;
-				}
-			} else {
-				// If is sky
-				depth = (World.SKY_HEIGHT - yMove) / -vert;
-				if (game.controls.isWalking) {
-					depth = (World.SKY_HEIGHT - yMove - bobbing) / -vert;
-				}
-			}
+			boolean isSky = vert < 0; // top half of screen is sky
+			boolean inVoid = pos.y < 0;
+			boolean generateSky = isSky && !inVoid;
 
 			// Loop through pixel columns
-			for (int x = 0; x < this.width; x++) {
-				int pixelI = x + (y * this.width);
+			for (int xPx = 0; xPx < this.width; xPx++) {
+				int pixelI = xPx + (yPx * this.width);
 
-				// Relative horizontal position to player
-				double horiz = (x - this.width / 2.0D) / this.height;
-				horiz *= depth; // apply depth scale
+				// Relative horizontal position of screen pixel
+				double horiz = (xPx - this.width / 2.0D) / this.height;
+
+				// Depth calculation
+				double offset = pos.y;
+				double skyDepth = (World.SKY_HEIGHT - offset) / -vert;
+				double worldDepth = (Player.PLAYER_HEIGHT + offset) / vert;
+				double depth = generateSky ? skyDepth : worldDepth;
+				if (game.controls.isWalking) {
+					depth += bobbing;
+				}
+				// Save to depth buffer
+				this.depthStore[pixelI] = isSky ? skyDepth : worldDepth;
+
+				// Apply depth
+				horiz *= depth;
 
 				// World pixel coords
-				int pxX = (int) (horiz * cosine + depth * sine + xMove);
-				// int pxY = (int) (depth * vert + yMove);
-				int pxZ = (int) (depth * cosine - horiz * sine + zMove);
+				int texelX = (int) (horiz * rotCos + depth * rotSin + pos.x);
+				int texelY = 0; // (int) (depth * vert + pos.y);
+				int texelZ = (int) (depth * rotCos - horiz * rotSin + pos.z);
 
 				// World block coords
-				BlockCoord blockCoord = Conversion.worldPxToBlockCoords(pxX, 0, pxZ);
+				BlockCoord blockCoord = Conversion.worldPxToBlockCoords(texelX, texelY, texelZ);
 				int blockX = blockCoord.x;
 				int blockY = blockCoord.y;
 				int blockZ = blockCoord.z;
@@ -99,20 +98,15 @@ public class Render3D extends Render {
 					Mineo.player.setLookingAt(blockX, blockY, blockZ);
 				}
 
-				// Store depth in Z buffer
-				this.zBuffer[pixelI] = depth;
-
 				// Get texture for block at this coordinate if within render distance
 				Render texture = Block.SKY.getTexture();
 				boolean withinRenderDist = depth < Options.renderDistance;
-				boolean isNotSky = depth > World.SKY_HEIGHT / -vert;
-				boolean isBelowWorld = yMove < 0;
-				if (withinRenderDist && (isNotSky || isBelowWorld)) {
+				if (withinRenderDist && !generateSky) {
 					// Render block
 					texture = Mineo.world.getTextureAt(blockX, blockY, blockZ);
 				}
 				// Apply texture
-				int texPx = (pxX & (TEX_SIZE - 1)) + (pxZ & (TEX_SIZE - 1)) * TEX_SIZE;
+				int texPx = (texelX & (TEX_SIZE - 1)) + (texelZ & (TEX_SIZE - 1)) * TEX_SIZE;
 				this.pixels[pixelI] = texture.pixels[texPx];
 			}
 		}
@@ -120,17 +114,21 @@ public class Render3D extends Render {
 		// Mouse cursor
 		this.drawCursor();
 
+		// Apply render distance limiter
+		this.renderDistLimiter();
+
 		// Set last control moves
-		this.lastXMove = xMove;
-		this.lastYMove = yMove;
-		this.lastZMove = zMove;
+		this.lastXMove = pos.x;
+		this.lastYMove = pos.y;
+		this.lastZMove = pos.z;
 		this.lastRot = rotation;
 		this.lastTilt = tilt;
 		this.lastKbdInput = Arrays.copyOf(game.kbdInput, game.kbdInput.length);
+
 	}
 
 	/** Adds depth-based fog to the pixels */
-	public void renderDistLimiter() {
+	private void renderDistLimiter() {
 		double gamma = Options.gamma;
 
 		if (this.fogAlrApplied)
@@ -140,7 +138,7 @@ public class Render3D extends Render {
 			// Get pixel colour
 			int colour = this.pixels[i];
 			// Determine brightness based on depth value from Z buffer
-			int brightness = (int) (Options.renderDistance * gamma / this.zBuffer[i]);
+			int brightness = (int) (Options.renderDistance * gamma / this.depthStore[i]);
 
 			// Clamp brightness
 			if (brightness < 0)

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.11_2
+*2024-06-22 20:31*
+- Made void darker
+
 ## 0.0.11_1
 *2024-06-21 02:24*
 - Changed options file format
