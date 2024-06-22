@@ -31,12 +31,13 @@ public class Render3D extends Render {
 	public void renderWorld(Game game) {
 		final int TEX_SIZE = Conversion.PX_PER_BLOCK;
 
-		Coord pos = new Coord(game.controls.x, game.controls.y, game.controls.z);
+		
+		Coord pos = game.controls.getControllerCoords();
 		double bobbing = Math.sin(game.time) / 10.0;
-		double rotation = game.controls.rot;
+		double rotation = game.controls.getXRot();
 		double rotCos = Math.cos(rotation);
 		double rotSin = Math.sin(rotation);
-		double tilt = game.controls.tilt;
+		double tilt = game.controls.getYRot();
 		double tiltCos = Math.cos(tilt);
 		double tiltSin = Math.sin(tilt);
 

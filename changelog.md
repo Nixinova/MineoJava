@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.12_2
+*2024-06-22 22:43*
+- Changed sprint key from Shift to Control
+- Player now only falls through world layers when holding Shift
+- Fixed Y-position not updating
+
 ## 0.0.12_1
 *2024-06-22 22:20*
 - Player now slowly falls through the world layers

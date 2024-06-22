@@ -15,7 +15,8 @@ public class Keys {
 	public static final int LEFT = KeyEvent.VK_A;
 	public static final int RIGHT = KeyEvent.VK_D;
 	public static final int JUMP = KeyEvent.VK_SPACE;
-	public static final int SPRINT = KeyEvent.VK_SHIFT;
+	public static final int SPRINT = KeyEvent.VK_CONTROL;
+	public static final int SHIFT = KeyEvent.VK_SHIFT;
 
 	public static final int NUM_1 = KeyEvent.VK_1;
 	public static final int NUM_2 = KeyEvent.VK_2;

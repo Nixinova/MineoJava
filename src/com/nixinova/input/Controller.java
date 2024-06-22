@@ -4,25 +4,21 @@ import com.nixinova.main.Mineo;
 import com.nixinova.main.Player;
 import com.nixinova.readwrite.Options;
 import com.nixinova.types.BlockCoord;
+import com.nixinova.types.Conversion;
+import com.nixinova.types.Coord;
 import com.nixinova.world.Block;
 import com.nixinova.world.World;
 
 public class Controller {
 
-	public double x;
-	public double y;
-	public double z;
-	public double rot;
-	public double tilt;
-	public int curX, curY;
-
 	public float playerGround = 0;
 	public boolean debugShown = true;
 	public boolean isWalking = false;
 
-	private double x2;
-	private double y2;
-	private double z2;
+	private Coord pos = new Coord();
+	private double rot;
+	private double tilt;
+	private Coord pos2 = new Coord();
 	private double rot2;
 	private double tilt2;
 
@@ -92,8 +88,9 @@ public class Controller {
 					playerGround = World.GROUND_Y;
 				this.jumpY = 0;
 			}
-		} else {
-			playerGround -= 0.01;
+		} 
+		if (kbd.pressed(Keys.SHIFT)){
+			playerGround -= 0.025;
 			if (playerGround < 0)
 				playerGround = 0;
 		}
@@ -104,7 +101,7 @@ public class Controller {
 			} else if (aboveGround()) {
 				yMove -= Options.jumpHeight * Options.gravity;
 			} else if (belowGround()) {
-				this.y = Player.PLAYER_HEIGHT + groundBuffer * 1.01D;
+				this.pos.y = Player.PLAYER_HEIGHT + groundBuffer * 1.01D;
 				yMove = 0.001D;
 			}
 		} else {
@@ -132,34 +129,50 @@ public class Controller {
 		this.debugCooldown++;
 
 		// differentials for controls
-		this.x2 += (xMove * Math.cos(this.rot) + zMove * Math.sin(this.rot)) * Options.walkSpeed;
-		this.y2 += yMove;
-		this.z2 += (zMove * Math.cos(this.rot) - xMove * Math.sin(this.rot)) * Options.walkSpeed;
+		this.pos2.x += (xMove * Math.cos(this.rot) + zMove * Math.sin(this.rot)) * Options.walkSpeed;
+		this.pos2.y += yMove;
+		this.pos2.z += (zMove * Math.cos(this.rot) - xMove * Math.sin(this.rot)) * Options.walkSpeed;
 
 		// apply differentials
-		this.x += this.x2;
-		this.y += this.y2;
-		this.z += this.z2;
+		this.pos.x += this.pos2.x;
+		this.pos.y += this.pos2.y;
+		this.pos.z += this.pos2.z;
 		this.rot += this.rot2;
 		this.tilt += this.tilt2;
 
 		// decel/interpolate
-		this.x2 *= 0.6D;
-		this.y2 *= 0.3D;
-		this.z2 *= 0.6D;
+		this.pos2.x *= 0.6D;
+		this.pos2.y *= 0.3D;
+		this.pos2.z *= 0.6D;
 		this.rot2 *= 0.8D;
 		this.tilt2 *= 0.8D;
 	}
+	
+	public Coord getControllerCoords() {
+		return this.pos;
+	}
+	
+	public Coord getPxPositionCoords() {
+		return new Coord(this.pos.x, this.pos.y + this.playerGround * Conversion.PX_PER_BLOCK, this.pos.z);
+	}
+	
+	public double getXRot() {
+		return this.rot;
+	}
+	
+	public double getYRot() {
+		return this.tilt;
+	}
 
 	public boolean onGround() {
-		return Math.abs(this.y - Player.PLAYER_HEIGHT) < groundBuffer;
+		return Math.abs(this.pos.y - Player.PLAYER_HEIGHT) < groundBuffer;
 	}
 
 	public boolean aboveGround() {
-		return this.y > Player.PLAYER_HEIGHT;
+		return this.pos.y > Player.PLAYER_HEIGHT;
 	}
 
 	public boolean belowGround() {
-		return this.y < Player.PLAYER_HEIGHT;
+		return this.pos.y < Player.PLAYER_HEIGHT;
 	}
 }

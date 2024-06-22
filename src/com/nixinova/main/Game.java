@@ -27,7 +27,7 @@ public class Game {
 		this.input.tick();
 
 		// Set player coords
-		Coord pxCoords = new Coord(controls.x, controls.y, controls.z);
+		Coord pxCoords = controls.getPxPositionCoords();
 		BlockCoord blockCoords = Conversion.worldPxToBlockCoords(pxCoords);
 		Mineo.player.setPlayerBlockPos(blockCoords);
 		Mineo.player.setPlayerPxPos(pxCoords);
