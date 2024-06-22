@@ -8,14 +8,10 @@ import com.nixinova.types.BlockCoord;
 import com.nixinova.types.Conversion;
 
 public class World {
-	public static final int SKY_HEIGHT = 18 * Conversion.PX_PER_BLOCK;
+	public static final int SKY_Y_PX = 18 * Conversion.PX_PER_BLOCK;
+	public static final int GROUND_Y = 10;
 
 	private final int arrSize;
-	private final Render[] groundBlocks = new Render[] {
-		Block.GRASS.getTexture(),
-		Block.DIRT.getTexture(),
-		Block.STONE.getTexture(),
-	};
 
 	private Render[][][] blockTextures;
 
@@ -57,15 +53,23 @@ public class World {
 			for (int y = 0; y < arrSize; y++) {
 				for (int z = 0; z < arrSize; z++) {
 					BlockCoord coordI = toBlockCoord(new BlockCoord(x, y, z));
-					Render texture;
 
-					if (coordI.x == 0 || coordI.z == 0)
-						// Bedrock along world origin
-						texture = Block.BEDROCK.getTexture();
+					if (coordI.y < 0)
+						continue;
+
+					Block block;
+					if (coordI.y <= 0)
+						block = Block.BEDROCK;
+					else if (coordI.y <= GROUND_Y - 4)
+						block = random.nextInt(coordI.y) > 1 ? Block.DIRT : Block.STONE;
+					else if (coordI.y <= GROUND_Y - 2)
+						block = Block.DIRT;
+					else if (coordI.y <= GROUND_Y)
+						block = Block.GRASS;
 					else
-						texture = this.groundBlocks[random.nextInt(this.groundBlocks.length)];
+						block = null;
 
-					blockTextures[x][y][z] = texture;
+					blockTextures[x][y][z] = block == null ? null : block.getTexture();
 				}
 			}
 		}

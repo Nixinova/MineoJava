@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.12
+*2024-06-22 22:11*
+- Added layers of blocks to the world
+  - World is made up of bedrock, stone and dirt, dirt, and grass layers
+  - Go up a layer by jumping
+
 ## 0.0.11_2
 *2024-06-22 20:31*
 - Made void darker

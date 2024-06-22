@@ -16,6 +16,7 @@ public class Controller {
 	public double tilt;
 	public int curX, curY;
 
+	public int playerGround = 0;
 	public boolean debugShown = true;
 	public boolean isWalking = false;
 
@@ -86,6 +87,9 @@ public class Controller {
 			// Once maximum height reached, stop isJumping
 			if (this.jumpY >= Options.jumpHeight) {
 				isJumping = false;
+				playerGround++;
+				if (playerGround > World.GROUND_Y)
+					playerGround = World.GROUND_Y;
 				this.jumpY = 0;
 			}
 		}

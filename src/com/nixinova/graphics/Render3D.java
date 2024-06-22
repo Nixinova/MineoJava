@@ -70,7 +70,7 @@ public class Render3D extends Render {
 
 				// Depth calculation
 				double offset = pos.y;
-				double skyDepth = (World.SKY_HEIGHT - offset) / -vert;
+				double skyDepth = (World.SKY_Y_PX - offset) / -vert;
 				double worldDepth = (Player.PLAYER_HEIGHT + offset) / vert;
 				double depth = generateSky ? skyDepth : worldDepth;
 				if (game.controls.isWalking) {
@@ -90,7 +90,7 @@ public class Render3D extends Render {
 				// World block coords
 				BlockCoord blockCoord = Conversion.worldPxToBlockCoords(texelX, texelY, texelZ);
 				int blockX = blockCoord.x;
-				int blockY = blockCoord.y;
+				int blockY = game.controls.playerGround;
 				int blockZ = blockCoord.z;
 
 				// Set looking at block
