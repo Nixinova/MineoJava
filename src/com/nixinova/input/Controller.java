@@ -16,7 +16,7 @@ public class Controller {
 	public double tilt;
 	public int curX, curY;
 
-	public int playerGround = 0;
+	public float playerGround = 0;
 	public boolean debugShown = true;
 	public boolean isWalking = false;
 
@@ -92,6 +92,10 @@ public class Controller {
 					playerGround = World.GROUND_Y;
 				this.jumpY = 0;
 			}
+		} else {
+			playerGround -= 0.01;
+			if (playerGround < 0)
+				playerGround = 0;
 		}
 		if (Mineo.player.isWithinWorld()) {
 			if (onGround()) {

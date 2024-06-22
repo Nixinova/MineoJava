@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.12_1
+*2024-06-22 22:20*
+- Player now slowly falls through the world layers
+
 ## 0.0.12
 *2024-06-22 22:11*
 - Added layers of blocks to the world

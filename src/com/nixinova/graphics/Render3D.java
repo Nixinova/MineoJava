@@ -18,7 +18,7 @@ public class Render3D extends Render {
 	public double[] depthStore;
 
 	private boolean fogAlrApplied;
-	private double lastXMove, lastYMove, lastZMove, lastRot, lastTilt;
+	private double lastXMove, lastYMove, lastZMove, lastGround, lastRot, lastTilt;
 	private boolean[] lastKbdInput;
 
 	public Render3D(int width, int height) {
@@ -43,7 +43,7 @@ public class Render3D extends Render {
 		// Early return if player hasn't inputted this tick
 		IntStream indicesRange = IntStream.range(0, this.lastKbdInput != null ? this.lastKbdInput.length : 0);
 		boolean hasntPressed = indicesRange.allMatch(i -> game.kbdInput[i] == this.lastKbdInput[i]); // check all array items are equal
-		boolean hasntMoved = pos.x == lastXMove && pos.y == lastYMove && pos.z == lastZMove;
+		boolean hasntMoved = pos.x == lastXMove && pos.y == lastYMove && pos.z == lastZMove && lastGround == game.controls.playerGround;
 		boolean hasntLooked = rotation == lastRot && tilt == lastTilt;
 		if (hasntPressed && hasntMoved && hasntLooked) {
 			return;
@@ -72,6 +72,7 @@ public class Render3D extends Render {
 				double offset = pos.y;
 				double skyDepth = (World.SKY_Y_PX - offset) / -vert;
 				double worldDepth = (Player.PLAYER_HEIGHT + offset) / vert;
+				worldDepth +=  (game.controls.playerGround - (int) game.controls.playerGround)*10; // world layer falling through effect
 				double depth = generateSky ? skyDepth : worldDepth;
 				if (game.controls.isWalking) {
 					depth += bobbing;
@@ -90,7 +91,7 @@ public class Render3D extends Render {
 				// World block coords
 				BlockCoord blockCoord = Conversion.worldPxToBlockCoords(texelX, texelY, texelZ);
 				int blockX = blockCoord.x;
-				int blockY = game.controls.playerGround;
+				int blockY = (int) game.controls.playerGround;
 				int blockZ = blockCoord.z;
 
 				// Set looking at block
@@ -121,6 +122,7 @@ public class Render3D extends Render {
 		this.lastXMove = pos.x;
 		this.lastYMove = pos.y;
 		this.lastZMove = pos.z;
+		this.lastGround = game.controls.playerGround;
 		this.lastRot = rotation;
 		this.lastTilt = tilt;
 		this.lastKbdInput = Arrays.copyOf(game.kbdInput, game.kbdInput.length);
