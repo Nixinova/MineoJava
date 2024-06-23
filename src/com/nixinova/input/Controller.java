@@ -1,14 +1,13 @@
 package com.nixinova.input;
 
 import com.nixinova.coords.BlockCoord;
+import com.nixinova.coords.Coord;
 import com.nixinova.coords.PxCoord;
-import com.nixinova.coords.TxCoord;
 import com.nixinova.main.Game;
 import com.nixinova.player.Hotbar;
 import com.nixinova.player.Player;
 import com.nixinova.readwrite.Options;
 import com.nixinova.world.Block;
-import com.nixinova.world.Conversion;
 import com.nixinova.world.World;
 
 public class Controller {
@@ -24,7 +23,7 @@ public class Controller {
 	private double groundBuffer = 0.1D;
 	private boolean isJumping = false;
 	private double jumpY = 0;
-	private double playerGround = 0;
+	private double playerGround = 0; // sub-block
 
 	public Controller(Game game) {
 		this.game = game;
@@ -153,25 +152,12 @@ public class Controller {
 		this.tilt2 *= 0.8D;
 	}
 
-	public PxCoord getPositionPx() {
-		double y = this.pos.y + this.getPlayerGroundPx();
-		return new PxCoord(this.pos.x, y, this.pos.z);
+	public Coord getPosition() {
+		return Coord.fromPx(this.pos);
 	}
 
-	public TxCoord getPositionTx() {
-		int x = (int) this.pos.x;
-		int y = (int) this.pos.y + this.getPlayerGroundTx();
-		int z = (int) this.pos.z;
-		return new TxCoord(x, y, z);
-	}
-
-	public double getPlayerGroundPx() {
-		return this.playerGround;
-	}
-
-	public int getPlayerGroundTx() {
-		PxCoord px = new PxCoord(0, this.getPlayerGroundPx(), 0);
-		return px.toTxCoord().y;
+	public Coord getPlayerGround() {
+		return Coord.fromSubBlock(this.playerGround);
 	}
 
 	public double getXRot() {

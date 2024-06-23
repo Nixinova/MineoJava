@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.12_3
+*2024-06-23 16:02*
+- Changed internal coordinate system
+- Changed layer falling effect
+
 ## 0.0.12_2
 *2024-06-22 22:43*
 - Changed sprint key from Shift to Control

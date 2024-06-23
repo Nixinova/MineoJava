@@ -131,7 +131,7 @@ public class Display extends Canvas implements Runnable {
 		graphics.drawImage(this.img, 0, 0, WIDTH, HEIGHT, null);
 		graphics.setColor(Color.white);
 
-		BlockCoord playerBlockPos = this.game.player.getPlayerBlockPos();
+		BlockCoord playerBlockPos = this.game.player.position.toBlock();
 		String playerX = String.format("%d", playerBlockPos.x);
 		String playerY = String.format("%d", playerBlockPos.y);
 		String playerZ = String.format("%d", playerBlockPos.z);

@@ -30,6 +30,6 @@ public class Game {
 		this.input.tick();
 
 		// Set player coords
-		this.player.setPlayerTxPos(this.controls.getPositionTx());
+		this.player.position = this.controls.getPosition();
 	}
 }
