@@ -1,4 +1,7 @@
-package com.nixinova.types;
+package com.nixinova.world;
+
+import com.nixinova.coords.BlockCoord;
+import com.nixinova.coords.Coord;
 
 public class Conversion {
 	public static final int PX_PER_BLOCK = 8;

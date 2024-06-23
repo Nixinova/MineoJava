@@ -1,11 +1,8 @@
 package com.nixinova.input;
 
-import com.nixinova.main.Display;
-import com.nixinova.main.Mineo;
-
 import java.awt.AWTException;
-import java.awt.Robot;
 import java.awt.Point;
+import java.awt.Robot;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -15,6 +12,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.JFrame;
+
+import com.nixinova.main.Display;
 
 // Input handler: absolute mouse movement, regardless of sensitivity etc
 public class InputHandler implements KeyListener, FocusListener, MouseListener, MouseMotionListener {
@@ -27,10 +26,13 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 	public int centerX, centerY;
 	public int deltaX, deltaY;
 
+	private JFrame frame;
 	private Robot robot;
 	private boolean inMotion = false;
 
-	public InputHandler() {
+	public InputHandler(JFrame frame) {
+		this.frame = frame;
+		
 		this.centerX = Display.WIDTH / 2;
 		this.centerY = Display.HEIGHT / 2;
 		this.mouseX = this.centerX;
@@ -64,12 +66,11 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 		}
 
 		// Get frame pos info
-		JFrame frame = Mineo.frame;
-		Point framePos = frame.getContentPane().getLocationOnScreen();
+		Point framePos = this.frame.getContentPane().getLocationOnScreen();
 
 		// Recalculate center
-		this.centerX = (frame.getWidth() + framePos.x) / 2;
-		this.centerY = (frame.getHeight() + framePos.y) / 2;
+		this.centerX = (this.frame.getWidth() + framePos.x) / 2;
+		this.centerY = (this.frame.getHeight() + framePos.y) / 2;
 
 		// Mouse movement data
 		int newX = event.getX() + framePos.x;

@@ -1,12 +1,13 @@
 package com.nixinova.input;
 
-import com.nixinova.main.Mineo;
-import com.nixinova.main.Player;
+import com.nixinova.coords.BlockCoord;
+import com.nixinova.coords.Coord;
+import com.nixinova.main.Game;
+import com.nixinova.player.Hotbar;
+import com.nixinova.player.Player;
 import com.nixinova.readwrite.Options;
-import com.nixinova.types.BlockCoord;
-import com.nixinova.types.Conversion;
-import com.nixinova.types.Coord;
 import com.nixinova.world.Block;
+import com.nixinova.world.Conversion;
 import com.nixinova.world.World;
 
 public class Controller {
@@ -15,17 +16,20 @@ public class Controller {
 	public boolean debugShown = true;
 	public boolean isWalking = false;
 
-	private Coord pos = new Coord();
-	private double rot;
-	private double tilt;
-	private Coord pos2 = new Coord();
-	private double rot2;
-	private double tilt2;
-
+	private Game game;
+	private Coord pos, pos2;
+	private double rot, rot2;
+	private double tilt, tilt2;
 	private int debugCooldown = 0;
 	private double groundBuffer = 0.1D;
 	private boolean isJumping = false;
 	private double jumpY = 0;
+	
+	public Controller(Game game) {
+		this.game = game;
+		this.pos = new Coord();
+		this.pos2 = new Coord();
+	}
 
 	public void tick(InputHandler input, boolean[] keys) {
 		Keys kbd = new Keys(keys);
@@ -37,9 +41,9 @@ public class Controller {
 
 		// Placing
 		if (kbd.clickedButton(Keys.LCLICK)) {
-			BlockCoord lookingAt = Mineo.player.getLookingAt();
+			BlockCoord lookingAt = this.game.player.getLookingAt();
 			if (Block.isInsideWorld(lookingAt)) {
-				Mineo.world.setTextureAt(lookingAt.x, lookingAt.y, lookingAt.z, Hotbar.getCurrentBlock());
+				this.game.world.setTextureAt(lookingAt.x, lookingAt.y, lookingAt.z, Hotbar.getCurrentBlock());
 			}
 		}
 
@@ -94,7 +98,7 @@ public class Controller {
 			if (playerGround < 0)
 				playerGround = 0;
 		}
-		if (Mineo.player.isWithinWorld()) {
+		if (this.game.player.isWithinWorld()) {
 			if (onGround()) {
 				if (kbd.pressed(Keys.JUMP))
 					isJumping = true;

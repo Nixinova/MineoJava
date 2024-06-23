@@ -1,10 +1,10 @@
-package com.nixinova.main;
+package com.nixinova.player;
 
+import com.nixinova.coords.BlockCoord;
+import com.nixinova.coords.Coord;
+import com.nixinova.coords.WorldCoord;
 import com.nixinova.readwrite.Options;
-import com.nixinova.types.BlockCoord;
-import com.nixinova.types.Conversion;
-import com.nixinova.types.Coord;
-import com.nixinova.types.WorldCoord;
+import com.nixinova.world.Conversion;
 
 public class Player {
 	public static final int PLAYER_HEIGHT = 2 * Conversion.PX_PER_BLOCK;

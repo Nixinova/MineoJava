@@ -7,17 +7,14 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
+import com.nixinova.input.InputHandler;
 import com.nixinova.readwrite.Options;
-import com.nixinova.world.World;
 
 public class Mineo {
-
-	public static final String VERSION = "0.0.12_2";
+	public static final String VERSION = "0.0.12_2";//a
 	public static final String TITLE = "Mineo " + VERSION;
 
-	public static JFrame frame;
-	public static World world;
-	public static Player player;
+	private static JFrame frame;
 
 	public static void main(String[] args) {
 		Options.createOptions();
@@ -25,9 +22,10 @@ public class Mineo {
 		Cursor blank = Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "blank");
 
 		frame = new JFrame();
-		Display display = new Display();
-		world = new World();
-		player = new Player();
+		
+		InputHandler input = new InputHandler(frame);
+		Game game = new Game(input);
+		Display display = new Display(game, input);
 
 		frame.add(display);
 		frame.pack();

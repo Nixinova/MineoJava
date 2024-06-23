@@ -3,20 +3,18 @@ package com.nixinova.graphics;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
+import com.nixinova.coords.BlockCoord;
+import com.nixinova.coords.Coord;
 import com.nixinova.main.Game;
-import com.nixinova.main.Mineo;
-import com.nixinova.main.Player;
+import com.nixinova.player.Player;
 import com.nixinova.readwrite.Options;
-import com.nixinova.types.BlockCoord;
-import com.nixinova.types.Conversion;
-import com.nixinova.types.Coord;
 import com.nixinova.world.Block;
+import com.nixinova.world.Conversion;
 import com.nixinova.world.World;
 
 public class Render3D extends Render {
 
-	public double[] depthStore;
-
+	private double[] depthStore;
 	private boolean fogAlrApplied;
 	private double lastXMove, lastYMove, lastZMove, lastGround, lastRot, lastTilt;
 	private boolean[] lastKbdInput;
@@ -31,7 +29,6 @@ public class Render3D extends Render {
 	public void renderWorld(Game game) {
 		final int TEX_SIZE = Conversion.PX_PER_BLOCK;
 
-		
 		Coord pos = game.controls.getControllerCoords();
 		double bobbing = Math.sin(game.time) / 10.0;
 		double rotation = game.controls.getXRot();
@@ -44,9 +41,10 @@ public class Render3D extends Render {
 		// Early return if player hasn't inputted this tick
 		IntStream indicesRange = IntStream.range(0, this.lastKbdInput != null ? this.lastKbdInput.length : 0);
 		boolean hasntPressed = indicesRange.allMatch(i -> game.kbdInput[i] == this.lastKbdInput[i]); // check all array items are equal
-		boolean hasntMoved = pos.x == lastXMove && pos.y == lastYMove && pos.z == lastZMove && lastGround == game.controls.playerGround;
+		boolean hasntMoved = pos.x == lastXMove && pos.y == lastYMove && pos.z == lastZMove;
+		boolean hasntFallen = lastGround == game.controls.playerGround;
 		boolean hasntLooked = rotation == lastRot && tilt == lastTilt;
-		if (hasntPressed && hasntMoved && hasntLooked) {
+		if (hasntPressed && hasntMoved && hasntFallen && hasntLooked) {
 			return;
 		}
 
@@ -73,7 +71,8 @@ public class Render3D extends Render {
 				double offset = pos.y;
 				double skyDepth = (World.SKY_Y_PX - offset) / -vert;
 				double worldDepth = (Player.PLAYER_HEIGHT + offset) / vert;
-				worldDepth +=  (game.controls.playerGround - (int) game.controls.playerGround)*10; // world layer falling through effect
+				final int worldFallSpeed = 10;
+				worldDepth += (game.controls.playerGround - (int) game.controls.playerGround) * worldFallSpeed; // world layer falling through effect
 				double depth = generateSky ? skyDepth : worldDepth;
 				if (game.controls.isWalking) {
 					depth += bobbing;
@@ -97,7 +96,7 @@ public class Render3D extends Render {
 
 				// Set looking at block
 				if (pixelI == width * height / 2) {
-					Mineo.player.setLookingAt(blockX, blockY, blockZ);
+					game.player.setLookingAt(blockX, blockY, blockZ);
 				}
 
 				// Get texture for block at this coordinate if within render distance
@@ -105,7 +104,7 @@ public class Render3D extends Render {
 				boolean withinRenderDist = depth < Options.renderDistance;
 				if (withinRenderDist && !generateSky) {
 					// Render block
-					texture = Mineo.world.getTextureAt(blockX, blockY, blockZ);
+					texture = game.world.getTextureAt(blockX, blockY, blockZ);
 				}
 				// Apply texture
 				int texPx = (texelX & (TEX_SIZE - 1)) + (texelZ & (TEX_SIZE - 1)) * TEX_SIZE;

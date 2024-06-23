@@ -13,7 +13,7 @@ public class Options {
 	public static final float OPTIONS_VERSION = 1.0F;
 	// Increment options version by +1.0 for file format changes and by +0.1 for value implementation changes
 
-	private final class DEFAULT_OPTIONS {
+	private static final class DEFAULT_OPTIONS {
 		public static long seed = 100L;
 		public static int worldSize = 100;
 		public static int renderDistance = 5000;
@@ -27,7 +27,7 @@ public class Options {
 		public static String texturesFolder = "/textures/";
 	}
 
-	public final class OPTION_STRINGS {
+	private static final class OPTION_STRINGS {
 		public static String fileVersion = "fileVersion";
 		public static String seed = "seed";
 		public static String worldSize = "worldSize";

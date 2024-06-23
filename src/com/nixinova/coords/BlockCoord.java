@@ -1,4 +1,4 @@
-package com.nixinova.types;
+package com.nixinova.coords;
 
 public class BlockCoord {
 	

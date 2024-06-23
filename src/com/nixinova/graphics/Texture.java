@@ -6,14 +6,14 @@ import javax.imageio.ImageIO;
 
 import com.nixinova.readwrite.Options;
 
-public class Textures {
+public class Texture {
 	public static Render loadTexture(String name) {
 		return loadBitmap(name + ".png");
 	}
 
 	private static Render loadBitmap(String filename) {
 		try {
-			BufferedImage image = ImageIO.read(Textures.class.getResource(Options.texturesFolder + filename));
+			BufferedImage image = ImageIO.read(Texture.class.getResource(Options.texturesFolder + filename));
 			int width = image.getWidth();
 			int height = image.getHeight();
 			Render result = new Render(width, height);

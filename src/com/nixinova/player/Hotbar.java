@@ -1,6 +1,7 @@
-package com.nixinova.input;
+package com.nixinova.player;
 
 import com.nixinova.graphics.Render;
+import com.nixinova.input.Keys;
 import com.nixinova.world.Block;
 
 public class Hotbar {

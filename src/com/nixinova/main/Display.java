@@ -13,10 +13,10 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
+import com.nixinova.coords.BlockCoord;
 import com.nixinova.graphics.Screen;
 import com.nixinova.input.InputHandler;
 import com.nixinova.readwrite.Options;
-import com.nixinova.types.BlockCoord;
 
 public class Display extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
@@ -36,7 +36,10 @@ public class Display extends Canvas implements Runnable {
 	private boolean running = false;
 	private int[] pixels;
 
-	public Display() {
+	public Display(Game game, InputHandler input) {
+		this.input = input;
+		this.game = game;
+
 		Dimension size = new Dimension(WIDTH, HEIGHT);
 		setPreferredSize(size);
 		setMinimumSize(size);
@@ -45,8 +48,6 @@ public class Display extends Canvas implements Runnable {
 		this.screen = new Screen(WIDTH, HEIGHT);
 		this.img = new BufferedImage(WIDTH, HEIGHT, 1);
 		this.pixels = ((DataBufferInt) this.img.getRaster().getDataBuffer()).getData();
-		this.input = new InputHandler();
-		this.game = new Game(this.input);
 
 		addKeyListener((KeyListener) this.input);
 		addFocusListener((FocusListener) this.input);
@@ -76,6 +77,7 @@ public class Display extends Canvas implements Runnable {
 		}
 	}
 
+	@Override
 	public void run() {
 		int frames = 0;
 		double unprocessedSecs = 0.0D;
@@ -129,7 +131,7 @@ public class Display extends Canvas implements Runnable {
 		graphics.drawImage(this.img, 0, 0, WIDTH, HEIGHT, null);
 		graphics.setColor(Color.white);
 
-		BlockCoord playerBlockPos = Mineo.player.getPlayerBlockPos();
+		BlockCoord playerBlockPos = this.game.player.getPlayerBlockPos();
 		String playerX = String.format("%d", playerBlockPos.x);
 		String playerY = String.format("%d", playerBlockPos.y);
 		String playerZ = String.format("%d", playerBlockPos.z);

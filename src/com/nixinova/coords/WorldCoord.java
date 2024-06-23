@@ -1,4 +1,6 @@
-package com.nixinova.types;
+package com.nixinova.coords;
+
+import com.nixinova.world.Conversion;
 
 public class WorldCoord {
 	
