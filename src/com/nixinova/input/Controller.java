@@ -1,7 +1,8 @@
 package com.nixinova.input;
 
 import com.nixinova.coords.BlockCoord;
-import com.nixinova.coords.Coord;
+import com.nixinova.coords.PxCoord;
+import com.nixinova.coords.TxCoord;
 import com.nixinova.main.Game;
 import com.nixinova.player.Hotbar;
 import com.nixinova.player.Player;
@@ -12,23 +13,23 @@ import com.nixinova.world.World;
 
 public class Controller {
 
-	public float playerGround = 0;
 	public boolean debugShown = true;
 	public boolean isWalking = false;
 
 	private Game game;
-	private Coord pos, pos2;
+	private PxCoord pos, pos2;
 	private double rot, rot2;
 	private double tilt, tilt2;
 	private int debugCooldown = 0;
 	private double groundBuffer = 0.1D;
 	private boolean isJumping = false;
 	private double jumpY = 0;
-	
+	private double playerGround = 0;
+
 	public Controller(Game game) {
 		this.game = game;
-		this.pos = new Coord();
-		this.pos2 = new Coord();
+		this.pos = new PxCoord();
+		this.pos2 = new PxCoord();
 	}
 
 	public void tick(InputHandler input, boolean[] keys) {
@@ -92,8 +93,8 @@ public class Controller {
 					playerGround = World.GROUND_Y;
 				this.jumpY = 0;
 			}
-		} 
-		if (kbd.pressed(Keys.SHIFT)){
+		}
+		if (kbd.pressed(Keys.SHIFT)) {
 			playerGround -= 0.025;
 			if (playerGround < 0)
 				playerGround = 0;
@@ -151,19 +152,32 @@ public class Controller {
 		this.rot2 *= 0.8D;
 		this.tilt2 *= 0.8D;
 	}
-	
-	public Coord getControllerCoords() {
-		return this.pos;
+
+	public PxCoord getPositionPx() {
+		double y = this.pos.y + this.getPlayerGroundPx();
+		return new PxCoord(this.pos.x, y, this.pos.z);
 	}
-	
-	public Coord getPxPositionCoords() {
-		return new Coord(this.pos.x, this.pos.y + this.playerGround * Conversion.PX_PER_BLOCK, this.pos.z);
+
+	public TxCoord getPositionTx() {
+		int x = (int) this.pos.x;
+		int y = (int) this.pos.y + this.getPlayerGroundTx();
+		int z = (int) this.pos.z;
+		return new TxCoord(x, y, z);
 	}
-	
+
+	public double getPlayerGroundPx() {
+		return this.playerGround;
+	}
+
+	public int getPlayerGroundTx() {
+		PxCoord px = new PxCoord(0, this.getPlayerGroundPx(), 0);
+		return px.toTxCoord().y;
+	}
+
 	public double getXRot() {
 		return this.rot;
 	}
-	
+
 	public double getYRot() {
 		return this.tilt;
 	}

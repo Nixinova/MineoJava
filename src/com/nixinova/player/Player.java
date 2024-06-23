@@ -1,7 +1,8 @@
 package com.nixinova.player;
 
 import com.nixinova.coords.BlockCoord;
-import com.nixinova.coords.Coord;
+import com.nixinova.coords.PxCoord;
+import com.nixinova.coords.TxCoord;
 import com.nixinova.coords.WorldCoord;
 import com.nixinova.readwrite.Options;
 import com.nixinova.world.Conversion;
@@ -17,32 +18,32 @@ public class Player {
 		this.lookingAtBlock = new BlockCoord();
 	}
 
-	public Coord getPlayerPos() {
-		return this.playerPosition.getWorldCoords();
+	public PxCoord getPlayerPxPos() {
+		return this.playerPosition.getCoords().toPxCoord();
 	}
 
-	public void setPlayerPos(double x, double y, double z) {
-		this.playerPosition.setWorldCoords(x, y, z);
-	}
-
-	public void setPlayerPos(Coord coords) {
-		this.setPlayerPos(coords.x, coords.y, coords.z);
-	}
-
-	public Coord getPlayerPxPos() {
-		return this.playerPosition.getPxCoords();
-	}
-
-	public void setPlayerPxPos(int x, int y, int z) {
+	public void setPlayerPxPos(double x, double y, double z) {
 		this.playerPosition.setPxCoords(x, y, z);
 	}
 
-	public void setPlayerPxPos(Coord coords) {
-		this.setPlayerPxPos((int) coords.x, (int) coords.y, (int) coords.z);
+	public void setPlayerPxPos(PxCoord coords) {
+		this.setPlayerPxPos(coords.x, coords.y, coords.z);
+	}
+
+	public TxCoord getPlayerTxPos() {
+		return this.playerPosition.getCoords().toTxCoord();
+	}
+
+	public void setPlayerTxPos(int x, int y, int z) {
+		this.playerPosition.setTxCoords(x, y, z);
+	}
+
+	public void setPlayerTxPos(TxCoord coords) {
+		this.setPlayerTxPos(coords.x, coords.y, coords.z);
 	}
 
 	public BlockCoord getPlayerBlockPos() {
-		return this.playerPosition.getBlockCoords();
+		return this.playerPosition.getCoords().toBlockCoord();
 	}
 
 	public void setPlayerBlockPos(int x, int y, int z) {

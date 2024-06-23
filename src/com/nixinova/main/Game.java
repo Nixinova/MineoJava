@@ -1,11 +1,8 @@
 package com.nixinova.main;
 
-import com.nixinova.coords.BlockCoord;
-import com.nixinova.coords.Coord;
 import com.nixinova.input.Controller;
 import com.nixinova.input.InputHandler;
 import com.nixinova.player.Player;
-import com.nixinova.world.Conversion;
 import com.nixinova.world.World;
 
 public class Game {
@@ -33,9 +30,6 @@ public class Game {
 		this.input.tick();
 
 		// Set player coords
-		Coord pxCoords = this.controls.getPxPositionCoords();
-		BlockCoord blockCoords = Conversion.worldPxToBlockCoords(pxCoords);
-		this.player.setPlayerBlockPos(blockCoords);
-		this.player.setPlayerPxPos(pxCoords);
+		this.player.setPlayerTxPos(this.controls.getPositionTx());
 	}
 }

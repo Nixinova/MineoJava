@@ -4,7 +4,8 @@ import java.util.Arrays;
 import java.util.stream.IntStream;
 
 import com.nixinova.coords.BlockCoord;
-import com.nixinova.coords.Coord;
+import com.nixinova.coords.PxCoord;
+import com.nixinova.coords.TxCoord;
 import com.nixinova.main.Game;
 import com.nixinova.player.Player;
 import com.nixinova.readwrite.Options;
@@ -29,7 +30,7 @@ public class Render3D extends Render {
 	public void renderWorld(Game game) {
 		final int TEX_SIZE = Conversion.PX_PER_BLOCK;
 
-		Coord pos = game.controls.getControllerCoords();
+		PxCoord pos = game.controls.getPositionPx();
 		double bobbing = Math.sin(game.time) / 10.0;
 		double rotation = game.controls.getXRot();
 		double rotCos = Math.cos(rotation);
@@ -42,7 +43,7 @@ public class Render3D extends Render {
 		IntStream indicesRange = IntStream.range(0, this.lastKbdInput != null ? this.lastKbdInput.length : 0);
 		boolean hasntPressed = indicesRange.allMatch(i -> game.kbdInput[i] == this.lastKbdInput[i]); // check all array items are equal
 		boolean hasntMoved = pos.x == lastXMove && pos.y == lastYMove && pos.z == lastZMove;
-		boolean hasntFallen = lastGround == game.controls.playerGround;
+		boolean hasntFallen = lastGround == game.controls.getPlayerGroundPx();
 		boolean hasntLooked = rotation == lastRot && tilt == lastTilt;
 		if (hasntPressed && hasntMoved && hasntFallen && hasntLooked) {
 			return;
@@ -72,7 +73,8 @@ public class Render3D extends Render {
 				double skyDepth = (World.SKY_Y_PX - offset) / -vert;
 				double worldDepth = (Player.PLAYER_HEIGHT + offset) / vert;
 				final int worldFallSpeed = 10;
-				worldDepth += (game.controls.playerGround - (int) game.controls.playerGround) * worldFallSpeed; // world layer falling through effect
+				double groundPx = game.controls.getPlayerGroundPx();
+				worldDepth += (groundPx - (int) groundPx) * worldFallSpeed; // world layer falling through effect
 				double depth = generateSky ? skyDepth : worldDepth;
 				if (game.controls.isWalking) {
 					depth += bobbing;
@@ -85,13 +87,13 @@ public class Render3D extends Render {
 
 				// World pixel coords
 				int texelX = (int) (horiz * rotCos + depth * rotSin + pos.x);
-				int texelY = 0; // (int) (depth * vert + pos.y);
+				int texelY = game.controls.getPlayerGroundTx() * Conversion.PX_PER_BLOCK;
 				int texelZ = (int) (depth * rotCos - horiz * rotSin + pos.z);
 
 				// World block coords
-				BlockCoord blockCoord = Conversion.worldPxToBlockCoords(texelX, texelY, texelZ);
+				BlockCoord blockCoord = new TxCoord(texelX, texelY, texelZ).toBlockCoord();
 				int blockX = blockCoord.x;
-				int blockY = (int) game.controls.playerGround;
+				int blockY = blockCoord.y;
 				int blockZ = blockCoord.z;
 
 				// Set looking at block
@@ -122,7 +124,7 @@ public class Render3D extends Render {
 		this.lastXMove = pos.x;
 		this.lastYMove = pos.y;
 		this.lastZMove = pos.z;
-		this.lastGround = game.controls.playerGround;
+		this.lastGround = game.controls.getPlayerGroundPx();
 		this.lastRot = rotation;
 		this.lastTilt = tilt;
 		this.lastKbdInput = Arrays.copyOf(game.kbdInput, game.kbdInput.length);

@@ -1,38 +1,28 @@
 package com.nixinova.coords;
 
-import com.nixinova.world.Conversion;
-
 public class WorldCoord {
 	
-	private Coord worldPos;
+	private PxCoord worldPos;
 	
 	public WorldCoord() {
-		this.worldPos = new Coord();
+		this.worldPos = new PxCoord();
 	}
 	
-	public void setWorldCoords(double x, double y, double z) {
-		this.worldPos = new Coord(x, y, z);
+	public void setPxCoords(double x, double y, double z) {
+		this.worldPos = new PxCoord(x, y, z);
 	}
 	
-	public void setPxCoords(int x, int y, int z) {
-		this.worldPos = new Coord(x, y, z);
+	public void setTxCoords(int x, int y, int z) {
+		this.worldPos = new PxCoord(x, y, z);
 	}
 	
 	public void setBlockCoords(int x, int y, int z) {
-		Coord pxCoord = Conversion.blockCoordsToWorldPx(x, y, z);
-		this.worldPos = new Coord(pxCoord.x, pxCoord.y, pxCoord.z);
+		PxCoord pxCoord = new BlockCoord(x, y, z).toPxCoord();
+		this.worldPos = new PxCoord(pxCoord.x, pxCoord.y, pxCoord.z);
 	}
 	
-	public Coord getWorldCoords() {
+	public PxCoord getCoords() {
 		return this.worldPos;
-	}
-	
-	public Coord getPxCoords() {
-		return new Coord((int) worldPos.x, (int) worldPos.y, (int) worldPos.z);
-	}
-	
-	public BlockCoord getBlockCoords() {
-		return Conversion.worldPxToBlockCoords(worldPos);
 	}
 
 }
