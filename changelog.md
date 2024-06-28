@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.12_4
+*2024-06-28 15:35*
+- Player is now put on the ground of the world layer when Shift is unpressed
+
 ## 0.0.12_3
 *2024-06-23 16:02*
 - Changed internal coordinate system

@@ -24,6 +24,7 @@ public class Controller {
 	private boolean isJumping = false;
 	private double jumpY = 0;
 	private double playerGround = 0; // sub-block
+	private double playerGroundBlock = 0;
 
 	public Controller(Game game) {
 		this.game = game;
@@ -93,10 +94,14 @@ public class Controller {
 				this.jumpY = 0;
 			}
 		}
+		playerGroundBlock = Math.floor(playerGround);
 		if (kbd.pressed(Keys.SHIFT)) {
 			playerGround -= 0.025;
 			if (playerGround < 0)
 				playerGround = 0;
+
+		} else {
+			playerGround = playerGroundBlock;
 		}
 		if (this.game.player.isWithinWorld()) {
 			if (onGround()) {
