@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.12_5
+*2024-06-30 01:58*
+- Changed default gamma to 6.0
+- Changed default worldSize to 40
+- Changed position of options warning message
+
 ## 0.0.12_4
 *2024-06-28 15:35*
 - Player is now put on the ground of the world layer when Shift is unpressed

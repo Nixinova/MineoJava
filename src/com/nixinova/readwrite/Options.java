@@ -9,15 +9,19 @@ import java.util.Scanner;
 public class Options {
 	public static final String MINEO_FOLDER = ".mineo";
 	public static final String OPTIONS_FILE = "options.txt";
-
-	public static final float OPTIONS_VERSION = 1.0F;
-	// Increment options version by +1.0 for file format changes and by +0.1 for value implementation changes
+	/**
+	 * Semantics of version incrementing:
+	 *   +1.00: Major: Fundamental file format changes that make older options.txt files unreadable.
+	 *   +0.10: Minor: Changes to the implementation of a value.
+	 *   +0.01: Micro: Addition of new options, keeps backward compatibility.
+	 */
+	public static final float OPTIONS_VERSION = 1.00F;
 
 	private static final class DEFAULT_OPTIONS {
 		public static long seed = 100L;
-		public static int worldSize = 100;
+		public static int worldSize = 40;
 		public static int renderDistance = 5000;
-		public static double gamma = 4.0;
+		public static double gamma = 6.0;
 		public static double gravity = 0.08;
 		public static double sensitivity = 0.005;
 		public static double walkSpeed = 0.5;

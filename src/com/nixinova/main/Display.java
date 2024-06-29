@@ -139,16 +139,19 @@ public class Display extends Canvas implements Runnable {
 		String msg1 = "", msg2 = "", msg3 = "";
 		float fileV = Options.fileVersion;
 		float curV = Options.OPTIONS_VERSION;
-		if (fileV != curV) {
+		boolean diffMajor = (int) fileV != (int) curV;
+		boolean diffMinor = (int) (fileV * 10) != (int) (curV * 10);
+		if (diffMinor) { // only breaking change if major or minor is different
 			if (fileV < curV)
-				msg1 = "Outdated options version! client is on " + curV + " while options.txt is on " + fileV + ".";
+				msg1 = "Outdated options version! Client is on " + curV + " while options.txt is on " + fileV + ".";
 			else
-				msg1 = "Outdated options version! options.txt is on " + fileV + " while client is on " + curV + ".";
+				msg1 = "Options file too new! options.txt is on " + fileV + " while client is on " + curV + ".";
 
-			if ((int) fileV == (int) curV)
-				msg2 = "Data in options.txt which differs from the current version may not work correctly!";
-			else
+			if (diffMajor) // breaking changes to the file format
 				msg2 = "Data in options.txt which differs from the current version may break or crash your game!";
+			else if (diffMinor) // changes to implementation of values
+				msg2 = "Data in options.txt which differs from the current version may not work correctly!";
+
 			msg3 = "Delete options.txt in %appdata%\\.mineo and restart the game to refresh the options file.";
 		}
 
@@ -159,10 +162,10 @@ public class Display extends Canvas implements Runnable {
 			graphics.drawString("FPS: " + String.valueOf(this.fps), 5, sep * 2);
 			graphics.drawString("Block: " + playerX + " / " + playerY + " / " + playerZ, 5, sep * 3);
 
-			graphics.setColor((int) fileV == (int) curV ? Color.yellow : Color.red);
-			graphics.drawString(msg1, 5, sep * 4);
-			graphics.drawString(msg2, 5, sep * 5);
-			graphics.drawString(msg3, 5, sep * 6);
+			graphics.setColor(diffMajor ? Color.red : diffMinor ? Color.yellow : Color.white);
+			graphics.drawString(msg1, 5, HEIGHT - sep * 8);
+			graphics.drawString(msg2, 5, HEIGHT - sep * 7);
+			graphics.drawString(msg3, 5, HEIGHT - sep * 6);
 		}
 
 		graphics.dispose();
