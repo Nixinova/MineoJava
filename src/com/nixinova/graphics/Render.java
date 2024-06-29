@@ -1,5 +1,7 @@
 package com.nixinova.graphics;
 
+import com.nixinova.world.Conversion;
+
 public class Render {
 	public final int width;
 	public final int height;
@@ -24,5 +26,24 @@ public class Render {
 				}
 			}
 		}
+	}
+
+	public void fill(int startX, int startY, int width, int height, int color) {
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++) {
+				int pixelI = (startX + x) + (startY + y) * this.width;
+				this.pixels[pixelI] = color;
+			}
+	}
+
+	public void drawTextureOnScreen(Render texture, int size, int startX, int startY) {
+		final int TEX_SIZE = Conversion.PX_PER_BLOCK;
+		for (int x = 0; x < size; x++)
+			for (int y = 0; y < size; y++) {
+				int pixelI = (startX + x) + ((startY + y) * this.width);
+				int texelX = x * TEX_SIZE / size;
+				int texelY = y * TEX_SIZE / size;
+				this.pixels[pixelI] = Texture.getTexel(texture, texelX, texelY);
+			}
 	}
 }

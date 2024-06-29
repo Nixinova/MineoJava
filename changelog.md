@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.13
+*2024-06-30 03:34*
+- Added a hotbar, showing all available blocks, with the selected block outlined
+- Add a preview of the selected block, displayed in top right
+- Changed cursor to be white
 
 ## 0.0.12_6
 *2024-06-30 02:20*

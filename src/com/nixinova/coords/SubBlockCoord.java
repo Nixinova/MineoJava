@@ -1,14 +1,10 @@
 package com.nixinova.coords;
 
-import com.nixinova.world.Conversion;
-
 public class SubBlockCoord {
 
 	public double x;
 	public double y;
 	public double z;
-
-	private final int per = Conversion.PX_PER_BLOCK;
 
 	public SubBlockCoord() {
 		this.x = this.y = this.z = 0.0;

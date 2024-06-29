@@ -7,10 +7,10 @@ import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord;
 import com.nixinova.coords.PxCoord;
 import com.nixinova.main.Game;
+import com.nixinova.player.Hotbar;
 import com.nixinova.player.Player;
 import com.nixinova.readwrite.Options;
 import com.nixinova.world.Block;
-import com.nixinova.world.Conversion;
 import com.nixinova.world.World;
 
 public class Render3D extends Render {
@@ -28,8 +28,6 @@ public class Render3D extends Render {
 	}
 
 	public void renderWorld(Game game) {
-		final int TEX_SIZE = Conversion.PX_PER_BLOCK;
-
 		double renderDistPx = Coord.fromBlock(Options.renderDistance).toPx().value();
 
 		PxCoord pos = game.controls.getPosition().toPx();
@@ -109,16 +107,17 @@ public class Render3D extends Render {
 					texture = game.world.getTextureAt(blockX, blockY, blockZ);
 				}
 				// Apply texture
-				int texPx = (texelX & (TEX_SIZE - 1)) + (texelZ & (TEX_SIZE - 1)) * TEX_SIZE;
-				this.pixels[pixelI] = texture.pixels[texPx];
+				this.pixels[pixelI] = Texture.getTexel(texture, texelX, texelZ);
 			}
 		}
 
-		// Mouse cursor
-		this.drawCursor();
-
 		// Apply render distance limiter
 		this.renderDistLimiter(renderDistPx);
+
+		// Draw UI elements
+		this.drawCursor();
+		this.drawSelectedBlock();
+		Hotbar.drawHotbar(this);
 
 		// Set last control moves
 		this.lastXMove = pos.x;
@@ -157,17 +156,23 @@ public class Render3D extends Render {
 			b = b * brightness / 255;
 
 			// Save fog-adjusted colour to pixel
-			this.pixels[i] = r << 16 | g << 8 | b;
+			super.pixels[i] = r << 16 | g << 8 | b;
 			this.fogAlrApplied = true;
 		}
 	}
 
 	private void drawCursor() {
 		int size = 5;
-		int startX = (width - size) / 2;
-		int startY = (height - size) / 2;
-		for (int x = startX; x < startX + size; x++)
-			for (int y = startY; y < startY + size; y++)
-				pixels[x + (y * width)] = 0;
+		int startX = (super.width - size) / 2;
+		int startY = (super.height - size) / 2;
+		super.fill(startX, startY, size, size, 0xEEEEEE);
+	}
+
+	private void drawSelectedBlock() {
+		final int size = 100;
+		int startX = super.width - size - 50;
+		int startY = 30;
+		Render texture = Hotbar.getCurrentBlock();
+		super.drawTextureOnScreen(texture, size, startX, startY);
 	}
 }
