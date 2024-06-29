@@ -30,5 +30,9 @@ public class TxCoord {
 		int per = Conversion.PX_PER_BLOCK;
 		return new BlockCoord(this.x / per, this.y / per, this.z / per);
 	}
+	
+	public double value() {
+		return this.x;
+	}
 
 }

@@ -79,10 +79,10 @@ public class Controller {
 		// Ground checks
 		/// Jumping
 		if (isJumping) {
-			yMove += Options.jumpHeight * Options.jumpStrength;
+			yMove += Options.jumpHeight;
 
 			// Keep track of Y-increase from jumping as this.y2 decelerates
-			this.jumpY += Options.jumpHeight * Options.jumpStrength;
+			this.jumpY += Options.jumpHeight;
 
 			// Once maximum height reached, stop isJumping
 			if (this.jumpY >= Options.jumpHeight) {

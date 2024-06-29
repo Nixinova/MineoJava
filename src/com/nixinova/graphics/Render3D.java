@@ -30,6 +30,8 @@ public class Render3D extends Render {
 	public void renderWorld(Game game) {
 		final int TEX_SIZE = Conversion.PX_PER_BLOCK;
 
+		double renderDistPx = Coord.fromBlock(Options.renderDistance).toPx().value();
+
 		PxCoord pos = game.controls.getPosition().toPx();
 		double bobbing = Math.sin(game.time) / 10.0;
 		double rotation = game.controls.getXRot();
@@ -101,7 +103,7 @@ public class Render3D extends Render {
 
 				// Get texture for block at this coordinate if within render distance
 				Render texture = Block.SKY.getTexture();
-				boolean withinRenderDist = depth < Options.renderDistance;
+				boolean withinRenderDist = depth < renderDistPx;
 				if (withinRenderDist && !generateSky) {
 					// Render block
 					texture = game.world.getTextureAt(blockX, blockY, blockZ);
@@ -116,7 +118,7 @@ public class Render3D extends Render {
 		this.drawCursor();
 
 		// Apply render distance limiter
-		this.renderDistLimiter();
+		this.renderDistLimiter(renderDistPx);
 
 		// Set last control moves
 		this.lastXMove = pos.x;
@@ -130,9 +132,7 @@ public class Render3D extends Render {
 	}
 
 	/** Adds depth-based fog to the pixels */
-	private void renderDistLimiter() {
-		double gamma = Options.gamma;
-
+	private void renderDistLimiter(double renderDistance) {
 		if (this.fogAlrApplied)
 			return;
 
@@ -140,7 +140,7 @@ public class Render3D extends Render {
 			// Get pixel colour
 			int colour = this.pixels[i];
 			// Determine brightness based on depth value from Z buffer
-			int brightness = (int) (Options.renderDistance * gamma / this.depthStore[i]);
+			int brightness = (int) (renderDistance * Options.gamma * 100 / this.depthStore[i]);
 
 			// Clamp brightness
 			if (brightness < 0)

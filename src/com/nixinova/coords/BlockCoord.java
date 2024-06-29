@@ -31,5 +31,9 @@ public class BlockCoord {
 	public BlockCoord toBlockCoord() {
 		return new BlockCoord(this.x * per, this.y * per, this.z * per);
 	}
+	
+	public int value() {
+		return this.x;
+	}
 
 }

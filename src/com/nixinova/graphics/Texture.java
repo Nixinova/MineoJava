@@ -4,16 +4,16 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 
-import com.nixinova.readwrite.Options;
-
 public class Texture {
+	public static final String TEXTURES_FOLDER = "/textures/";
+
 	public static Render loadTexture(String name) {
 		return loadBitmap(name + ".png");
 	}
 
 	private static Render loadBitmap(String filename) {
 		try {
-			BufferedImage image = ImageIO.read(Texture.class.getResource(Options.texturesFolder + filename));
+			BufferedImage image = ImageIO.read(Texture.class.getResource(TEXTURES_FOLDER + filename));
 			int width = image.getWidth();
 			int height = image.getHeight();
 			Render result = new Render(width, height);

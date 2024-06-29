@@ -15,20 +15,18 @@ public class Options {
 	 *   +0.10: Minor: Changes to the implementation of a value.
 	 *   +0.01: Micro: Addition of new options, keeps backward compatibility.
 	 */
-	public static final float OPTIONS_VERSION = 1.00F;
+	public static final float OPTIONS_VERSION = 1.10F;
 
 	private static final class DEFAULT_OPTIONS {
 		public static long seed = 100L;
 		public static int worldSize = 40;
-		public static int renderDistance = 5000;
-		public static double gamma = 6.0;
-		public static double gravity = 0.08;
+		public static int renderDistance = 50;
+		public static double gamma = 0.8;
+		public static double gravity = 0.2;
 		public static double sensitivity = 0.005;
 		public static double walkSpeed = 0.5;
 		public static double sprintSpeed = 0.8;
-		public static double jumpHeight = 5.0;
-		public static double jumpStrength = 0.2;
-		public static String texturesFolder = "/textures/";
+		public static double jumpHeight = 1.0;
 	}
 
 	private static final class OPTION_STRINGS {
@@ -42,8 +40,6 @@ public class Options {
 		public static String walkSpeed = "walkSpeed";
 		public static String sprintSpeed = "sprintSpeed";
 		public static String jumpHeight = "jumpHeight";
-		public static String jumpStrength = "jumpStrength";
-		public static String texturesFolder = "texturesFolder";
 	}
 
 	public static float fileVersion = OPTIONS_VERSION;
@@ -56,8 +52,6 @@ public class Options {
 	public static double sprintSpeed = DEFAULT_OPTIONS.sprintSpeed;
 	public static double walkSpeed = DEFAULT_OPTIONS.walkSpeed;
 	public static double jumpHeight = DEFAULT_OPTIONS.jumpHeight;
-	public static double jumpStrength = DEFAULT_OPTIONS.jumpStrength;
-	public static String texturesFolder = DEFAULT_OPTIONS.texturesFolder;
 
 	public static String writeValue(String id, String value) {
 		String br = System.getProperty("line.separator");
@@ -91,8 +85,6 @@ public class Options {
 				writer.write(writeValue(OPTION_STRINGS.walkSpeed, DEFAULT_OPTIONS.walkSpeed));
 				writer.write(writeValue(OPTION_STRINGS.sprintSpeed, DEFAULT_OPTIONS.sprintSpeed));
 				writer.write(writeValue(OPTION_STRINGS.jumpHeight, DEFAULT_OPTIONS.jumpHeight));
-				writer.write(writeValue(OPTION_STRINGS.jumpStrength, DEFAULT_OPTIONS.jumpStrength));
-				writer.write(writeValue(OPTION_STRINGS.texturesFolder, DEFAULT_OPTIONS.texturesFolder));
 
 				writer.close();
 			} catch (IOException err) {
@@ -147,9 +139,5 @@ public class Options {
 			sprintSpeed = Double.parseDouble(val);
 		if (name.contains(OPTION_STRINGS.jumpHeight))
 			jumpHeight = Double.parseDouble(val);
-		if (name.contains(OPTION_STRINGS.jumpStrength))
-			jumpStrength = Double.parseDouble(val);
-		if (name.contains(OPTION_STRINGS.texturesFolder))
-			texturesFolder = val;
 	}
 }

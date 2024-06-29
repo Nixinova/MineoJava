@@ -23,5 +23,9 @@ public class SubBlockCoord {
 	public BlockCoord toBlockCoord() {
 		return new BlockCoord((int) this.x, (int) this.y, (int) this.z);
 	}
+	
+	public double value() {
+		return this.x;
+	}
 
 }

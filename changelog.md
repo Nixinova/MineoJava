@@ -1,5 +1,14 @@
 # Changelog
 
+
+## 0.0.12_6
+*2024-06-30 02:20*
+- Changed renderDistance and jumpHeight options to use blocks as a unit
+- Changed gamma option scale
+- Changed default renderDistance to 50, jumpHeight to 1.0, gamma to 0.8, and gravity to 0.2
+- Removed jumpStrength and texturesFolder options
+- Upgraded options version to 1.1
+
 ## 0.0.12_5
 *2024-06-30 01:58*
 - Changed default gamma to 6.0

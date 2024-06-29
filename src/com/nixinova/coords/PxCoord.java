@@ -31,5 +31,9 @@ public class PxCoord {
 	public BlockCoord toBlockCoord() {
 		return new BlockCoord((int) this.x / per, (int) this.y / per, (int) this.z / per);
 	}
+	
+	public double value() {
+		return this.x;
+	}
 
 }
