@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.13_2
+*2024-07-03 04:55*
+- Made game start in windowed fullscren
+- Fixed position of hotbar
+
 ## 0.0.13_1
 *2024-07-03 04:38*
 - Changed world layer falling to use gravity value

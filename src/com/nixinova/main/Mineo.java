@@ -11,7 +11,7 @@ import com.nixinova.input.InputHandler;
 import com.nixinova.readwrite.Options;
 
 public class Mineo {
-	public static final String VERSION = "0.0.13_1";
+	public static final String VERSION = "0.0.13_2";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	private static JFrame frame;
@@ -32,6 +32,7 @@ public class Mineo {
 		frame.getContentPane().setCursor(blank);
 		frame.setDefaultCloseOperation(3);
 		frame.setSize(Display.WIDTH, Display.HEIGHT);
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // windowed fullscreen
 		frame.setTitle(TITLE);
 		frame.setVisible(true);
 		frame.setFocusable(true);

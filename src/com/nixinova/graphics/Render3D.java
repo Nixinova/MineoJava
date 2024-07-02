@@ -7,7 +7,6 @@ import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord;
 import com.nixinova.coords.PxCoord;
 import com.nixinova.main.Game;
-import com.nixinova.player.Hotbar;
 import com.nixinova.player.Player;
 import com.nixinova.readwrite.Options;
 import com.nixinova.world.Block;
@@ -115,9 +114,8 @@ public class Render3D extends Render {
 		this.renderDistLimiter(renderDistPx);
 
 		// Draw UI elements
-		this.drawCursor();
-		this.drawSelectedBlock();
-		Hotbar.drawHotbar(this);
+		HUD hud = new HUD(this);
+		hud.draw();
 
 		// Set last control moves
 		this.lastXMove = pos.x;
@@ -159,20 +157,5 @@ public class Render3D extends Render {
 			super.pixels[i] = r << 16 | g << 8 | b;
 			this.fogAlrApplied = true;
 		}
-	}
-
-	private void drawCursor() {
-		int size = 5;
-		int startX = (super.width - size) / 2;
-		int startY = (super.height - size) / 2;
-		super.fill(startX, startY, size, size, 0xEEEEEE);
-	}
-
-	private void drawSelectedBlock() {
-		final int size = 100;
-		int startX = super.width - size - 50;
-		int startY = 30;
-		Render texture = Hotbar.getCurrentBlock();
-		super.drawTextureOnScreen(texture, size, startX, startY);
 	}
 }
