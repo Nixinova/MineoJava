@@ -31,8 +31,8 @@ public class Controller {
 		this.pos2 = new PxCoord();
 	}
 
-	public void tick(InputHandler input, boolean[] keys) {
-		Keys kbd = new Keys(keys);
+	public void tick(InputHandler input) {
+		Keys kbd = input.keys;
 
 		// Setup movement
 		double yMove = 0.0D;
@@ -87,14 +87,14 @@ public class Controller {
 			// Once maximum height reached, stop isJumping
 			if (this.jumpY >= Options.jumpHeight) {
 				isJumping = false;
-				playerGround++;
+				playerGround += Options.jumpHeight;
 				if (playerGround > World.GROUND_Y)
 					playerGround = World.GROUND_Y;
 				this.jumpY = 0;
 			}
 		}
 		if (kbd.pressed(Keys.SHIFT)) {
-			playerGround -= 0.025;
+			playerGround -= Options.gravity / 10;
 			if (playerGround < 0)
 				playerGround = 0;
 
@@ -104,10 +104,12 @@ public class Controller {
 		}
 		if (this.game.player.isWithinWorld()) {
 			if (onGround()) {
-				if (kbd.pressed(Keys.JUMP))
+				if (kbd.pressed(Keys.JUMP)) {
 					isJumping = true;
+					kbd.startCooldown(Keys.JUMP);
+				}
 			} else if (aboveGround()) {
-				yMove -= Options.jumpHeight * Options.gravity;
+				yMove -= Options.gravity;
 			} else if (belowGround()) {
 				this.pos.y = Player.PLAYER_HEIGHT + groundBuffer * 1.01D;
 				yMove = 0.001D;
@@ -157,7 +159,13 @@ public class Controller {
 	}
 
 	public Coord getPosition() {
-		return Coord.fromPx(this.pos);
+		double groundOffset = this.playerGround - (int) this.playerGround;
+		return Coord.fromPx(this.pos.x, this.pos.y + groundOffset, this.pos.z);
+	}
+
+	public Coord getPositionInWorld() {
+		double playerGroundVal = this.getPlayerGround().toPx().value();
+		return Coord.fromPx(this.pos.x, this.pos.y + playerGroundVal, this.pos.z);
 	}
 
 	public Coord getPlayerGround() {

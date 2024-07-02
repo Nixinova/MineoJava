@@ -17,14 +17,10 @@ import com.nixinova.main.Display;
 
 // Input handler: absolute mouse movement, regardless of sensitivity etc
 public class InputHandler implements KeyListener, FocusListener, MouseListener, MouseMotionListener {
-	public static final int MOUSE_OFFSET = 10000;
-
-	private static final int KEYS_ARR_SIZE = 10100; // to fit both keyboard and mouse
-
-	public boolean[] keys = new boolean[KEYS_ARR_SIZE];
 	public int mouseX, mouseY;
 	public int centerX, centerY;
 	public int deltaX, deltaY;
+	public Keys keys;
 
 	private JFrame frame;
 	private Robot robot;
@@ -32,7 +28,8 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 
 	public InputHandler(JFrame frame) {
 		this.frame = frame;
-		
+		this.keys = new Keys();
+
 		this.centerX = Display.WIDTH / 2;
 		this.centerY = Display.HEIGHT / 2;
 		this.mouseX = this.centerX;
@@ -45,7 +42,7 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 		} catch (AWTException err) {
 		}
 	}
-	
+
 	public void tick() {
 		this.deltaX = 0;
 		this.deltaY = 0;
@@ -100,14 +97,14 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 	@Override
 	public void mousePressed(MouseEvent event) {
 		int button = event.getButton();
-		this.keys[MOUSE_OFFSET + button] = true;
+		this.keys.setButton(button, true);
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent event) {
 		// Reset all mouse buttons
-		this.keys[MOUSE_OFFSET + Keys.LCLICK] = false;
-		this.keys[MOUSE_OFFSET + Keys.RCLICK] = false;
+		this.keys.setButton(Keys.LCLICK, false);
+		this.keys.setButton(Keys.RCLICK, false);
 	}
 
 	@Override
@@ -119,22 +116,21 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 	@Override
 	public void focusLost(FocusEvent event) {
 		// Clear all keypresses
-		for (int i = 0; i < this.keys.length; i++)
-			this.keys[i] = false;
+		this.keys = new Keys();
 	}
 
 	@Override
 	public void keyPressed(KeyEvent event) {
 		int keyCode = event.getKeyCode();
-		if (keyCode > 0 && keyCode < this.keys.length)
-			this.keys[keyCode] = true;
+		if (keyCode > 0 && keyCode < this.keys.size())
+			this.keys.setKey(keyCode, true);
 	}
 
 	@Override
 	public void keyReleased(KeyEvent event) {
 		int keyCode = event.getKeyCode();
-		if (keyCode > 0 && keyCode < this.keys.length)
-			this.keys[keyCode] = false;
+		if (keyCode > 0 && keyCode < this.keys.size())
+			this.keys.setKey(keyCode, false);
 	}
 
 	@Override

@@ -11,7 +11,7 @@ import com.nixinova.input.InputHandler;
 import com.nixinova.readwrite.Options;
 
 public class Mineo {
-	public static final String VERSION = "0.0.13";
+	public static final String VERSION = "0.0.13_1";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	private static JFrame frame;

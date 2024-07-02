@@ -1,9 +1,16 @@
 # Changelog
 
+## 0.0.13_1
+*2024-07-03 04:38*
+- Changed world layer falling to use gravity value
+- Fixed double-jumping by implementing a key cooldown
+- Fixed Y-position not updating
+- Fixed world layer falling effect
+
 ## 0.0.13
 *2024-06-30 03:34*
 - Added a hotbar, showing all available blocks, with the selected block outlined
-- Add a preview of the selected block, displayed in top right
+- Added a preview of the selected block, displayed in top right
 - Changed cursor to be white
 
 ## 0.0.12_6

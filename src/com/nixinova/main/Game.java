@@ -22,14 +22,14 @@ public class Game {
 		this.time = 0;
 	}
 
-	public void tick(boolean[] keys) {
+	public void tick() {
 		this.time += 0.0005;
 
-		this.kbdInput = keys;
-		this.controls.tick(this.input, keys);
+		this.kbdInput = this.input.keys.getKeyData();
+		this.controls.tick(this.input);
 		this.input.tick();
 
 		// Set player coords
-		this.player.position = this.controls.getPosition();
+		this.player.position = this.controls.getPositionInWorld();
 	}
 }

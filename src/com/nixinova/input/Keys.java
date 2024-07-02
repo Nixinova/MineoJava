@@ -5,6 +5,9 @@ import java.awt.event.MouseEvent;
 
 // Keyboard and mouse
 public class Keys {
+	private static final int MOUSE_OFFSET = 10000;
+
+	public static final int ARR_SIZE = MOUSE_OFFSET + 100; // to fit both keyboard and mouse
 
 	// Keyboard
 	public static final int ESCAPE = KeyEvent.VK_ESCAPE;
@@ -33,13 +36,29 @@ public class Keys {
 	public static final int LCLICK = MouseEvent.BUTTON1;
 	public static final int RCLICK = MouseEvent.BUTTON3;
 
+	private static final long cooldownTimeNs = (long) 0.2e9;
+
 	private boolean[] keys;
+	private long[] cooldowns;
 
 	public Keys(boolean[] keys) {
 		this.keys = keys;
+		this.cooldowns = new long[keys.length];
+	}
+
+	public Keys() {
+		this.keys = new boolean[ARR_SIZE];
+		this.cooldowns = new long[keys.length];
 	}
 
 	public boolean pressed(int key) {
+		// Check cooldown if applicable
+		long cooldownVal = this.cooldowns[key];
+		if (cooldownVal > 0 && cooldownVal > System.nanoTime() - cooldownTimeNs) {
+			// Still in the cooldown window, so ignore keypress
+			return false;
+		}
+
 		return this.keys[key];
 	}
 
@@ -52,6 +71,27 @@ public class Keys {
 	}
 
 	public boolean clickedButton(int key) {
-		return this.keys[InputHandler.MOUSE_OFFSET + key];
+		return this.keys[MOUSE_OFFSET + key];
+	}
+
+	public void setKey(int key, boolean value) {
+		this.keys[key] = value;
+	}
+
+	public void setButton(int button, boolean value) {
+		this.setKey(MOUSE_OFFSET + button, value);
+	}
+
+	public void startCooldown(int key) {
+		// reset cooldown
+		this.cooldowns[key] = System.nanoTime();
+	}
+
+	public int size() {
+		return this.keys.length;
+	}
+
+	public boolean[] getKeyData() {
+		return this.keys;
 	}
 }

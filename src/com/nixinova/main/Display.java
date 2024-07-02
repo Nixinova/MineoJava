@@ -112,7 +112,7 @@ public class Display extends Canvas implements Runnable {
 	}
 
 	private void tick() {
-		this.game.tick(this.input.keys);
+		this.game.tick();
 	}
 
 	private void render() {
