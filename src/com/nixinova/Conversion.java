@@ -12,7 +12,7 @@ public class Conversion {
 	}
 
 	public static double blockToPx(int block) {
-		return (double) block / PX_PER_BLOCK;
+		return (double) block * PX_PER_BLOCK;
 	}
 
 }

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.13_3
+*2024-07-04 04:59*
+- Changed how FPS is measured
+- Changed default sensitivity to 0.003
+
 ## 0.0.13_2
 *2024-07-03 04:55*
 - Made game start in windowed fullscreen

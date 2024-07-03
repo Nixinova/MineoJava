@@ -1,5 +1,6 @@
 package com.nixinova.input;
 
+import com.nixinova.Conversion;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord;
 import com.nixinova.coords.PxCoord;
@@ -94,7 +95,7 @@ public class Controller {
 			}
 		}
 		if (kbd.pressed(Keys.SHIFT)) {
-			playerGround -= Options.gravity / 10;
+			playerGround -= Options.gravity / Conversion.PX_PER_BLOCK; // gravity per texel instead of per block
 			if (playerGround < 0)
 				playerGround = 0;
 
@@ -118,7 +119,7 @@ public class Controller {
 			// Fall when outside of world
 			if (yMove == 0)
 				yMove = -0.5;
-			yMove *= 1 + Options.gravity; // acceleration due to gravity
+			yMove *= 1 + Math.pow(1 + Options.gravity, 2); // acceleration due to gravity
 		}
 
 		// Mouse look boundaries
@@ -151,9 +152,9 @@ public class Controller {
 		this.tilt += this.tilt2;
 
 		// decel/interpolate
-		this.pos2.x *= 0.6D;
+		this.pos2.x *= 0.8D;
 		this.pos2.y *= 0.3D;
-		this.pos2.z *= 0.6D;
+		this.pos2.z *= 0.8D;
 		this.rot2 *= 0.8D;
 		this.tilt2 *= 0.8D;
 	}

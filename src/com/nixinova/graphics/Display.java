@@ -14,7 +14,6 @@ import java.awt.image.DataBufferInt;
 
 import com.nixinova.input.InputHandler;
 import com.nixinova.main.Game;
-import com.nixinova.options.Options;
 
 public class Display extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
@@ -76,39 +75,30 @@ public class Display extends Canvas implements Runnable {
 	@Override
 	public void run() {
 		int frames = 0;
-		double unprocessedSecs = 0.0D;
-		long prevTime = System.nanoTime();
-		double secsPerTick = 1.0D / 60;
-		int tickCount = 0;
+		long nanosecs = 0;
+		long prevTime = 0;
 
 		while (this.running) {
-			long curTime = System.nanoTime();
-			long passedTime = curTime - prevTime;
-			prevTime = curTime;
-			unprocessedSecs += passedTime / 1.0E9D;
+			// Tick
+			this.game.tick();
 
-			while (unprocessedSecs > secsPerTick) {
-				tick();
-				unprocessedSecs -= secsPerTick;
-
-				tickCount++;
-				if (tickCount % 60 == 0) {
-					prevTime += 1000L;
-					this.game.fps = frames;
-					frames = 0;
-				}
-				if (tickCount % 600 == 0) {
-					Options.createOptions();
-				}
-			}
-
-			render();
+			// Render game
+			this.render();
 			frames++;
-		}
-	}
 
-	private void tick() {
-		this.game.tick();
+			// Calculate delta time
+			long deltaTime = System.nanoTime() - prevTime;
+			prevTime = System.nanoTime();
+			nanosecs += deltaTime;
+
+			// Update frame rate every 1 second
+			if (nanosecs >= 1e9) {
+				this.game.fps = frames;
+				frames = 0;
+				nanosecs = 0;
+			}
+		}
+
 	}
 
 	private void render() {

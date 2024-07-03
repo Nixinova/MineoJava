@@ -2,6 +2,7 @@ package com.nixinova.main;
 
 import com.nixinova.input.Controller;
 import com.nixinova.input.InputHandler;
+import com.nixinova.options.Options;
 import com.nixinova.player.Player;
 import com.nixinova.world.World;
 
@@ -20,6 +21,7 @@ public class Game {
 		this.controls = new Controller(this);
 		this.input = input;
 		this.time = 0;
+		Options.createOptions();
 	}
 
 	public void tick() {
