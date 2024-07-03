@@ -2,13 +2,12 @@ package com.nixinova.world;
 
 import java.util.Random;
 
-import com.nixinova.Conversion;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.graphics.Render;
 import com.nixinova.options.Options;
 
 public class World {
-	public static final int SKY_Y_PX = 18 * Conversion.PX_PER_BLOCK;
+	public static final int SKY_Y = 18;
 	public static final int GROUND_Y = 10;
 
 	private final int arrSize;
@@ -20,25 +19,30 @@ public class World {
 		this.mapBlockTextures();
 	}
 
-	public Render getTextureAt(int blockX, int blockY, int blockZ) {
-		BlockCoord coordI = toBlockIndex(new BlockCoord(blockX, blockY, blockZ));
+	public boolean inWorld(int blockX, int blockY, int blockZ) {
+		final int wS = Options.worldSize;
+		return blockX <= wS && blockX >= -wS && blockY <= SKY_Y && blockY >= 0 && blockZ <= wS && blockZ >= -wS;
+	}
 
-		try {
+	public Render getTextureAt(int blockX, int blockY, int blockZ) {
+
+		BlockCoord coordI = toBlockIndex(blockX, blockY, blockZ);
+		if (inWorld(blockX, blockY, blockZ)) {
 			// If within the world, return texture
 			// Throws when block is outside of world
 			return this.blockTextures[coordI.x][coordI.y][coordI.z];
-		} catch (ArrayIndexOutOfBoundsException err) {
+		} else {
 			// When outside of world, return sky texture
 			return Block.SKY.getTexture();
 		}
 	}
 
 	public void setTextureAt(int blockX, int blockY, int blockZ, Render texture) {
-		BlockCoord coordI = toBlockIndex(new BlockCoord(blockX, blockY, blockZ));
-		try {
+		BlockCoord coordI = toBlockIndex(blockX, blockY, blockZ);
+		if (inWorld(blockX, blockY, blockZ)) {
 			// Throws when block is outside of world
 			this.blockTextures[coordI.x][coordI.y][coordI.z] = texture;
-		} catch (ArrayIndexOutOfBoundsException err) {
+		} else {
 			// Do nothing if trying to place outside of world
 		}
 	}
@@ -48,23 +52,22 @@ public class World {
 
 		Random random = new Random(Options.seed);
 
-		// TODO: 3D coord-based: y=0 place block, otherwise AIR
 		for (int x = 0; x < arrSize; x++) {
 			for (int y = 0; y < arrSize; y++) {
 				for (int z = 0; z < arrSize; z++) {
-					BlockCoord coordI = toBlockCoord(new BlockCoord(x, y, z));
+					int yCoord = fromBlockIndex(y);
 
-					if (coordI.y < 0)
+					if (yCoord < 0)
 						continue;
 
 					Block block;
-					if (coordI.y <= 0)
+					if (yCoord <= 0)
 						block = Block.BEDROCK;
-					else if (coordI.y <= GROUND_Y - 4)
-						block = random.nextInt(coordI.y) > 1 ? Block.DIRT : Block.STONE;
-					else if (coordI.y <= GROUND_Y - 2)
+					else if (yCoord <= GROUND_Y - 4)
+						block = random.nextInt(yCoord) > 1 ? Block.DIRT : Block.STONE;
+					else if (yCoord <= GROUND_Y - 2)
 						block = Block.DIRT;
-					else if (coordI.y <= GROUND_Y)
+					else if (yCoord <= GROUND_Y)
 						block = Block.GRASS;
 					else
 						block = null;
@@ -79,16 +82,12 @@ public class World {
 		return blockCoord + Options.worldSize;
 	}
 
-	private BlockCoord toBlockIndex(BlockCoord blockCoord) {
-		return new BlockCoord(toBlockIndex(blockCoord.x), toBlockIndex(blockCoord.y), toBlockIndex(blockCoord.z));
+	private BlockCoord toBlockIndex(int blockX, int blockY, int blockZ) {
+		return new BlockCoord(toBlockIndex(blockX), toBlockIndex(blockY), toBlockIndex(blockZ));
 	}
 
-	private int toBlockCoord(int blockIndex) {
+	private int fromBlockIndex(int blockIndex) {
 		return blockIndex - Options.worldSize;
-	}
-
-	private BlockCoord toBlockCoord(BlockCoord indexCoord) {
-		return new BlockCoord(toBlockCoord(indexCoord.x), toBlockCoord(indexCoord.y), toBlockCoord(indexCoord.z));
 	}
 
 }

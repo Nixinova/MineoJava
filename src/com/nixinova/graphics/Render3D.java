@@ -3,6 +3,7 @@ package com.nixinova.graphics;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
+import com.nixinova.Conversion;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord;
 import com.nixinova.coords.PxCoord;
@@ -70,7 +71,7 @@ public class Render3D extends Render {
 				// Depth calculation
 				double ground = game.controls.getPlayerGround().toSubBlock().y;
 				double offset = pos.y + ground;
-				double skyDepth = (World.SKY_Y_PX - offset) / -vert;
+				double skyDepth = (Conversion.blockToPx(World.SKY_Y) - offset) / -vert;
 				double worldDepth = (Player.PLAYER_HEIGHT + offset) / vert;
 				double depth = generateSky ? skyDepth : worldDepth;
 				if (game.controls.isWalking) {

@@ -22,7 +22,9 @@ public class Player {
 	}
 
 	public void setLookingAt(int x, int y, int z) {
-		this.lookingAtBlock = new BlockCoord(x, y, z);
+		this.lookingAtBlock.x = x;
+		this.lookingAtBlock.y = y;
+		this.lookingAtBlock.z = z;
 	}
 
 	public boolean isWithinWorld() {

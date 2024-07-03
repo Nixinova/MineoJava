@@ -3,9 +3,16 @@ package com.nixinova;
 public class Conversion {
 	public static final int PX_PER_BLOCK = 8;
 
-	public static int pxToCoord(int px) {
-		// Implement two's complement to make mapping of 0..7->0, -1..-8->-1
-		return px >= 0 ? px / PX_PER_BLOCK : (px - PX_PER_BLOCK + 1) / PX_PER_BLOCK;
+	public static int pxToBlock(double px) {
+		return (int) px * PX_PER_BLOCK;
+	}
+
+	public static int txToBlock(int px) {
+		return px * PX_PER_BLOCK;
+	}
+
+	public static double blockToPx(int block) {
+		return (double) block / PX_PER_BLOCK;
 	}
 
 }
