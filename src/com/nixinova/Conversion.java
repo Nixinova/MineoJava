@@ -4,7 +4,11 @@ public class Conversion {
 	public static final int PX_PER_BLOCK = 8;
 
 	public static int pxToBlock(double px) {
-		return (int) px * PX_PER_BLOCK;
+		return (int) px / PX_PER_BLOCK;
+	}
+
+	public static double pxToSubBlock(double px) {
+		return px / PX_PER_BLOCK;
 	}
 
 	public static int txToBlock(int px) {

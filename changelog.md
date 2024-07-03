@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.13_4
+*2024-07-04 05:44*
+- Changed coordinate display to show current block to 1 decimal place
+- Changed Y coordinate origin
+- Fixed being able to Shift while in the void
+
 ## 0.0.13_3
 *2024-07-04 04:59*
 - Changed how FPS is measured

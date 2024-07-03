@@ -3,7 +3,7 @@ package com.nixinova.graphics;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import com.nixinova.coords.BlockCoord;
+import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.main.Game;
 import com.nixinova.main.Mineo;
 import com.nixinova.options.Options;
@@ -20,10 +20,10 @@ public class ScreenText {
 	}
 
 	public void drawMainInfo(Game game) {
-		BlockCoord playerBlockPos = game.player.position.toBlock();
-		String playerX = String.format("%d", playerBlockPos.x);
-		String playerY = String.format("%d", playerBlockPos.y);
-		String playerZ = String.format("%d", playerBlockPos.z);
+		SubBlockCoord playerBlockPos = game.player.position.toSubBlock();
+		String playerX = String.format("%.1f", playerBlockPos.x);
+		String playerY = String.format("%.1f", playerBlockPos.y);
+		String playerZ = String.format("%.1f", playerBlockPos.z);
 
 		graphics.setColor(Color.white);
 		graphics.drawString(Mineo.TITLE, 5, SEP);

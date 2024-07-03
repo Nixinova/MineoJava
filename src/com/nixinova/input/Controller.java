@@ -17,10 +17,9 @@ public class Controller {
 	public boolean isWalking = false;
 
 	private Game game;
-	private PxCoord pos, pos2;
+	private PxCoord pos, pos2; // important: *controller* position, not player position!
 	private double rot, rot2;
 	private double tilt, tilt2;
-	private int debugCooldown = 0;
 	private double groundBuffer = 0.1D;
 	private boolean isJumping = false;
 	private double jumpY = 0;
@@ -94,7 +93,7 @@ public class Controller {
 				this.jumpY = 0;
 			}
 		}
-		if (kbd.pressed(Keys.SHIFT)) {
+		if (kbd.pressed(Keys.SHIFT) && onGround()) {
 			playerGround -= Options.gravity / Conversion.PX_PER_BLOCK; // gravity per texel instead of per block
 			if (playerGround < 0)
 				playerGround = 0;
@@ -112,7 +111,7 @@ public class Controller {
 			} else if (aboveGround()) {
 				yMove -= Options.gravity;
 			} else if (belowGround()) {
-				this.pos.y = Player.PLAYER_HEIGHT + groundBuffer * 1.01D;
+				this.pos.y = Player.PLAYER_HEIGHT_PX + groundBuffer * 1.01D;
 				yMove = 0.001D;
 			}
 		} else {
@@ -120,6 +119,7 @@ public class Controller {
 			if (yMove == 0)
 				yMove = -0.5;
 			yMove *= 1 + Math.pow(1 + Options.gravity, 2); // acceleration due to gravity
+			playerGround -= Options.gravity;
 		}
 
 		// Mouse look boundaries
@@ -133,11 +133,10 @@ public class Controller {
 		if (kbd.pressed(Keys.ESCAPE)) {
 			System.exit(1);
 		}
-		if (kbd.pressed(Keys.DEBUG) && this.debugCooldown > 10) {
+		if (kbd.pressed(Keys.DEBUG)) {
 			debugShown = !debugShown;
-			this.debugCooldown = 0;
+			kbd.startCooldown(Keys.DEBUG);
 		}
-		this.debugCooldown++;
 
 		// differentials for controls
 		this.pos2.x += (xMove * Math.cos(this.rot) + zMove * Math.sin(this.rot)) * Options.walkSpeed;
@@ -159,17 +158,20 @@ public class Controller {
 		this.tilt2 *= 0.8D;
 	}
 
-	public Coord getPosition() {
+	public Coord getControllerPosition() {
 		double groundOffset = this.playerGround - (int) this.playerGround;
 		return Coord.fromPx(this.pos.x, this.pos.y + groundOffset, this.pos.z);
 	}
 
 	public Coord getPositionInWorld() {
-		double playerGroundVal = this.getPlayerGround().toPx().value();
-		return Coord.fromPx(this.pos.x, this.pos.y + playerGroundVal, this.pos.z);
+		double groundVal = this.getPlayerGround().toPx().value();
+		double groundOffset = this.pos.y - Player.PLAYER_HEIGHT_PX; // Y position, minus height
+		Coord pos = Coord.fromPx(this.pos.x, groundVal + groundOffset, this.pos.z);
+		return pos;
 	}
 
 	public Coord getPlayerGround() {
+		//double offset = Conversion.pxToSubBlock(this.pos.y - Player.PLAYER_HEIGHT_PX);
 		return Coord.fromSubBlock(this.playerGround);
 	}
 
@@ -181,15 +183,15 @@ public class Controller {
 		return this.tilt;
 	}
 
-	public boolean onGround() {
-		return Math.abs(this.pos.y - Player.PLAYER_HEIGHT) < groundBuffer;
+	private boolean onGround() {
+		return Math.abs(this.pos.y - Player.PLAYER_HEIGHT_PX) < groundBuffer;
 	}
 
-	public boolean aboveGround() {
-		return this.pos.y > Player.PLAYER_HEIGHT;
+	private boolean aboveGround() {
+		return this.pos.y > Player.PLAYER_HEIGHT_PX;
 	}
 
-	public boolean belowGround() {
-		return this.pos.y < Player.PLAYER_HEIGHT;
+	private boolean belowGround() {
+		return this.pos.y < Player.PLAYER_HEIGHT_PX;
 	}
 }

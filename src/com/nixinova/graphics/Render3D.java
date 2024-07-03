@@ -30,7 +30,7 @@ public class Render3D extends Render {
 	public void renderWorld(Game game) {
 		double renderDistPx = Coord.fromBlock(Options.renderDistance).toPx().value();
 
-		PxCoord pos = game.controls.getPosition().toPx();
+		PxCoord pos = game.controls.getControllerPosition().toPx();
 		double bobbing = Math.sin(game.time) / 10.0;
 		double rotation = game.controls.getXRot();
 		double rotCos = Math.cos(rotation);
@@ -72,7 +72,7 @@ public class Render3D extends Render {
 				double ground = game.controls.getPlayerGround().toSubBlock().y;
 				double offset = pos.y + ground;
 				double skyDepth = (Conversion.blockToPx(World.SKY_Y) - offset) / -vert;
-				double worldDepth = (Player.PLAYER_HEIGHT + offset) / vert;
+				double worldDepth = (Player.PLAYER_HEIGHT_PX + offset) / vert;
 				double depth = generateSky ? skyDepth : worldDepth;
 				if (game.controls.isWalking) {
 					depth += bobbing;

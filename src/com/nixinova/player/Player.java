@@ -6,7 +6,7 @@ import com.nixinova.coords.Coord;
 import com.nixinova.options.Options;
 
 public class Player {
-	public static final int PLAYER_HEIGHT = 2 * Conversion.PX_PER_BLOCK;
+	public static final int PLAYER_HEIGHT_PX = 2 * Conversion.PX_PER_BLOCK;
 
 	public Coord position;
 
