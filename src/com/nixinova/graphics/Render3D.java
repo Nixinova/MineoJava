@@ -7,8 +7,8 @@ import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord;
 import com.nixinova.coords.PxCoord;
 import com.nixinova.main.Game;
+import com.nixinova.options.Options;
 import com.nixinova.player.Player;
-import com.nixinova.readwrite.Options;
 import com.nixinova.world.Block;
 import com.nixinova.world.World;
 

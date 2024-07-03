@@ -1,6 +1,6 @@
 package com.nixinova.graphics;
 
-import com.nixinova.world.Conversion;
+import com.nixinova.Conversion;
 
 public class Render {
 	public final int width;

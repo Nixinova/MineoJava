@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 
-import com.nixinova.world.Conversion;
+import com.nixinova.Conversion;
 
 public class Texture {
 	public static final String TEXTURES_FOLDER = "/textures/";

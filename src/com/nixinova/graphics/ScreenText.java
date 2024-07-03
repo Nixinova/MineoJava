@@ -6,7 +6,7 @@ import java.awt.Graphics;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.main.Game;
 import com.nixinova.main.Mineo;
-import com.nixinova.readwrite.Options;
+import com.nixinova.options.Options;
 
 public class ScreenText {
 

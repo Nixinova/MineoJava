@@ -3,7 +3,7 @@ package com.nixinova.world;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.graphics.Render;
 import com.nixinova.graphics.Texture;
-import com.nixinova.readwrite.Options;
+import com.nixinova.options.Options;
 
 public class Block {
 	public static Block SKY = new Block("env/sky");

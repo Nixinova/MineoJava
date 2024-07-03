@@ -14,7 +14,7 @@ import java.awt.image.DataBufferInt;
 
 import com.nixinova.input.InputHandler;
 import com.nixinova.main.Game;
-import com.nixinova.readwrite.Options;
+import com.nixinova.options.Options;
 
 public class Display extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;

@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 
 import com.nixinova.graphics.Display;
 import com.nixinova.input.InputHandler;
-import com.nixinova.readwrite.Options;
+import com.nixinova.options.Options;
 
 public class Mineo {
 	public static final String VERSION = "0.0.13_2";

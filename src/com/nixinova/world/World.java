@@ -2,9 +2,10 @@ package com.nixinova.world;
 
 import java.util.Random;
 
+import com.nixinova.Conversion;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.graphics.Render;
-import com.nixinova.readwrite.Options;
+import com.nixinova.options.Options;
 
 public class World {
 	public static final int SKY_Y_PX = 18 * Conversion.PX_PER_BLOCK;

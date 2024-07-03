@@ -1,6 +1,6 @@
 package com.nixinova.coords;
 
-import com.nixinova.world.Conversion;
+import com.nixinova.Conversion;
 
 public class BlockCoord implements ICoord<Integer> {
 
