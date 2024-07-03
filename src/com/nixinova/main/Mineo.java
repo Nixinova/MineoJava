@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
+import com.nixinova.graphics.Display;
 import com.nixinova.input.InputHandler;
 import com.nixinova.readwrite.Options;
 

@@ -113,10 +113,6 @@ public class Render3D extends Render {
 		// Apply render distance limiter
 		this.renderDistLimiter(renderDistPx);
 
-		// Draw UI elements
-		HUD hud = new HUD(this);
-		hud.draw();
-
 		// Set last control moves
 		this.lastXMove = pos.x;
 		this.lastYMove = pos.y;

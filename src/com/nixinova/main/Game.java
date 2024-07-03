@@ -7,7 +7,7 @@ import com.nixinova.world.World;
 
 public class Game {
 	public double time = 0.0D;
-
+	public int fps = 0;
 	public World world;
 	public Player player;
 	public Controller controls;

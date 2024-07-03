@@ -10,7 +10,7 @@ public class HUD {
 		this.render = render;
 	}
 	
-	public void draw() {
+	public void drawAll() {
 		this.drawCursor();
 		this.drawSelectedBlock();
 		this.drawHotbar();

@@ -2,7 +2,7 @@
 
 ## 0.0.13_2
 *2024-07-03 04:55*
-- Made game start in windowed fullscren
+- Made game start in windowed fullscreen
 - Fixed position of hotbar
 
 ## 0.0.13_1

@@ -1,7 +1,6 @@
-package com.nixinova.main;
+package com.nixinova.graphics;
 
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Toolkit;
@@ -13,9 +12,8 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
-import com.nixinova.coords.BlockCoord;
-import com.nixinova.graphics.Screen;
 import com.nixinova.input.InputHandler;
+import com.nixinova.main.Game;
 import com.nixinova.readwrite.Options;
 
 public class Display extends Canvas implements Runnable {
@@ -26,10 +24,8 @@ public class Display extends Canvas implements Runnable {
 	public static int WIDTH = (int) screenSize.getWidth();
 	public static int HEIGHT = (int) screenSize.getHeight();
 
-	public int fps = 0;
-
 	private Thread thread;
-	private Screen screen;
+	private Render3D renderer;
 	private BufferedImage img;
 	private Game game;
 	private InputHandler input;
@@ -45,7 +41,7 @@ public class Display extends Canvas implements Runnable {
 		setMinimumSize(size);
 		setMaximumSize(size);
 
-		this.screen = new Screen(WIDTH, HEIGHT);
+		this.renderer = new Render3D(WIDTH, HEIGHT);
 		this.img = new BufferedImage(WIDTH, HEIGHT, 1);
 		this.pixels = ((DataBufferInt) this.img.getRaster().getDataBuffer()).getData();
 
@@ -98,7 +94,7 @@ public class Display extends Canvas implements Runnable {
 				tickCount++;
 				if (tickCount % 60 == 0) {
 					prevTime += 1000L;
-					this.fps = frames;
+					this.game.fps = frames;
 					frames = 0;
 				}
 				if (tickCount % 600 == 0) {
@@ -121,53 +117,29 @@ public class Display extends Canvas implements Runnable {
 			createBufferStrategy(3);
 			return;
 		}
-		this.screen.render(this.game);
-
-		for (int i = 0; i < WIDTH * HEIGHT; i++) {
-			this.pixels[i] = this.screen.pixels[i];
-		}
 
 		Graphics graphics = buffer.getDrawGraphics();
+
+		// Draw world
+		this.renderer.renderWorld(this.game);
+
+		// Draw UI graphical elements
+		HUD hud = new HUD(this.renderer);
+		hud.drawAll();
+
+		// Apply and render nontext elements
+		for (int i = 0; i < WIDTH * HEIGHT; i++) {
+			this.pixels[i] = this.renderer.pixels[i];
+		}
 		graphics.drawImage(this.img, 0, 0, WIDTH, HEIGHT, null);
-		graphics.setColor(Color.white);
 
-		BlockCoord playerBlockPos = this.game.player.position.toBlock();
-		String playerX = String.format("%d", playerBlockPos.x);
-		String playerY = String.format("%d", playerBlockPos.y);
-		String playerZ = String.format("%d", playerBlockPos.z);
+		// Draw UI text elements
+		ScreenText uiText = new ScreenText(graphics);
+		if (game.controls.debugShown)
+			uiText.drawMainInfo(this.game);
+		uiText.drawOptionsWarning();
 
-		String msg1 = "", msg2 = "", msg3 = "";
-		float fileV = Options.fileVersion;
-		float curV = Options.OPTIONS_VERSION;
-		boolean diffMajor = (int) fileV != (int) curV;
-		boolean diffMinor = (int) (fileV * 10) != (int) (curV * 10);
-		if (diffMinor) { // only breaking change if major or minor is different
-			if (fileV < curV)
-				msg1 = "Outdated options version! Client is on " + curV + " while options.txt is on " + fileV + ".";
-			else
-				msg1 = "Options file too new! options.txt is on " + fileV + " while client is on " + curV + ".";
-
-			if (diffMajor) // breaking changes to the file format
-				msg2 = "Data in options.txt which differs from the current version may break or crash your game!";
-			else if (diffMinor) // changes to implementation of values
-				msg2 = "Data in options.txt which differs from the current version may not work correctly!";
-
-			msg3 = "Delete options.txt in %appdata%\\.mineo and restart the game to refresh the options file.";
-		}
-
-		if (game.controls.debugShown) {
-			final int sep = 15;
-			graphics.setColor(Color.white);
-			graphics.drawString(Mineo.TITLE, 5, sep);
-			graphics.drawString("FPS: " + String.valueOf(this.fps), 5, sep * 2);
-			graphics.drawString("Block: " + playerX + " / " + playerY + " / " + playerZ, 5, sep * 3);
-
-			graphics.setColor(diffMajor ? Color.red : diffMinor ? Color.yellow : Color.white);
-			graphics.drawString(msg1, 5, HEIGHT - sep * 8);
-			graphics.drawString(msg2, 5, HEIGHT - sep * 7);
-			graphics.drawString(msg3, 5, HEIGHT - sep * 6);
-		}
-
+		// Done
 		graphics.dispose();
 		buffer.show();
 	}
