@@ -2,13 +2,13 @@ package com.nixinova.coords;
 
 import com.nixinova.world.Conversion;
 
-public class BlockCoord {
+public class BlockCoord implements ICoord<Integer> {
 
 	public int x;
 	public int y;
 	public int z;
-	
-	private final int per = Conversion.PX_PER_BLOCK;
+
+	private static final int PER = Conversion.PX_PER_BLOCK;
 
 	public BlockCoord() {
 		this.x = this.y = this.z = 0;
@@ -21,18 +21,22 @@ public class BlockCoord {
 	}
 
 	public PxCoord toPxCoord() {
-		return new PxCoord(this.x * per, this.y * per, this.z * per);
+		return new PxCoord(this.x * PER, this.y * PER, this.z * PER);
 	}
 
 	public TxCoord toTxCoord() {
-		return new TxCoord(this.x * per, this.y * per, this.z * per);
+		return new TxCoord(this.x * PER, this.y * PER, this.z * PER);
 	}
 
 	public BlockCoord toBlockCoord() {
-		return new BlockCoord(this.x * per, this.y * per, this.z * per);
+		return this;
 	}
-	
-	public int value() {
+
+	public SubBlockCoord toSubBlockCoord() {
+		return new SubBlockCoord(this.x, this.y, this.z);
+	}
+
+	public Integer value() {
 		return this.x;
 	}
 

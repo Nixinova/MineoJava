@@ -1,10 +1,14 @@
 package com.nixinova.coords;
 
-public class SubBlockCoord {
+import com.nixinova.world.Conversion;
+
+public class SubBlockCoord implements ICoord<Double> {
 
 	public double x;
 	public double y;
 	public double z;
+
+	private static final int PER = Conversion.PX_PER_BLOCK;
 
 	public SubBlockCoord() {
 		this.x = this.y = this.z = 0.0;
@@ -16,11 +20,23 @@ public class SubBlockCoord {
 		this.z = z;
 	}
 
+	public PxCoord toPxCoord() {
+		return new PxCoord(this.x * PER, this.y * PER, this.z * PER);
+	}
+
+	public TxCoord toTxCoord() {
+		return new TxCoord((int) this.x * PER, (int) this.y * PER, (int) this.z * PER);
+	}
+
 	public BlockCoord toBlockCoord() {
 		return new BlockCoord((int) this.x, (int) this.y, (int) this.z);
 	}
+
+	public SubBlockCoord toSubBlockCoord() {
+		return this;
+	}
 	
-	public double value() {
+	public Double value() {
 		return this.x;
 	}
 
