@@ -23,7 +23,7 @@ public class Options {
 		public static int renderDistance = 50;
 		public static double gamma = 0.8;
 		public static double gravity = 0.2;
-		public static double sensitivity = 0.003;
+		public static double sensitivity = 0.005;
 		public static double walkSpeed = 0.5;
 		public static double sprintSpeed = 0.8;
 		public static double jumpHeight = 1.0;

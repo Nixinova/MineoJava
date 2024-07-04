@@ -16,7 +16,9 @@ public class Texture {
 	}
 
 	public static int getTexel(Render texture, int texelX, int texelY) {
-		int texPx = (texelX & (TEX_SIZE - 1)) + (texelY & (TEX_SIZE - 1)) * TEX_SIZE;
+		int blockTexelX = (texelX);//Conversion.pxToTexturePx(texelX);
+		int blockTexelY = (texelY);//Conversion.pxToTexturePx(texelY);
+		int texPx = (blockTexelX & (TEX_SIZE - 1)) + (blockTexelY & (TEX_SIZE - 1)) * TEX_SIZE;
 		return texture.pixels[texPx];
 	}
 

@@ -151,9 +151,9 @@ public class Controller {
 		this.tilt += this.tilt2;
 
 		// decel/interpolate
-		this.pos2.x *= 0.8D;
+		this.pos2.x *= 0.3D;
 		this.pos2.y *= 0.3D;
-		this.pos2.z *= 0.8D;
+		this.pos2.z *= 0.3D;
 		this.rot2 *= 0.8D;
 		this.tilt2 *= 0.8D;
 	}

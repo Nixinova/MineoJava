@@ -72,33 +72,34 @@ public class Display extends Canvas implements Runnable {
 		}
 	}
 
-	@Override
 	public void run() {
 		int frames = 0;
+		long prevTime = System.nanoTime();
+		double secsPerTick = 1.0D / 60;
+		double unprocessedSecs = 0;
 		long nanosecs = 0;
-		long prevTime = 0;
 
 		while (this.running) {
-			// Tick
-			this.game.tick();
+			long curTime = System.nanoTime();
+			long passedTime = curTime - prevTime;
+			prevTime = curTime;
+			nanosecs += passedTime;
+			unprocessedSecs += passedTime / 1.0E9D;
 
-			// Render game
-			this.render();
-			frames++;
+			while (unprocessedSecs > secsPerTick) {
+				this.game.tick();
+				unprocessedSecs -= secsPerTick;
 
-			// Calculate delta time
-			long deltaTime = System.nanoTime() - prevTime;
-			prevTime = System.nanoTime();
-			nanosecs += deltaTime;
-
-			// Update frame rate every 1 second
-			if (nanosecs >= 1e9) {
-				this.game.fps = frames;
-				frames = 0;
-				nanosecs = 0;
+				if (nanosecs > 1e9) {
+					this.game.fps = frames;
+					frames = 0;
+					nanosecs = 0;
+				}
 			}
-		}
 
+			render();
+			frames++;
+		}
 	}
 
 	private void render() {

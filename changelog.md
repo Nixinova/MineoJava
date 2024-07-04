@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.13_5
+*2024-07-05 06:20*
+- Reverted FPS measuring change
+- Changed default sensitivity back to 0.005
+- Fixed block duplication at origin
+- Fixed textures being mirrored along world origin
+
 ## 0.0.13_4
 *2024-07-04 05:44*
 - Changed coordinate display to show current block to 1 decimal place

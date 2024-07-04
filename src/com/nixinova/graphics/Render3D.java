@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.stream.IntStream;
 
 import com.nixinova.Conversion;
-import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord;
 import com.nixinova.coords.PxCoord;
 import com.nixinova.main.Game;
@@ -28,10 +27,13 @@ public class Render3D extends Render {
 	}
 
 	public void renderWorld(Game game) {
-		double renderDistPx = Coord.fromBlock(Options.renderDistance).toPx().value();
+		final Render skyTex = Block.SKY.getTexture();
 
+		double renderDistPx = Coord.fromBlock(Options.renderDistance).toPx().value();
 		PxCoord pos = game.controls.getControllerPosition().toPx();
-		double bobbing = Math.sin(game.time) / 10.0;
+		Coord playerGround = game.controls.getPlayerGround();
+
+		double bobbing = Math.sin(System.nanoTime()) / 1e9;
 		double rotation = game.controls.getXRot();
 		double rotCos = Math.cos(rotation);
 		double rotSin = Math.sin(rotation);
@@ -61,38 +63,36 @@ public class Render3D extends Render {
 			boolean inVoid = pos.y < 0;
 			boolean generateSky = isSky && !inVoid;
 
+			// Depth calculation
+			double ground = playerGround.toSubBlock().y;
+			double offset = pos.y + ground;
+			double skyDepth = (Conversion.blockToPx(World.SKY_Y) - offset) / -vert;
+			double worldDepth = (Player.PLAYER_HEIGHT_PX + offset) / vert;
+			double depth = generateSky ? skyDepth : worldDepth;
+			if (game.controls.isWalking) {
+				depth += bobbing;
+			}
+
 			// Loop through pixel columns
 			for (int xPx = 0; xPx < this.width; xPx++) {
 				int pixelI = xPx + (yPx * this.width);
 
 				// Relative horizontal position of screen pixel
 				double horiz = (xPx - this.width / 2.0D) / this.height;
+				horiz *= depth; // apply depth
 
-				// Depth calculation
-				double ground = game.controls.getPlayerGround().toSubBlock().y;
-				double offset = pos.y + ground;
-				double skyDepth = (Conversion.blockToPx(World.SKY_Y) - offset) / -vert;
-				double worldDepth = (Player.PLAYER_HEIGHT_PX + offset) / vert;
-				double depth = generateSky ? skyDepth : worldDepth;
-				if (game.controls.isWalking) {
-					depth += bobbing;
-				}
-				// Save to depth buffer
+				// Save depth in buffer
 				this.depthStore[pixelI] = isSky ? skyDepth : worldDepth;
 
-				// Apply depth
-				horiz *= depth;
-
 				// World pixel coords
-				int texelX = (int) (horiz * rotCos + depth * rotSin + pos.x);
-				int texelY = (int) game.controls.getPlayerGround().toTx().y;
-				int texelZ = (int) (depth * rotCos - horiz * rotSin + pos.z);
+				int texelX = (int) Math.floor(horiz * rotCos + depth * rotSin + pos.x);
+				int texelY = playerGround.toTx().y;
+				int texelZ = (int) Math.floor(depth * rotCos - horiz * rotSin + pos.z);
 
 				// World block coords
-				BlockCoord blockCoord = Coord.fromTx(texelX, texelY, texelZ).toBlock();
-				int blockX = blockCoord.x;
-				int blockY = blockCoord.y;
-				int blockZ = blockCoord.z;
+				int blockX = Conversion.txToBlockTwosComp(texelX);
+				int blockY = Conversion.txToBlockTwosComp(texelY);
+				int blockZ = Conversion.txToBlockTwosComp(texelZ);
 
 				// Set looking at block
 				if (pixelI == width * height / 2) {
@@ -100,7 +100,7 @@ public class Render3D extends Render {
 				}
 
 				// Get texture for block at this coordinate if within render distance
-				Render texture = Block.SKY.getTexture();
+				Render texture = skyTex;
 				boolean withinRenderDist = depth < renderDistPx;
 				if (withinRenderDist && !generateSky) {
 					// Render block
