@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.14_1
+*2024-07-10 20:30*
+- Left click now breaks blocks
+- Right click now places blocks on top of another
+- Top layer of world is now jagged
+
 ## 0.0.14
 *2024-07-10 20:03*
 - World is now properly 3D

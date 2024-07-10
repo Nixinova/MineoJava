@@ -1,19 +1,18 @@
 package com.nixinova.player;
 
-import com.nixinova.graphics.Render;
 import com.nixinova.input.Keys;
 import com.nixinova.world.Block;
 
 public class Hotbar {
-	public static final Render[] SLOTS = new Render[10];
+	public static final Block[] SLOTS = new Block[10];
 
 	public static int currentBlockID = 1;
 
 	static {
-		SLOTS[1] = Block.BEDROCK.getTexture();
-		SLOTS[2] = Block.GRASS.getTexture();
-		SLOTS[3] = Block.DIRT.getTexture();
-		SLOTS[4] = Block.STONE.getTexture();
+		SLOTS[1] = Block.BEDROCK;
+		SLOTS[2] = Block.GRASS;
+		SLOTS[3] = Block.DIRT;
+		SLOTS[4] = Block.STONE;
 	}
 
 	public static void updateFromKbd(Keys kbd) {
@@ -25,7 +24,7 @@ public class Hotbar {
 		}
 	}
 
-	public static Render getCurrentBlock() {
+	public static Block getCurrentBlock() {
 		return SLOTS[currentBlockID];
 	}
 

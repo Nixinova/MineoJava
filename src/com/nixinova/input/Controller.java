@@ -5,6 +5,7 @@ import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord;
 import com.nixinova.coords.PxCoord;
 import com.nixinova.coords.SubBlockCoord;
+import com.nixinova.graphics.Render;
 import com.nixinova.main.Game;
 import com.nixinova.options.Options;
 import com.nixinova.player.Hotbar;
@@ -37,12 +38,32 @@ public class Controller {
 		double yMove = 0.0D;
 		double zMove = 0.0D;
 
-		// Placing
+		// Block breaking
 		if (kbd.clickedButton(Keys.LCLICK)) {
+			// Get looking at block
 			BlockCoord lookingAt = this.game.player.getLookingAt();
+
+			// Break block if within world
 			if (Block.isInsideWorld(lookingAt)) {
-				this.game.world.setTextureAt(lookingAt.x, lookingAt.y, lookingAt.z, Hotbar.getCurrentBlock());
+				this.game.world.setTextureAt(lookingAt.x, lookingAt.y, lookingAt.z, Block.AIR.getTexture());
 			}
+			
+			// Cooldown
+			kbd.startCooldown(Keys.RCLICK);
+		}
+		// Block placing
+		if (kbd.clickedButton(Keys.RCLICK)) {
+			// Get looking at block
+			BlockCoord lookingAt = this.game.player.getLookingAt();
+
+			// Place block if within world
+			if (Block.isInsideWorld(lookingAt)) {
+				Block block = Hotbar.getCurrentBlock();
+				this.game.world.setTextureAt(lookingAt.x, lookingAt.y + 1, lookingAt.z, block.getTexture());
+			}
+			
+			// Cooldown
+			kbd.startCooldown(Keys.RCLICK);
 		}
 
 		// Selecting block
@@ -87,7 +108,7 @@ public class Controller {
 				this.jumpY = 0;
 			}
 		}
-		
+
 		// Ground checks
 		if (this.game.player.isWithinWorld(this.game.world)) {
 			if (onGround()) {
@@ -98,7 +119,7 @@ public class Controller {
 			} else if (aboveGround()) {
 				yMove -= Options.gravity;
 			} else if (belowGround()) {
-				this.pos.y = Conversion.pxToSubBlock(World.GROUND_Y);
+				this.pos.y = getGroundYPx();
 				yMove = 0.001D;
 			}
 		} else {
@@ -158,17 +179,21 @@ public class Controller {
 
 	private boolean onGround() {
 		final double groundBuffer = 0.1;
-		SubBlockCoord subB = this.getPosition().toSubBlock();
-		int groundY = this.game.world.getGroundY((int) subB.x, (int) subB.z);
-		return Math.abs(this.pos.y - Conversion.pxToSubBlock(groundY)) < groundBuffer;
+
+		return Math.abs(this.pos.y - getGroundYPx()) < groundBuffer;
 	}
 
 	private boolean aboveGround() {
-		SubBlockCoord subB = this.getPosition().toSubBlock();
-		return !this.onGround() && subB.y > this.game.world.getGroundY((int) subB.x, (int) subB.z);
+		return !this.onGround() && this.pos.y > getGroundYPx();
 	}
 
 	private boolean belowGround() {
 		return !this.onGround() & !this.aboveGround();
+	}
+
+	private double getGroundYPx() {
+		BlockCoord blockCoord = this.getPosition().toBlock();
+		int groundY = this.game.world.getGroundY(blockCoord.x, blockCoord.z);
+		return Conversion.subBlockToPx(groundY);
 	}
 }

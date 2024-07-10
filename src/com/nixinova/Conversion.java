@@ -23,4 +23,8 @@ public class Conversion {
 		return (double) block * PX_PER_BLOCK;
 	}
 
+	public static double subBlockToPx(double block) {
+		return block * PX_PER_BLOCK;
+	}
+
 }

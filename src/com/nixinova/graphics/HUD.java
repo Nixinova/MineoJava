@@ -1,6 +1,7 @@
 package com.nixinova.graphics;
 
 import com.nixinova.player.Hotbar;
+import com.nixinova.world.Block;
 
 public class HUD {
 
@@ -9,7 +10,7 @@ public class HUD {
 	public HUD(Render render) {
 		this.render = render;
 	}
-	
+
 	public void drawAll() {
 		this.drawCursor();
 		this.drawSelectedBlock();
@@ -35,9 +36,9 @@ public class HUD {
 		int curX = startX;
 		int curY = startY;
 		for (int i = 0; i < 10; i++) {
-			Render texture = Hotbar.SLOTS[i];
-			if (texture != null) {
-				render.drawTextureOnScreen(texture, size, curX, curY);
+			Block block = Hotbar.SLOTS[i];
+			if (block != null) {
+				render.drawTextureOnScreen(block.getTexture(), size, curX, curY);
 				curX += cell;
 			}
 		}
@@ -54,7 +55,7 @@ public class HUD {
 		final int size = 100;
 		int startX = render.width - size - 50;
 		int startY = 30;
-		Render texture = Hotbar.getCurrentBlock();
+		Render texture = Hotbar.getCurrentBlock().getTexture();
 		render.drawTextureOnScreen(texture, size, startX, startY);
 	}
 

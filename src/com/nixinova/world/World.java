@@ -82,7 +82,6 @@ public class World {
 
 	private void mapBlockTextures() {
 		this.blockTextures = new Render[arrSize[0]][arrSize[1]][arrSize[2]];
-		System.out.println(arrSize[0]+" "+ arrSize[1]+ " "+arrSize[2]);
 
 		Random random = new Random(Options.seed);
 
@@ -102,8 +101,8 @@ public class World {
 						block = Block.DIRT;
 					else if (y <= GROUND_Y)
 						block = Block.GRASS;
-					// else if (yCoord <= GROUND_Y + 1 && random.nextBoolean())
-					// block = Block.GRASS;
+					else if (y <= GROUND_Y + 1 && random.nextBoolean())
+						block = Block.GRASS;
 					else
 						block = Block.AIR;
 
