@@ -120,7 +120,7 @@ public class Display extends Canvas implements Runnable {
 
 		// Apply and render nontext elements
 		for (int i = 0; i < WIDTH * HEIGHT; i++) {
-			this.pixels[i] = this.renderer.pixels[i];
+			this.pixels[i] = this.renderer.getImage()[i];
 		}
 		graphics.drawImage(this.img, 0, 0, WIDTH, HEIGHT, null);
 

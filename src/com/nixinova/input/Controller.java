@@ -4,10 +4,10 @@ import com.nixinova.Conversion;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord;
 import com.nixinova.coords.PxCoord;
+import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.main.Game;
 import com.nixinova.options.Options;
 import com.nixinova.player.Hotbar;
-import com.nixinova.player.Player;
 import com.nixinova.world.Block;
 import com.nixinova.world.World;
 
@@ -17,13 +17,11 @@ public class Controller {
 	public boolean isWalking = false;
 
 	private Game game;
-	private PxCoord pos, pos2; // important: *controller* position, not player position!
+	private PxCoord pos, pos2;
 	private double rot, rot2;
 	private double tilt, tilt2;
-	private double groundBuffer = 0.1D;
 	private boolean isJumping = false;
 	private double jumpY = 0;
-	private double playerGround = 0; // sub-block
 
 	public Controller(Game game) {
 		this.game = game;
@@ -35,8 +33,8 @@ public class Controller {
 		Keys kbd = input.keys;
 
 		// Setup movement
-		double yMove = 0.0D;
 		double xMove = 0.0D;
+		double yMove = 0.0D;
 		double zMove = 0.0D;
 
 		// Placing
@@ -50,7 +48,7 @@ public class Controller {
 		// Selecting block
 		Hotbar.updateFromKbd(kbd);
 
-		/// Movement
+		// Movement
 		double mvChange = kbd.pressed(Keys.SPRINT) ? Options.sprintSpeed : Options.walkSpeed;
 		if (kbd.pressed(Keys.FORWARD)) {
 			zMove += mvChange;
@@ -66,7 +64,7 @@ public class Controller {
 		}
 		isWalking = kbd.pressedAny(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
 
-		/// Mouse look
+		// Mouse look
 		double mouseDX = Options.sensitivity * input.deltaX;
 		double mouseDY = Options.sensitivity * input.deltaY;
 		if (mouseDX != 0) {
@@ -76,8 +74,7 @@ public class Controller {
 			this.tilt2 += -mouseDY;
 		}
 
-		// Ground checks
-		/// Jumping
+		// Jumping
 		if (isJumping) {
 			yMove += Options.jumpHeight;
 
@@ -87,22 +84,12 @@ public class Controller {
 			// Once maximum height reached, stop isJumping
 			if (this.jumpY >= Options.jumpHeight) {
 				isJumping = false;
-				playerGround += Options.jumpHeight;
-				if (playerGround > World.GROUND_Y)
-					playerGround = World.GROUND_Y;
 				this.jumpY = 0;
 			}
 		}
-		if (kbd.pressed(Keys.SHIFT) && onGround()) {
-			playerGround -= Options.gravity / Conversion.PX_PER_BLOCK; // gravity per texel instead of per block
-			if (playerGround < 0)
-				playerGround = 0;
-
-		} else {
-			// Snap to ground when Shift is unpressed
-			playerGround = Math.floor(playerGround);
-		}
-		if (this.game.player.isWithinWorld()) {
+		
+		// Ground checks
+		if (this.game.player.isWithinWorld(this.game.world)) {
 			if (onGround()) {
 				if (kbd.pressed(Keys.JUMP)) {
 					isJumping = true;
@@ -111,7 +98,7 @@ public class Controller {
 			} else if (aboveGround()) {
 				yMove -= Options.gravity;
 			} else if (belowGround()) {
-				this.pos.y = Player.PLAYER_HEIGHT_PX + groundBuffer * 1.01D;
+				this.pos.y = Conversion.pxToSubBlock(World.GROUND_Y);
 				yMove = 0.001D;
 			}
 		} else {
@@ -119,11 +106,10 @@ public class Controller {
 			if (yMove == 0)
 				yMove = -0.5;
 			yMove *= 1 + Math.pow(1 + Options.gravity, 2); // acceleration due to gravity
-			playerGround -= Options.gravity;
 		}
 
 		// Mouse look boundaries
-		double maxTilt = 1.0;
+		double maxTilt = 1.5;
 		if (tilt < -maxTilt)
 			tilt = -maxTilt;
 		if (tilt > maxTilt)
@@ -158,21 +144,8 @@ public class Controller {
 		this.tilt2 *= 0.8D;
 	}
 
-	public Coord getControllerPosition() {
-		double groundOffset = this.playerGround - (int) this.playerGround;
-		return Coord.fromPx(this.pos.x, this.pos.y + groundOffset, this.pos.z);
-	}
-
-	public Coord getPositionInWorld() {
-		double groundVal = this.getPlayerGround().toPx().value();
-		double groundOffset = this.pos.y - Player.PLAYER_HEIGHT_PX; // Y position, minus height
-		Coord pos = Coord.fromPx(this.pos.x, groundVal + groundOffset, this.pos.z);
-		return pos;
-	}
-
-	public Coord getPlayerGround() {
-		//double offset = Conversion.pxToSubBlock(this.pos.y - Player.PLAYER_HEIGHT_PX);
-		return Coord.fromSubBlock(this.playerGround);
+	public Coord getPosition() {
+		return Coord.fromPx(this.pos);
 	}
 
 	public double getXRot() {
@@ -184,14 +157,18 @@ public class Controller {
 	}
 
 	private boolean onGround() {
-		return Math.abs(this.pos.y - Player.PLAYER_HEIGHT_PX) < groundBuffer;
+		final double groundBuffer = 0.1;
+		SubBlockCoord subB = this.getPosition().toSubBlock();
+		int groundY = this.game.world.getGroundY((int) subB.x, (int) subB.z);
+		return Math.abs(this.pos.y - Conversion.pxToSubBlock(groundY)) < groundBuffer;
 	}
 
 	private boolean aboveGround() {
-		return this.pos.y > Player.PLAYER_HEIGHT_PX;
+		SubBlockCoord subB = this.getPosition().toSubBlock();
+		return !this.onGround() && subB.y > this.game.world.getGroundY((int) subB.x, (int) subB.z);
 	}
 
 	private boolean belowGround() {
-		return this.pos.y < Player.PLAYER_HEIGHT_PX;
+		return !this.onGround() & !this.aboveGround();
 	}
 }

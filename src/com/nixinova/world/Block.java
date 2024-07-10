@@ -8,6 +8,7 @@ import com.nixinova.options.Options;
 public class Block {
 	public static Block SKY = new Block("env/sky");
 
+	public static Block AIR = new Block(null);
 	public static Block BEDROCK = new Block("blocks/bedrock");
 	public static Block STONE = new Block("blocks/stone");
 	public static Block DIRT = new Block("blocks/dirt");
@@ -17,7 +18,7 @@ public class Block {
 	private Render texture;
 	
 	public Block(String texture) {
-		this.texture = Texture.loadTexture(texture);
+		this.texture = texture == null ? null : Texture.loadTexture(texture);
 	}
 	
 	public Render getTexture() {

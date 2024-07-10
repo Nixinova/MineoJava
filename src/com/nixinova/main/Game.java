@@ -27,6 +27,6 @@ public class Game {
 		this.controls.tick(this.input);
 		this.input.tick();
 		// Set player coords
-		this.player.position = this.controls.getPositionInWorld();
+		this.player.position = this.controls.getPosition();
 	}
 }

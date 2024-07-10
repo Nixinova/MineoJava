@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.14
+*2024-07-10 20:03*
+- World is now properly 3D
+- Game now renders in 2.5D
+- Player can now look fully up and down
+- World size is now locked to 10 blocks in radius for performance reasons
+- Removed distance fog effect
+
 ## 0.0.13_5
 *2024-07-05 06:20*
 - Reverted FPS measuring change

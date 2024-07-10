@@ -10,6 +10,10 @@ public class Conversion {
 		else
 			return (tx - (PX_PER_BLOCK - 1)) / PX_PER_BLOCK;
 	}
+	
+	public static double pxToSubBlock(double px) {
+		return px * PX_PER_BLOCK;
+	}
 
 	public static int txToBlock(int tx) {
 		return tx / PX_PER_BLOCK;

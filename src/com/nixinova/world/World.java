@@ -10,69 +10,104 @@ public class World {
 	public static final int SKY_Y = 18;
 	public static final int GROUND_Y = 10;
 
-	private final int arrSize;
+	public final BlockCoord minCorner;
+	public final BlockCoord maxCorner;
+
+	private final int[] arrSize;
 
 	private Render[][][] blockTextures;
 
 	public World() {
-		this.arrSize = Options.worldSize * 2 + 1; // to go from +size to -size incl. 0
+		this.minCorner = new BlockCoord(-Options.worldSize, 0, -Options.worldSize);
+		this.maxCorner = new BlockCoord(Options.worldSize, SKY_Y, Options.worldSize);
+		this.arrSize = new int[] {
+			// to go from +size to -size incl. 0
+			maxCorner.x - minCorner.x + 1,
+			maxCorner.y - minCorner.y + 1,
+			maxCorner.z - minCorner.z + 1,
+		};
+
 		this.mapBlockTextures();
 	}
 
-	public boolean inWorld(int blockX, int blockY, int blockZ) {
-		final int wS = Options.worldSize;
-		return blockX <= wS && blockX >= -wS && blockY <= SKY_Y && blockY >= 0 && blockZ <= wS && blockZ >= -wS;
+	public boolean isWithinWorld(int blockX, int blockY, int blockZ) {
+		final BlockCoord min = minCorner, max = maxCorner;
+		boolean xValid = blockX >= min.x && blockX <= max.x;
+		boolean yValid = blockY >= min.y && blockY <= max.y;
+		boolean zValid = blockZ >= min.z && blockZ <= max.z;
+		return xValid && yValid && zValid;
+	}
+
+	public boolean isExposed(int blockX, int blockY, int blockZ) {
+		int x = blockX, y = blockY, z = blockZ;
+		// TODO: also true if at edge of world
+		boolean airAbove = isAir(x, y + 1, z);
+		boolean airBeside = isAir(x + 1, y, z) || isAir(x - 1, y, z) || isAir(x, y, z + 1) || isAir(x, y, z - 1);
+		boolean atEdge = !isWithinWorld(x + 1, y, z) || !isWithinWorld(x - 1, y, z) || !isWithinWorld(x, y + 1, z)
+			|| !isWithinWorld(x, y - 1, z) || !isWithinWorld(x, y, z + 1) || !isWithinWorld(x, y, z - 1);
+		return airAbove || airBeside || atEdge;
+	}
+
+	/** returns -1 if all is air */
+	public int getGroundY(int blockX, int blockZ) {
+		for (int i = 0; i < SKY_Y; i++) {
+			if (this.getTextureAt(blockX, i, blockZ) == null) {
+				return i - 1;
+			}
+		}
+		return -1;
+	}
+
+	public boolean isAir(int blockX, int blockY, int blockZ) {
+		return getTextureAt(blockX, blockY, blockZ) == Block.AIR.getTexture();
 	}
 
 	public Render getTextureAt(int blockX, int blockY, int blockZ) {
-
-		BlockCoord coordI = toBlockIndex(blockX, blockY, blockZ);
-		if (inWorld(blockX, blockY, blockZ)) {
+		if (isWithinWorld(blockX, blockY, blockZ)) {
 			// If within the world, return texture
-			// Throws when block is outside of world
+			BlockCoord coordI = toBlockIndex(blockX, blockY, blockZ);
 			return this.blockTextures[coordI.x][coordI.y][coordI.z];
 		} else {
-			// When outside of world, return sky texture
+			// When outside of world, return sky
 			return Block.SKY.getTexture();
 		}
 	}
 
 	public void setTextureAt(int blockX, int blockY, int blockZ, Render texture) {
-		BlockCoord coordI = toBlockIndex(blockX, blockY, blockZ);
-		if (inWorld(blockX, blockY, blockZ)) {
-			// Throws when block is outside of world
+		if (isWithinWorld(blockX, blockY, blockZ)) {
+			BlockCoord coordI = toBlockIndex(blockX, blockY, blockZ);
 			this.blockTextures[coordI.x][coordI.y][coordI.z] = texture;
-		} else {
-			// Do nothing if trying to place outside of world
 		}
 	}
 
 	private void mapBlockTextures() {
-		this.blockTextures = new Render[arrSize][arrSize][arrSize];
+		this.blockTextures = new Render[arrSize[0]][arrSize[1]][arrSize[2]];
+		System.out.println(arrSize[0]+" "+ arrSize[1]+ " "+arrSize[2]);
 
 		Random random = new Random(Options.seed);
 
-		for (int x = 0; x < arrSize; x++) {
-			for (int y = 0; y < arrSize; y++) {
-				for (int z = 0; z < arrSize; z++) {
-					int yCoord = fromBlockIndex(y);
+		for (int x = 0; x < arrSize[0]; x++) {
+			for (int y = 0; y < arrSize[1]; y++) {
+				for (int z = 0; z < arrSize[2]; z++) {
 
-					if (yCoord < 0)
+					if (y < 0)
 						continue;
 
 					Block block;
-					if (yCoord <= 0)
+					if (y <= 0)
 						block = Block.BEDROCK;
-					else if (yCoord <= GROUND_Y - 4)
-						block = random.nextInt(yCoord) > 1 ? Block.DIRT : Block.STONE;
-					else if (yCoord <= GROUND_Y - 2)
+					else if (y <= GROUND_Y - 4)
+						block = random.nextInt(y) > 1 ? Block.DIRT : Block.STONE;
+					else if (y <= GROUND_Y - 2)
 						block = Block.DIRT;
-					else if (yCoord <= GROUND_Y)
+					else if (y <= GROUND_Y)
 						block = Block.GRASS;
+					// else if (yCoord <= GROUND_Y + 1 && random.nextBoolean())
+					// block = Block.GRASS;
 					else
-						block = null;
+						block = Block.AIR;
 
-					blockTextures[x][y][z] = block == null ? null : block.getTexture();
+					blockTextures[x][y][z] = block.getTexture();
 				}
 			}
 		}
@@ -83,11 +118,8 @@ public class World {
 	}
 
 	private BlockCoord toBlockIndex(int blockX, int blockY, int blockZ) {
-		return new BlockCoord(toBlockIndex(blockX), toBlockIndex(blockY), toBlockIndex(blockZ));
-	}
-
-	private int fromBlockIndex(int blockIndex) {
-		return blockIndex - Options.worldSize;
+		// Note: Y cannot be negative, so no blockIndexing
+		return new BlockCoord(toBlockIndex(blockX), blockY, toBlockIndex(blockZ));
 	}
 
 }

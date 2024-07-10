@@ -27,102 +27,9 @@ public class Render3D extends Render {
 	}
 
 	public void renderWorld(Game game) {
-		final Render skyTex = Block.SKY.getTexture();
-
-		double renderDistPx = Coord.fromBlock(Options.renderDistance).toPx().value();
-		PxCoord pos = game.controls.getControllerPosition().toPx();
-		Coord playerGround = game.controls.getPlayerGround();
-
-		double bobbing = Math.sin(System.nanoTime()) / 1e9;
-		double rotation = game.controls.getXRot();
-		double rotCos = Math.cos(rotation);
-		double rotSin = Math.sin(rotation);
-		double tilt = game.controls.getYRot();
-		double tiltCos = Math.cos(tilt);
-		double tiltSin = Math.sin(tilt);
-
-		// Early return if player hasn't inputted this tick
-		IntStream indicesRange = IntStream.range(0, this.lastKbdInput != null ? this.lastKbdInput.length : 0);
-		boolean hasntPressed = indicesRange.allMatch(i -> game.kbdInput[i] == this.lastKbdInput[i]); // check all array items are equal
-		boolean hasntMoved = pos.x == lastXMove && pos.y == lastYMove && pos.z == lastZMove;
-		boolean hasntFallen = lastGround == game.controls.getPlayerGround().toPx().y;
-		boolean hasntLooked = rotation == lastRot && tilt == lastTilt;
-		if (hasntPressed && hasntMoved && hasntFallen && hasntLooked) {
-			return;
-		}
-
-		this.fogAlrApplied = false; // reinitialise distance limiter as we are rerendering screen
-
-		// Loop through pixel rows
-		for (int yPx = 0; yPx < this.height; yPx++) {
-			// Relative vertical position of screen pixel
-			double vert = (yPx - this.height / 2.0D) / this.height;
-			vert = vert * tiltCos - tiltSin; // apply tilt
-
-			boolean isSky = vert < 0; // top half of screen is sky
-			boolean inVoid = pos.y < 0;
-			boolean generateSky = isSky && !inVoid;
-
-			// Depth calculation
-			double ground = playerGround.toSubBlock().y;
-			double offset = pos.y + ground;
-			double skyDepth = (Conversion.blockToPx(World.SKY_Y) - offset) / -vert;
-			double worldDepth = (Player.PLAYER_HEIGHT_PX + offset) / vert;
-			double depth = generateSky ? skyDepth : worldDepth;
-			if (game.controls.isWalking) {
-				depth += bobbing;
-			}
-
-			// Loop through pixel columns
-			for (int xPx = 0; xPx < this.width; xPx++) {
-				int pixelI = xPx + (yPx * this.width);
-
-				// Relative horizontal position of screen pixel
-				double horiz = (xPx - this.width / 2.0D) / this.height;
-				horiz *= depth; // apply depth
-
-				// Save depth in buffer
-				this.depthStore[pixelI] = isSky ? skyDepth : worldDepth;
-
-				// World pixel coords
-				int texelX = (int) Math.floor(horiz * rotCos + depth * rotSin + pos.x);
-				int texelY = playerGround.toTx().y;
-				int texelZ = (int) Math.floor(depth * rotCos - horiz * rotSin + pos.z);
-
-				// World block coords
-				int blockX = Conversion.txToBlockTwosComp(texelX);
-				int blockY = Conversion.txToBlockTwosComp(texelY);
-				int blockZ = Conversion.txToBlockTwosComp(texelZ);
-
-				// Set looking at block
-				if (pixelI == width * height / 2) {
-					game.player.setLookingAt(blockX, blockY, blockZ);
-				}
-
-				// Get texture for block at this coordinate if within render distance
-				Render texture = skyTex;
-				boolean withinRenderDist = depth < renderDistPx;
-				if (withinRenderDist && !generateSky) {
-					// Render block
-					texture = game.world.getTextureAt(blockX, blockY, blockZ);
-				}
-				// Apply texture
-				this.pixels[pixelI] = Texture.getTexel(texture, texelX, texelZ);
-			}
-		}
-
-		// Apply render distance limiter
-		this.renderDistLimiter(renderDistPx);
-
-		// Set last control moves
-		this.lastXMove = pos.x;
-		this.lastYMove = pos.y;
-		this.lastZMove = pos.z;
-		this.lastGround = game.controls.getPlayerGround().toPx().y;
-		this.lastRot = rotation;
-		this.lastTilt = tilt;
-		this.lastKbdInput = Arrays.copyOf(game.kbdInput, game.kbdInput.length);
-
+		BlocksRenderer blockRender = new BlocksRenderer(this, game);
+		blockRender.renderWorld();
+		super.replaceImage(blockRender.getImage());
 	}
 
 	/** Adds depth-based fog to the pixels */
@@ -130,9 +37,9 @@ public class Render3D extends Render {
 		if (this.fogAlrApplied)
 			return;
 
-		for (int i = 0; i < this.width * this.height; i++) {
+		for (int i = 0; i < imageSize(); i++) {
 			// Get pixel colour
-			int colour = this.pixels[i];
+			int colour = getPixel(i);
 			// Determine brightness based on depth value from Z buffer
 			int brightness = (int) (renderDistance * Options.gamma * 100 / this.depthStore[i]);
 
@@ -151,7 +58,7 @@ public class Render3D extends Render {
 			b = b * brightness / 255;
 
 			// Save fog-adjusted colour to pixel
-			super.pixels[i] = r << 16 | g << 8 | b;
+			setPixel(i, r << 16 | g << 8 | b);
 			this.fogAlrApplied = true;
 		}
 	}

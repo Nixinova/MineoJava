@@ -1,12 +1,11 @@
 package com.nixinova.player;
 
-import com.nixinova.Conversion;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord;
-import com.nixinova.options.Options;
+import com.nixinova.world.World;
 
 public class Player {
-	public static final int PLAYER_HEIGHT_PX = 2 * Conversion.PX_PER_BLOCK;
+	public static final int PLAYER_HEIGHT = 2;
 
 	public Coord position;
 
@@ -27,10 +26,11 @@ public class Player {
 		this.lookingAtBlock.z = z;
 	}
 
-	public boolean isWithinWorld() {
-		BlockCoord coord = this.position.toBlock();
-		int size = Options.worldSize;
-		return coord.x >= -size && coord.x <= size && coord.y >= 0 && coord.z >= -size && coord.z <= size;
+	public boolean isWithinWorld(World world) {
+		BlockCoord pos = this.position.toBlock();
+		BlockCoord min = world.minCorner;
+		BlockCoord max = world.maxCorner;
+		return pos.x >= min.x && pos.x <= max.x && pos.y >= min.y && pos.y <= max.y && pos.z >= min.z && pos.z <= max.z;
 	}
 
 }

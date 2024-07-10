@@ -19,7 +19,7 @@ public class Texture {
 		int blockTexelX = (texelX);//Conversion.pxToTexturePx(texelX);
 		int blockTexelY = (texelY);//Conversion.pxToTexturePx(texelY);
 		int texPx = (blockTexelX & (TEX_SIZE - 1)) + (blockTexelY & (TEX_SIZE - 1)) * TEX_SIZE;
-		return texture.pixels[texPx];
+		return texture.getPixel(texPx);
 	}
 
 	private static Render loadBitmap(String filename) {
@@ -28,7 +28,7 @@ public class Texture {
 			int width = image.getWidth();
 			int height = image.getHeight();
 			Render result = new Render(width, height);
-			image.getRGB(0, 0, width, height, result.pixels, 0, width);
+			image.getRGB(0, 0, width, height, result.getImage(), 0, width);
 			return result;
 		} catch (Exception err) {
 			throw new RuntimeException("Error: Missing file \"" + filename + "\"");
