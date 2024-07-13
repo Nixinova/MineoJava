@@ -1,6 +1,9 @@
 # Changelog
 
-## 0.0.14_1
+## 0.0.15
+*2024-07-13 22:21*
+
+### 0.0.14_1
 *2024-07-10 20:30*
 - Left click now breaks blocks
 - Right click now places blocks on top of another
