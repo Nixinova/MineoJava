@@ -19,6 +19,10 @@ public class PxCoord implements ICoord<Double> {
 		this.y = y;
 		this.z = z;
 	}
+	
+	public Coord toCoord() {
+		return Coord.fromPx(this);
+	}
 
 	public PxCoord toPxCoord() {
 		return this;

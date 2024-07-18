@@ -1,16 +1,15 @@
 package com.nixinova.input;
 
 import com.nixinova.Conversion;
+import com.nixinova.Vector3;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord;
 import com.nixinova.coords.PxCoord;
-import com.nixinova.coords.SubBlockCoord;
-import com.nixinova.graphics.Render;
 import com.nixinova.main.Game;
 import com.nixinova.options.Options;
 import com.nixinova.player.Hotbar;
+import com.nixinova.player.Player;
 import com.nixinova.world.Block;
-import com.nixinova.world.World;
 
 public class Controller {
 
@@ -38,52 +37,48 @@ public class Controller {
 		double yMove = 0.0D;
 		double zMove = 0.0D;
 
+		// Get looking at block
+		BlockCoord lookingAt = this.game.player.getLookingAt();
 		// Block breaking
-		if (kbd.clickedButton(Keys.LCLICK)) {
-			// Get looking at block
-			BlockCoord lookingAt = this.game.player.getLookingAt();
-
+		if (kbd.pressedButton(Keys.LCLICK) && lookingAt != null) {
 			// Break block if within world
 			if (Block.isInsideWorld(lookingAt)) {
 				this.game.world.setTextureAt(lookingAt.x, lookingAt.y, lookingAt.z, Block.AIR.getTexture());
 			}
-			
+
 			// Cooldown
-			kbd.startCooldown(Keys.RCLICK);
+			kbd.startButtonCooldown(Keys.LCLICK);
 		}
 		// Block placing
-		if (kbd.clickedButton(Keys.RCLICK)) {
-			// Get looking at block
-			BlockCoord lookingAt = this.game.player.getLookingAt();
-
+		if ((kbd.pressedButton(Keys.RCLICK) || kbd.pressedKey(Keys.MISC1)) && lookingAt != null) {
 			// Place block if within world
 			if (Block.isInsideWorld(lookingAt)) {
 				Block block = Hotbar.getCurrentBlock();
 				this.game.world.setTextureAt(lookingAt.x, lookingAt.y + 1, lookingAt.z, block.getTexture());
 			}
-			
+
 			// Cooldown
-			kbd.startCooldown(Keys.RCLICK);
+			kbd.startButtonCooldown(Keys.RCLICK);
 		}
 
-		// Selecting block
+		// Hotbar
 		Hotbar.updateFromKbd(kbd);
 
 		// Movement
-		double mvChange = kbd.pressed(Keys.SPRINT) ? Options.sprintSpeed : Options.walkSpeed;
-		if (kbd.pressed(Keys.FORWARD)) {
+		double mvChange = kbd.pressedKey(Keys.SPRINT) ? Options.sprintSpeed : Options.walkSpeed;
+		if (kbd.pressedKey(Keys.FORWARD)) {
 			zMove += mvChange;
 		}
-		if (kbd.pressed(Keys.BACK)) {
+		if (kbd.pressedKey(Keys.BACK)) {
 			zMove += -mvChange;
 		}
-		if (kbd.pressed(Keys.RIGHT)) {
+		if (kbd.pressedKey(Keys.RIGHT)) {
 			xMove += mvChange;
 		}
-		if (kbd.pressed(Keys.LEFT)) {
+		if (kbd.pressedKey(Keys.LEFT)) {
 			xMove += -mvChange;
 		}
-		isWalking = kbd.pressedAny(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
+		isWalking = kbd.pressedAnyKey(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
 
 		// Mouse look
 		double mouseDX = Options.sensitivity * input.deltaX;
@@ -112,9 +107,9 @@ public class Controller {
 		// Ground checks
 		if (this.game.player.isWithinWorld(this.game.world)) {
 			if (onGround()) {
-				if (kbd.pressed(Keys.JUMP)) {
+				if (kbd.pressedKey(Keys.JUMP)) {
 					isJumping = true;
-					kbd.startCooldown(Keys.JUMP);
+					kbd.startKeyCooldown(Keys.JUMP);
 				}
 			} else if (aboveGround()) {
 				yMove -= Options.gravity;
@@ -130,19 +125,19 @@ public class Controller {
 		}
 
 		// Mouse look boundaries
-		double maxTilt = 1.5;
+		double maxTilt = Math.toRadians(90);
 		if (tilt < -maxTilt)
 			tilt = -maxTilt;
 		if (tilt > maxTilt)
 			tilt = maxTilt;
 
 		// System keys
-		if (kbd.pressed(Keys.ESCAPE)) {
+		if (kbd.pressedKey(Keys.ESCAPE)) {
 			System.exit(1);
 		}
-		if (kbd.pressed(Keys.DEBUG)) {
+		if (kbd.pressedKey(Keys.F3)) {
 			debugShown = !debugShown;
-			kbd.startCooldown(Keys.DEBUG);
+			kbd.startKeyCooldown(Keys.F3);
 		}
 
 		// differentials for controls
@@ -163,18 +158,45 @@ public class Controller {
 		this.pos2.z *= 0.3D;
 		this.rot2 *= 0.8D;
 		this.tilt2 *= 0.8D;
+
+		// Modulo'ing
+		this.rot %= Math.TAU;
 	}
 
-	public Coord getPosition() {
+	public Coord getFootPosition() {
 		return Coord.fromPx(this.pos);
 	}
 
+	public Coord getCameraPosition() {
+		double heightPx = Conversion.subBlockToPx(Player.PLAYER_HEIGHT);
+		return Coord.fromPx(this.pos.x, this.pos.y + heightPx, this.pos.z);
+	}
+
+	/** Horizontal rotation in radians */
 	public double getXRot() {
 		return this.rot;
 	}
 
+	/** Vertical rotation/tilt in radians */
 	public double getYRot() {
 		return this.tilt;
+	}
+
+	public Vector3 getViewDirection() {
+		double xRot = this.getXRot();
+		double yRot = this.getYRot();
+
+		double x = -Math.sin(xRot) * Math.cos(yRot);
+		double y = Math.sin(yRot);
+		double z = Math.cos(xRot) * Math.cos(yRot);
+
+		// Normalize
+		double length = Math.sqrt(x * x + y * y + z * z);
+		x /= length;
+		y /= length;
+		z /= length;
+
+		return new Vector3(x, y, z);
 	}
 
 	private boolean onGround() {
@@ -192,7 +214,7 @@ public class Controller {
 	}
 
 	private double getGroundYPx() {
-		BlockCoord blockCoord = this.getPosition().toBlock();
+		BlockCoord blockCoord = this.getFootPosition().toBlock();
 		int groundY = this.game.world.getGroundY(blockCoord.x, blockCoord.z);
 		return Conversion.subBlockToPx(groundY);
 	}

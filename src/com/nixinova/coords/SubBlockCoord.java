@@ -20,6 +20,10 @@ public class SubBlockCoord implements ICoord<Double> {
 		this.z = z;
 	}
 
+	public Coord toCoord() {
+		return Coord.fromSubBlock(this);
+	}
+
 	public PxCoord toPxCoord() {
 		return new PxCoord(this.x * PER, this.y * PER, this.z * PER);
 	}
@@ -35,7 +39,7 @@ public class SubBlockCoord implements ICoord<Double> {
 	public SubBlockCoord toSubBlockCoord() {
 		return this;
 	}
-	
+
 	public Double value() {
 		return this.x;
 	}

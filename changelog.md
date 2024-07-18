@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.0.16
+*2024-07-19 01:22*
+- Blocks now render in 3D
+- Added raycast rendering
+- Added cooldown to mouse button actions
+- Added "lowest ground", "camera", "angle", and "hovered" debug text lines
+- Changed world generation to a test level
+- Changed font size of game version to 1.25x
+
 ## 0.0.15
 *2024-07-13 22:21*
 

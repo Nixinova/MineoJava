@@ -1,5 +1,7 @@
 package com.nixinova.main;
 
+import com.nixinova.coords.BlockCoord;
+import com.nixinova.graphics.Raycast;
 import com.nixinova.input.Controller;
 import com.nixinova.input.InputHandler;
 import com.nixinova.options.Options;
@@ -23,10 +25,25 @@ public class Game {
 	}
 
 	public void tick() {
-		this.kbdInput = this.input.keys.getKeyData();
+		this.preTick();
+
 		this.controls.tick(this.input);
 		this.input.tick();
-		// Set player coords
-		this.player.position = this.controls.getPosition();
+
+		this.postTick();
+	}
+
+	private void preTick() {
+		// Prepare inputs
+		this.kbdInput = this.input.keys.getKeyData();
+	}
+
+	private void postTick() {
+		// Update player position
+		this.player.updatePosition(this.controls.getFootPosition());
+
+		// Set player looking at
+		BlockCoord lookingAt = Raycast.getLookingAt(this);
+		this.player.setLookingAt(lookingAt);
 	}
 }

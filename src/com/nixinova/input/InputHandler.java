@@ -129,8 +129,10 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 	@Override
 	public void keyReleased(KeyEvent event) {
 		int keyCode = event.getKeyCode();
-		if (keyCode > 0 && keyCode < this.keys.size())
+		if (keyCode > 0 && keyCode < this.keys.size()) {
 			this.keys.setKey(keyCode, false);
+			this.keys.startKeyCooldown(keyCode);
+		}
 	}
 
 	@Override

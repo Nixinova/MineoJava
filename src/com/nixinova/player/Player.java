@@ -5,19 +5,30 @@ import com.nixinova.coords.Coord;
 import com.nixinova.world.World;
 
 public class Player {
-	public static final int PLAYER_HEIGHT = 2;
+	public static final double PLAYER_HEIGHT = 2.0;
 
-	public Coord position;
-
+	private Coord position;
 	private BlockCoord lookingAtBlock;
 
 	public Player() {
 		this.position = new Coord();
-		this.lookingAtBlock = new BlockCoord();
+		this.lookingAtBlock = null;
+	}
+
+	public Coord getPosition() {
+		return this.position;
+	}
+
+	public void updatePosition(Coord footPosition) {
+		this.position = footPosition;
 	}
 
 	public BlockCoord getLookingAt() {
 		return this.lookingAtBlock;
+	}
+
+	public void setLookingAt(BlockCoord coord) {
+		this.lookingAtBlock = coord;
 	}
 
 	public void setLookingAt(int x, int y, int z) {

@@ -38,16 +38,6 @@ public class World {
 		return xValid && yValid && zValid;
 	}
 
-	public boolean isExposed(int blockX, int blockY, int blockZ) {
-		int x = blockX, y = blockY, z = blockZ;
-		// TODO: also true if at edge of world
-		boolean airAbove = isAir(x, y + 1, z);
-		boolean airBeside = isAir(x + 1, y, z) || isAir(x - 1, y, z) || isAir(x, y, z + 1) || isAir(x, y, z - 1);
-		boolean atEdge = !isWithinWorld(x + 1, y, z) || !isWithinWorld(x - 1, y, z) || !isWithinWorld(x, y + 1, z)
-			|| !isWithinWorld(x, y - 1, z) || !isWithinWorld(x, y, z + 1) || !isWithinWorld(x, y, z - 1);
-		return airAbove || airBeside || atEdge;
-	}
-
 	/** returns -1 if all is air */
 	public int getGroundY(int blockX, int blockZ) {
 		for (int i = 0; i < SKY_Y; i++) {
@@ -56,6 +46,13 @@ public class World {
 			}
 		}
 		return -1;
+	}
+
+	public boolean isExposed(int blockX, int blockY, int blockZ) {
+		int x = blockX, y = blockY, z = blockZ;
+		boolean touchingAir = isAir(x, y + 1, z) || isAir(x, y - 1, z)
+			|| isAir(x + 1, y, z) || isAir(x - 1, y, z) || isAir(x, y, z + 1) || isAir(x, y, z - 1);
+		return touchingAir;
 	}
 
 	public boolean isAir(int blockX, int blockY, int blockZ) {
@@ -93,8 +90,19 @@ public class World {
 						continue;
 
 					Block block;
-					if (y <= 0)
+					if (y == 0)
 						block = Block.BEDROCK;
+					else if ((y * 2 < x + z) && y <= GROUND_Y - 4)
+						block = Block.STONE;
+					else if ((y * 2 < x + z) && y <= GROUND_Y - 1)
+						block = Block.DIRT;
+					else if ((y * 2 < x + z) && y <= GROUND_Y)
+						block = Block.GRASS;
+					else if ((y * 1.5 > x + z) && y <= GROUND_Y - 1)
+						block = Block.DIRT;
+					else if ((y * 1.5 > x + z) && y <= GROUND_Y)
+						block = Block.GRASS;
+					/*
 					else if (y <= GROUND_Y - 4)
 						block = random.nextInt(y) > 1 ? Block.DIRT : Block.STONE;
 					else if (y <= GROUND_Y - 2)
@@ -103,6 +111,7 @@ public class World {
 						block = Block.GRASS;
 					else if (y <= GROUND_Y + 1 && random.nextBoolean())
 						block = Block.GRASS;
+					//*/
 					else
 						block = Block.AIR;
 

@@ -1,16 +1,7 @@
 package com.nixinova.graphics;
 
-import java.util.Arrays;
-import java.util.stream.IntStream;
-
-import com.nixinova.Conversion;
-import com.nixinova.coords.Coord;
-import com.nixinova.coords.PxCoord;
 import com.nixinova.main.Game;
 import com.nixinova.options.Options;
-import com.nixinova.player.Player;
-import com.nixinova.world.Block;
-import com.nixinova.world.World;
 
 public class Render3D extends Render {
 
@@ -28,7 +19,7 @@ public class Render3D extends Render {
 
 	public void renderWorld(Game game) {
 		BlocksRenderer blockRender = new BlocksRenderer(this, game);
-		blockRender.renderWorld();
+		blockRender.renderWorld(game);
 		super.replaceImage(blockRender.getImage());
 	}
 

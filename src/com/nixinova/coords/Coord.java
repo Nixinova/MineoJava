@@ -79,7 +79,11 @@ public class Coord {
 	}
 
 	public static Coord fromSubBlock(double n) {
-		return Coord.fromSubBlock(n, n, n);
+		return fromSubBlock(n, n, n);
+	}
+
+	public static Coord fromSubBlock(SubBlockCoord coord) {
+		return fromSubBlock(coord.x, coord.y, coord.z);
 	}
 
 	public SubBlockCoord toSubBlock() {

@@ -11,6 +11,12 @@ public class Conversion {
 			return (tx - (PX_PER_BLOCK - 1)) / PX_PER_BLOCK;
 	}
 	
+	// General
+
+	public static int pxToBlock(double px) {
+		return (int) px / PX_PER_BLOCK;
+	}
+
 	public static double pxToSubBlock(double px) {
 		return px * PX_PER_BLOCK;
 	}

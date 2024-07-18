@@ -13,6 +13,7 @@ public class Block {
 	public static Block STONE = new Block("blocks/stone");
 	public static Block DIRT = new Block("blocks/dirt");
 	public static Block GRASS = new Block("blocks/grass");
+	public static Block DEBUG = new Block("debug");
 	public static Block MISSING = new Block("missing_texture");
 	
 	private Render texture;

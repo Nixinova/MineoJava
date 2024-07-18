@@ -11,7 +11,7 @@ public class Keys {
 
 	// Keyboard
 	public static final int ESCAPE = KeyEvent.VK_ESCAPE;
-	public static final int DEBUG = KeyEvent.VK_F3;
+	public static final int F3 = KeyEvent.VK_F3;
 
 	public static final int FORWARD = KeyEvent.VK_W;
 	public static final int BACK = KeyEvent.VK_S;
@@ -32,6 +32,9 @@ public class Keys {
 	public static final int NUM_9 = KeyEvent.VK_9;
 	public static final int NUM_0 = KeyEvent.VK_0;
 
+	public static final int MISC1 = KeyEvent.VK_Z;
+	public static final int MISC2 = KeyEvent.VK_X;
+
 	// Mouse
 	public static final int LCLICK = MouseEvent.BUTTON1;
 	public static final int RCLICK = MouseEvent.BUTTON3;
@@ -51,27 +54,20 @@ public class Keys {
 		this.cooldowns = new long[keys.length];
 	}
 
-	public boolean pressed(int key) {
-		// Check cooldown if applicable
-		long cooldownVal = this.cooldowns[key];
-		if (cooldownVal > 0 && cooldownVal > System.nanoTime() - cooldownTimeNs) {
-			// Still in the cooldown window, so ignore keypress
-			return false;
-		}
-
-		return this.keys[key];
+	public boolean pressedKey(int key) {
+		return this.pressedInput(key);
 	}
 
-	public boolean pressedAny(int... keys) {
+	public boolean pressedAnyKey(int... keys) {
 		for (int i = 0; i < keys.length; i++) {
-			if (this.pressed(keys[i]))
+			if (this.pressedKey(keys[i]))
 				return true;
 		}
 		return false;
 	}
 
-	public boolean clickedButton(int key) {
-		return this.keys[MOUSE_OFFSET + key];
+	public boolean pressedButton(int button) {
+		return this.pressedInput(MOUSE_OFFSET + button);
 	}
 
 	public void setKey(int key, boolean value) {
@@ -82,9 +78,12 @@ public class Keys {
 		this.setKey(MOUSE_OFFSET + button, value);
 	}
 
-	public void startCooldown(int key) {
-		// reset cooldown
-		this.cooldowns[key] = System.nanoTime();
+	public void startKeyCooldown(int key) {
+		this.startInputCooldown(key);
+	}
+
+	public void startButtonCooldown(int key) {
+		this.startInputCooldown(MOUSE_OFFSET + key);
 	}
 
 	public int size() {
@@ -93,5 +92,21 @@ public class Keys {
 
 	public boolean[] getKeyData() {
 		return this.keys;
+	}
+
+	private void startInputCooldown(int input) {
+		// reset cooldown
+		this.cooldowns[input] = System.nanoTime();
+	}
+
+	private boolean pressedInput(int input) {
+		// Check cooldown if applicable
+		long cooldownVal = this.cooldowns[input];
+		if (cooldownVal > 0 && cooldownVal > System.nanoTime() - cooldownTimeNs) {
+			// Still in the cooldown window, so ignore keypress
+			return false;
+		}
+
+		return this.keys[input];
 	}
 }

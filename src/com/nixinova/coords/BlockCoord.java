@@ -19,6 +19,10 @@ public class BlockCoord implements ICoord<Integer> {
 		this.y = y;
 		this.z = z;
 	}
+	
+	public Coord toCoord() {
+		return Coord.fromBlock(this);
+	}
 
 	public PxCoord toPxCoord() {
 		return new PxCoord(this.x * PER, this.y * PER, this.z * PER);

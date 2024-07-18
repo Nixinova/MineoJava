@@ -1,6 +1,8 @@
 package com.nixinova.coords;
 
 public interface ICoord<X extends Number> {
+	
+	public Coord toCoord();
 
 	public PxCoord toPxCoord();
 
