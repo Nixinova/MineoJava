@@ -79,8 +79,8 @@ public class BlocksRenderer extends Render {
 
 	private PxCoord txCoordToScreenPx(int txX, int txY, int txZ) {
 		PxCoord camPos = this.game.controls.getCameraPosition().toPx();
-		double rot = this.game.controls.getXRot();
-		double tilt = this.game.controls.getYRot();
+		double rot = this.game.controls.getMouseHorizRads();
+		double tilt = this.game.controls.getMouseVertRads();
 
 		// Relative position of block in world and player pos
 		PxCoord relPos = new PxCoord(txX - camPos.x, txY - camPos.y, txZ - camPos.z);

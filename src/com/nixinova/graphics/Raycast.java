@@ -2,6 +2,7 @@ package com.nixinova.graphics;
 
 import com.nixinova.Vector3;
 import com.nixinova.coords.BlockCoord;
+import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.main.Game;
 
 public class Raycast {
@@ -11,7 +12,8 @@ public class Raycast {
 	public static boolean isBlockVisibleToPlayer(Game game, int blockX, int blockY, int blockZ) {
 
 		// Get player's position
-		var playerPos = game.controls.getCameraPosition().toSubBlock();
+		SubBlockCoord playerPos = game.controls.getCameraPosition().toSubBlock();
+		playerPos.y += 0.5; // upround
 
 		// Define the corners of the block
 		double[][] corners = {
@@ -87,7 +89,7 @@ public class Raycast {
 			y += vect.y * STEP_SIZE;
 			z += vect.z * STEP_SIZE;
 
-			BlockCoord curBlock = applyAsBlock(val -> Math.round(val), x, y, z);
+			BlockCoord curBlock = applyAsBlock(val -> Math.floor(val), x, y, z);
 
 			// Looking outside the world so no block selected
 			if (!game.world.isWithinWorld(curBlock.x, curBlock.y, curBlock.z))

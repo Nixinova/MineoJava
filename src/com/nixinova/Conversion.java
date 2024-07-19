@@ -18,7 +18,7 @@ public class Conversion {
 	}
 
 	public static double pxToSubBlock(double px) {
-		return px * PX_PER_BLOCK;
+		return px / PX_PER_BLOCK;
 	}
 
 	public static int txToBlock(int tx) {

@@ -50,7 +50,7 @@ public class Controller {
 			kbd.startButtonCooldown(Keys.LCLICK);
 		}
 		// Block placing
-		if ((kbd.pressedButton(Keys.RCLICK) || kbd.pressedKey(Keys.MISC1)) && lookingAt != null) {
+		if (kbd.pressedButton(Keys.RCLICK) && lookingAt != null) {
 			// Place block if within world
 			if (Block.isInsideWorld(lookingAt)) {
 				Block block = Hotbar.getCurrentBlock();
@@ -172,23 +172,18 @@ public class Controller {
 		return Coord.fromPx(this.pos.x, this.pos.y + heightPx, this.pos.z);
 	}
 
-	/** Horizontal rotation in radians */
-	public double getXRot() {
+	public double getMouseHorizRads() {
 		return this.rot;
 	}
 
-	/** Vertical rotation/tilt in radians */
-	public double getYRot() {
+	public double getMouseVertRads() {
 		return this.tilt;
 	}
 
 	public Vector3 getViewDirection() {
-		double xRot = this.getXRot();
-		double yRot = this.getYRot();
-
-		double x = -Math.sin(xRot) * Math.cos(yRot);
-		double y = Math.sin(yRot);
-		double z = Math.cos(xRot) * Math.cos(yRot);
+		double x = Math.cos(this.tilt) * Math.sin(this.rot);
+		double y = Math.sin(this.tilt);
+		double z = Math.cos(this.rot) * Math.cos(this.tilt);
 
 		// Normalize
 		double length = Math.sqrt(x * x + y * y + z * z);
@@ -196,6 +191,7 @@ public class Controller {
 		y /= length;
 		z /= length;
 
+		// Return unit vector
 		return new Vector3(x, y, z);
 	}
 

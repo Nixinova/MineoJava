@@ -43,13 +43,13 @@ public class ScreenText {
 		// Lowest ground Y value
 		var blockPos = position.toBlock();
 		var groundY = game.world.getGroundY(blockPos.x, blockPos.z);
-		graphics.drawString("Lowest ground: " + groundY, INDENT, SEP * ++i);
+		graphics.drawString("Floor: " + groundY, INDENT, SEP * ++i);
 		// Camera pos and angle
 		var camPosFmt = formatCoord(game.controls.getCameraPosition());
 		graphics.drawString("Camera: " + camPosFmt, INDENT, SEP * ++i);
 		// Mouse look angle
 		var mouseLookFmt = String.format("%.1f / %.1f",
-			(Math.toDegrees(game.controls.getXRot()) + 360) % 360, Math.toDegrees(game.controls.getYRot()));
+			(Math.toDegrees(game.controls.getMouseHorizRads()) + 360) % 360, Math.toDegrees(game.controls.getMouseVertRads()));
 		graphics.drawString("Angle: " + mouseLookFmt, INDENT, SEP * ++i);
 		// Block being looked at
 		var lookingAt = game.player.getLookingAt();

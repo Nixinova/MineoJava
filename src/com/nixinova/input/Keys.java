@@ -32,9 +32,6 @@ public class Keys {
 	public static final int NUM_9 = KeyEvent.VK_9;
 	public static final int NUM_0 = KeyEvent.VK_0;
 
-	public static final int MISC1 = KeyEvent.VK_Z;
-	public static final int MISC2 = KeyEvent.VK_X;
-
 	// Mouse
 	public static final int LCLICK = MouseEvent.BUTTON1;
 	public static final int RCLICK = MouseEvent.BUTTON3;

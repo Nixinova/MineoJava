@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.16_1
+*2024-07-19 13:29*
+- Fixed incorrect hovered block calculation
+- Changed "lowest ground" debug text line to "floor"
+- Removed being able to place blocks by pressing Z
+
 ## 0.0.16
 *2024-07-19 01:22*
 - Blocks now render in 3D
@@ -8,6 +14,7 @@
 - Added "lowest ground", "camera", "angle", and "hovered" debug text lines
 - Changed world generation to a test level
 - Changed font size of game version to 1.25x
+- Blocks can now also be placed by pressing Z
 
 ## 0.0.15
 *2024-07-13 22:21*
