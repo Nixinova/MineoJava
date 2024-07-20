@@ -4,21 +4,19 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 
-import com.nixinova.Conversion;
-
 public class Texture {
+	public static final int SIZE = 8;
+	
 	public static final String TEXTURES_FOLDER = "/textures/";
-
-	private static final int TEX_SIZE = Conversion.PX_PER_BLOCK;
 
 	public static Render loadTexture(String name) {
 		return loadBitmap(name + ".png");
 	}
 
 	public static int getTexel(Render texture, int texelX, int texelY) {
-		int blockTexelX = (texelX);//Conversion.pxToTexturePx(texelX);
-		int blockTexelY = (texelY);//Conversion.pxToTexturePx(texelY);
-		int texPx = (blockTexelX & (TEX_SIZE - 1)) + (blockTexelY & (TEX_SIZE - 1)) * TEX_SIZE;
+		int blockTexelX = texelX;
+		int blockTexelY = texelY;
+		int texPx = (blockTexelX & (SIZE - 1)) + (blockTexelY & (SIZE - 1)) * SIZE;
 		return texture.getPixel(texPx);
 	}
 

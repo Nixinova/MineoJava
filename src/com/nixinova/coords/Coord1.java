@@ -1,12 +1,10 @@
 package com.nixinova.coords;
 
-import com.nixinova.Conversion;
+import com.nixinova.graphics.Texture;
 
 public class Coord1 {
 
 	private double px;
-
-	private static final int PER = Conversion.PX_PER_BLOCK;
 
 	public Coord1() {
 		this.px = 0;
@@ -39,21 +37,31 @@ public class Coord1 {
 	// Block
 
 	public static Coord1 fromBlock(int val) {
-		return new Coord1(val * PER);
+		return new Coord1((int) blockToPx(val));
 	}
 
 	public int toBlock() {
-		return (int) Math.floor(this.px) / PER;
+		return (int) pxToBlock(this.px);
 	}
 
 	// Sub block
 
 	public static Coord1 fromSubBlock(double val) {
-		return new Coord1(val * PER);
+		return new Coord1(blockToPx(val));
 	}
 
 	public double toSubBlock() {
-		return this.px / PER;
+		return pxToBlock(this.px);
+	}
+
+	// Basic quick conversions
+
+	public static double pxToBlock(double px) {
+		return Math.floor(px) / Texture.SIZE;
+	}
+
+	public static double blockToPx(double block) {
+		return block * Texture.SIZE;
 	}
 
 }

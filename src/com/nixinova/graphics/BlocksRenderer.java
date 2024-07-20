@@ -1,6 +1,5 @@
 package com.nixinova.graphics;
 
-import com.nixinova.Conversion;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord3;
 import com.nixinova.coords.PxCoord;
@@ -39,7 +38,7 @@ public class BlocksRenderer extends Render {
 	}
 
 	private void renderOneBlock(int blockX, int blockY, int blockZ) {
-		final int size = Conversion.PX_PER_BLOCK;
+		final int size = Texture.SIZE;
 
 		// Loop through texels and render
 		// TODO fill inbetween as well
@@ -109,7 +108,6 @@ public class BlocksRenderer extends Render {
 	}
 
 	private void generateRenderedTexel(int pixel, PxCoord screenPos, BlockCoord blockPos) {
-		final int TEXTURE_SIZE = Conversion.PX_PER_BLOCK;
 		final int TEXEL_SIZE = 16;
 
 		int startX = (int) screenPos.x;
@@ -117,8 +115,8 @@ public class BlocksRenderer extends Render {
 
 		for (int x = 0; x < TEXEL_SIZE; x++) {
 			for (int y = 0; y < TEXEL_SIZE; y++) {
-				int screenX = startX + x - TEXTURE_SIZE;
-				int screenY = startY + y - TEXTURE_SIZE;
+				int screenX = startX + x - Texture.SIZE;
+				int screenY = startY + y - Texture.SIZE;
 
 				// Ensure pixel is within screen bounds
 				if (isValidPosition(screenX, screenY)) {
