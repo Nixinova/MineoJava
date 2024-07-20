@@ -1,25 +1,25 @@
 package com.nixinova.player;
 
 import com.nixinova.coords.BlockCoord;
-import com.nixinova.coords.Coord;
+import com.nixinova.coords.Coord3;
 import com.nixinova.world.World;
 
 public class Player {
 	public static final double PLAYER_HEIGHT = 2.0;
 
-	private Coord position;
+	private Coord3 position;
 	private BlockCoord lookingAtBlock;
 
 	public Player() {
-		this.position = new Coord();
+		this.position = new Coord3();
 		this.lookingAtBlock = null;
 	}
 
-	public Coord getPosition() {
+	public Coord3 getPosition() {
 		return this.position;
 	}
 
-	public void updatePosition(Coord footPosition) {
+	public void updatePosition(Coord3 footPosition) {
 		this.position = footPosition;
 	}
 

@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 
-import com.nixinova.coords.Coord;
+import com.nixinova.coords.Coord3;
 import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.main.Game;
 import com.nixinova.main.Mineo;
@@ -32,7 +32,7 @@ public class ScreenText {
 		graphics.setColor(Color.white);
 		graphics.drawString(Mineo.TITLE, INDENT, SEP * ++i);
 
-		Coord position = game.player.getPosition();
+		Coord3 position = game.player.getPosition();
 		graphics.setFont(initialFont);
 		
 		// FPS
@@ -83,7 +83,7 @@ public class ScreenText {
 		graphics.drawString(msg3, INDENT, Display.HEIGHT - SEP * 6);
 	}
 
-	private String formatCoord(Coord coord) {
+	private String formatCoord(Coord3 coord) {
 		SubBlockCoord pos = coord.toSubBlock();
 		String playerX = String.format("%.1f", pos.x);
 		String playerY = String.format("%.1f", pos.y);

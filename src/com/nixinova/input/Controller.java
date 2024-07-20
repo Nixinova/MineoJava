@@ -1,9 +1,9 @@
 package com.nixinova.input;
 
-import com.nixinova.Conversion;
 import com.nixinova.Vector3;
 import com.nixinova.coords.BlockCoord;
-import com.nixinova.coords.Coord;
+import com.nixinova.coords.Coord1;
+import com.nixinova.coords.Coord3;
 import com.nixinova.coords.PxCoord;
 import com.nixinova.main.Game;
 import com.nixinova.options.Options;
@@ -17,7 +17,7 @@ public class Controller {
 	public boolean isWalking = false;
 
 	private Game game;
-	private PxCoord pos, pos2;
+	private Coord3 pos, pos2;
 	private double rot, rot2;
 	private double tilt, tilt2;
 	private boolean isJumping = false;
@@ -25,8 +25,8 @@ public class Controller {
 
 	public Controller(Game game) {
 		this.game = game;
-		this.pos = new PxCoord();
-		this.pos2 = new PxCoord();
+		this.pos = new Coord3();
+		this.pos2 = new Coord3();
 	}
 
 	public void tick(InputHandler input) {
@@ -114,14 +114,16 @@ public class Controller {
 			} else if (aboveGround()) {
 				yMove -= Options.gravity;
 			} else if (belowGround()) {
-				this.pos.y = getGroundYPx();
+				// Push player up to be on the ground
+				this.pos = Coord3.fromPx(this.pos.toPx().x, getGroundY().toPx(), this.pos.toPx().z);
 				yMove = 0.001D;
 			}
 		} else {
 			// Fall when outside of world
 			if (yMove == 0)
 				yMove = -0.5;
-			yMove *= 1 + Math.pow(1 + Options.gravity, 2); // acceleration due to gravity
+			// Acceleration due to gravity
+			yMove *= 1 + Math.pow(1 + Options.gravity, 2);
 		}
 
 		// Mouse look boundaries
@@ -141,21 +143,26 @@ public class Controller {
 		}
 
 		// differentials for controls
-		this.pos2.x += (xMove * Math.cos(this.rot) + zMove * Math.sin(this.rot)) * Options.walkSpeed;
-		this.pos2.y += yMove;
-		this.pos2.z += (zMove * Math.cos(this.rot) - xMove * Math.sin(this.rot)) * Options.walkSpeed;
+		PxCoord newPos2 = new PxCoord();
+		newPos2.x += (xMove * Math.cos(this.rot) + zMove * Math.sin(this.rot)) * Options.walkSpeed;
+		newPos2.y += yMove;
+		newPos2.z += (zMove * Math.cos(this.rot) - xMove * Math.sin(this.rot)) * Options.walkSpeed;
+		this.pos2 = Coord3.fromPx(newPos2);
 
 		// apply differentials
-		this.pos.x += this.pos2.x;
-		this.pos.y += this.pos2.y;
-		this.pos.z += this.pos2.z;
+		PxCoord newPos = this.pos.toPx();
+		newPos.x += newPos2.x;
+		newPos.y += newPos2.y;
+		newPos.z += newPos2.z;
+		this.pos = Coord3.fromPx(newPos);
 		this.rot += this.rot2;
 		this.tilt += this.tilt2;
 
 		// decel/interpolate
-		this.pos2.x *= 0.3D;
-		this.pos2.y *= 0.3D;
-		this.pos2.z *= 0.3D;
+		newPos2.x *= 0.3D;
+		newPos2.y *= 0.3D;
+		newPos2.z *= 0.3D;
+		this.pos2 = Coord3.fromPx(newPos2);
 		this.rot2 *= 0.8D;
 		this.tilt2 *= 0.8D;
 
@@ -163,13 +170,14 @@ public class Controller {
 		this.rot %= Math.TAU;
 	}
 
-	public Coord getFootPosition() {
-		return Coord.fromPx(this.pos);
+	public Coord3 getFootPosition() {
+		return this.pos;
 	}
 
-	public Coord getCameraPosition() {
-		double heightPx = Conversion.subBlockToPx(Player.PLAYER_HEIGHT);
-		return Coord.fromPx(this.pos.x, this.pos.y + heightPx, this.pos.z);
+	public Coord3 getCameraPosition() {
+		PxCoord posPx = this.pos.toPx();
+		double heightPx = Coord1.fromSubBlock(Player.PLAYER_HEIGHT).toPx();
+		return Coord3.fromPx(posPx.x, posPx.y + heightPx, posPx.z);
 	}
 
 	public double getMouseHorizRads() {
@@ -198,20 +206,20 @@ public class Controller {
 	private boolean onGround() {
 		final double groundBuffer = 0.1;
 
-		return Math.abs(this.pos.y - getGroundYPx()) < groundBuffer;
+		return Math.abs(this.pos.toPx().y - getGroundY().toPx()) < groundBuffer;
 	}
 
 	private boolean aboveGround() {
-		return !this.onGround() && this.pos.y > getGroundYPx();
+		return !this.onGround() && this.pos.toPx().y > getGroundY().toPx();
 	}
 
 	private boolean belowGround() {
 		return !this.onGround() & !this.aboveGround();
 	}
 
-	private double getGroundYPx() {
+	private Coord1 getGroundY() {
 		BlockCoord blockCoord = this.getFootPosition().toBlock();
 		int groundY = this.game.world.getGroundY(blockCoord.x, blockCoord.z);
-		return Conversion.subBlockToPx(groundY);
+		return Coord1.fromSubBlock(groundY);
 	}
 }

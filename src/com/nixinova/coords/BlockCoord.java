@@ -20,8 +20,8 @@ public class BlockCoord implements ICoord<Integer> {
 		this.z = z;
 	}
 	
-	public Coord toCoord() {
-		return Coord.fromBlock(this);
+	public Coord3 toCoord() {
+		return Coord3.fromBlock(this);
 	}
 
 	public PxCoord toPxCoord() {

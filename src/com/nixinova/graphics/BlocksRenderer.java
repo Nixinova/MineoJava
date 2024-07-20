@@ -2,7 +2,7 @@ package com.nixinova.graphics;
 
 import com.nixinova.Conversion;
 import com.nixinova.coords.BlockCoord;
-import com.nixinova.coords.Coord;
+import com.nixinova.coords.Coord3;
 import com.nixinova.coords.PxCoord;
 import com.nixinova.coords.TxCoord;
 import com.nixinova.main.Game;
@@ -43,7 +43,7 @@ public class BlocksRenderer extends Render {
 
 		// Loop through texels and render
 		// TODO fill inbetween as well
-		TxCoord startTx = Coord.fromBlock(blockX, blockY, blockZ).toTx();
+		TxCoord startTx = Coord3.fromBlock(blockX, blockY, blockZ).toTx();
 		for (int txX = 0; txX < size; txX++) {
 			for (int txY = 0; txY < size; txY++) {
 				for (int txZ = 0; txZ < size; txZ++) {
@@ -61,7 +61,7 @@ public class BlocksRenderer extends Render {
 	}
 
 	private void renderOneTx(int txX, int txY, int txZ) {
-		BlockCoord blockCoord = Coord.fromTx(txX, txY, txZ).toBlock();
+		BlockCoord blockCoord = Coord3.fromTx(txX, txY, txZ).toBlock();
 		Render texture = this.game.world.getTextureAt(blockCoord.x, blockCoord.y, blockCoord.z);
 
 		// Skip if air

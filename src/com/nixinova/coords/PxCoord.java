@@ -20,8 +20,8 @@ public class PxCoord implements ICoord<Double> {
 		this.z = z;
 	}
 	
-	public Coord toCoord() {
-		return Coord.fromPx(this);
+	public Coord3 toCoord() {
+		return Coord3.fromPx(this);
 	}
 
 	public PxCoord toPxCoord() {

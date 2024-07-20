@@ -20,8 +20,8 @@ public class TxCoord implements ICoord<Integer> {
 		this.z = z;
 	}
 	
-	public Coord toCoord() {
-		return Coord.fromTx(this);
+	public Coord3 toCoord() {
+		return Coord3.fromTx(this);
 	}
 	
 	public PxCoord toPxCoord() {

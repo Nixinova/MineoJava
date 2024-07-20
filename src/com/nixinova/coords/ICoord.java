@@ -2,7 +2,7 @@ package com.nixinova.coords;
 
 public interface ICoord<X extends Number> {
 	
-	public Coord toCoord();
+	public Coord3 toCoord();
 
 	public PxCoord toPxCoord();
 
