@@ -143,7 +143,7 @@ public class Controller {
 		}
 
 		// differentials for controls
-		PxCoord newPos2 = new PxCoord();
+		PxCoord newPos2 = this.pos2.toPx();
 		newPos2.x += (xMove * Math.cos(this.rot) + zMove * Math.sin(this.rot)) * Options.walkSpeed;
 		newPos2.y += yMove;
 		newPos2.z += (zMove * Math.cos(this.rot) - xMove * Math.sin(this.rot)) * Options.walkSpeed;
