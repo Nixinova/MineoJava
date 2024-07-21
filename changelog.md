@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.17_2
+*2024-07-21 22:28*
+- Changed rendering to make closer texels overwrite farther texels
+
 ## 0.0.17_1
 *2024-07-21 22:11*
 - Changed rendering culling

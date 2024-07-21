@@ -10,13 +10,19 @@ import com.nixinova.options.Options;
 public class BlocksRenderer extends Render {
 	private Game game;
 
+	private float[] pixelCurMinDistances;
+
 	public BlocksRenderer(int width, int height) {
 		super(width, height);
+		this.pixelCurMinDistances = new float[width * height];
 	}
 
 	public void prepare(Game game) {
 		this.game = game;
 		super.clearImage();
+		for (int i = 0; i < super.imageSize(); i++) {
+			this.pixelCurMinDistances[i] = Integer.MAX_VALUE;
+		}
 	}
 
 	public void renderWorld() {
@@ -122,6 +128,7 @@ public class BlocksRenderer extends Render {
 
 		int startX = (int) screenPos.x;
 		int startY = (int) screenPos.y;
+		double zIndex = screenPos.z;
 
 		for (int x = 0; x < TEXEL_SIZE; x++) {
 			for (int y = 0; y < TEXEL_SIZE; y++) {
@@ -130,9 +137,9 @@ public class BlocksRenderer extends Render {
 
 				// Ensure pixel is within screen bounds
 				if (isValidPosition(screenX, screenY)) {
-					int brightAmount = (int) (Options.gamma * 10 * (Options.renderDistance - screenPos.z / 10));
+					int brightAmount = (int) (Options.gamma * 10 * (Options.renderDistance - zIndex / 10));
 					int fogAppliedPixel = applyFog(pixel, brightAmount);
-					setPixel(screenX, screenY, fogAppliedPixel);
+					this.savePixel(screenX, screenY, fogAppliedPixel, zIndex);
 				}
 			}
 		}
@@ -165,6 +172,20 @@ public class BlocksRenderer extends Render {
 
 		// Save fog-adjusted colour to pixel
 		return r << 16 | g << 8 | b;
+	}
+
+	/** Update a pixel in the current screen image if it is closer to the player than any other pixel at that coordinate */
+	private void savePixel(int screenX, int screenY, int pixel, double zIndex) {
+		int pixelI = super.getPixelIndex(screenX, screenY);
+		double curMinDist = this.pixelCurMinDistances[pixelI];
+
+		// If distance is greater than current min dist, do not render the pixel
+		if (zIndex >= curMinDist)
+			return;
+
+		// Otherwise save pixel for rendering
+		super.setPixel(screenX, screenY, pixel);
+		this.pixelCurMinDistances[pixelI] = (float) zIndex;
 	}
 
 }
