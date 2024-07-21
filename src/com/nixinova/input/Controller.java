@@ -39,23 +39,18 @@ public class Controller {
 
 		// Get looking at block
 		BlockCoord lookingAt = this.game.player.getLookingAt();
+		boolean isLookingAtValidBlock = lookingAt != null && Block.isInsideWorld(lookingAt);
 		// Block breaking
-		if (kbd.pressedButton(Keys.LCLICK) && lookingAt != null) {
-			// Break block if within world
-			if (Block.isInsideWorld(lookingAt)) {
-				this.game.world.setTextureAt(lookingAt.x, lookingAt.y, lookingAt.z, Block.AIR.getTexture());
-			}
+		if (kbd.pressedButton(Keys.LCLICK) && isLookingAtValidBlock) {
+			this.game.world.setTextureAt(lookingAt.x, lookingAt.y, lookingAt.z, Block.AIR.getTexture());
 
 			// Cooldown
 			kbd.startButtonCooldown(Keys.LCLICK);
 		}
 		// Block placing
-		if (kbd.pressedButton(Keys.RCLICK) && lookingAt != null) {
-			// Place block if within world
-			if (Block.isInsideWorld(lookingAt)) {
-				Block block = Hotbar.getCurrentBlock();
-				this.game.world.setTextureAt(lookingAt.x, lookingAt.y + 1, lookingAt.z, block.getTexture());
-			}
+		if (kbd.pressedButton(Keys.RCLICK) && isLookingAtValidBlock) {
+			Block block = Hotbar.getCurrentBlock();
+			this.game.world.setTextureAt(lookingAt.x, lookingAt.y + 1, lookingAt.z, block.getTexture());
 
 			// Cooldown
 			kbd.startButtonCooldown(Keys.RCLICK);
