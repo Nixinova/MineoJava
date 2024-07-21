@@ -130,17 +130,14 @@ public class BlocksRenderer extends Render {
 		int startY = (int) screenPos.y;
 		double zIndex = screenPos.z;
 
-		for (int x = 0; x < TEXEL_SIZE; x++) {
-			for (int y = 0; y < TEXEL_SIZE; y++) {
-				int screenX = startX + x - Texture.SIZE;
-				int screenY = startY + y - Texture.SIZE;
+		// Apply fog to pixel
+		int brightAmount = (int) (Options.gamma * 10 * (Options.renderDistance - zIndex / 10));
+		int fogAppliedPixel = applyFog(pixel, brightAmount);
 
-				// Ensure pixel is within screen bounds
-				if (isValidPosition(screenX, screenY)) {
-					int brightAmount = (int) (Options.gamma * 10 * (Options.renderDistance - zIndex / 10));
-					int fogAppliedPixel = applyFog(pixel, brightAmount);
-					this.savePixel(screenX, screenY, fogAppliedPixel, zIndex);
-				}
+		// Generate texel of given size and save o screen image
+		for (int x = startX; x < startX + TEXEL_SIZE && x < super.width; x++) {
+			for (int y = startY; y < startY + TEXEL_SIZE && y < super.height; y++) {
+				this.savePixel(x, y, fogAppliedPixel, zIndex);
 			}
 		}
 	}
