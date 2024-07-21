@@ -15,7 +15,7 @@ public class Raycast {
 		SubBlockCoord playerPos = game.controls.getCameraPosition().toSubBlock();
 
 		// Define the corners of the block
-		double[][] corners = {
+		int[][] corners = {
 			{ blockX, blockY, blockZ },
 			{ blockX + 1, blockY, blockZ },
 			{ blockX, blockY + 1, blockZ },
@@ -27,10 +27,10 @@ public class Raycast {
 		};
 
 		// Check visibility for each corner
-		for (double[] corner : corners) {
-			double cornerX = corner[0];
-			double cornerY = corner[1];
-			double cornerZ = corner[2];
+		for (int[] corner : corners) {
+			int cornerX = corner[0];
+			int cornerY = corner[1];
+			int cornerZ = corner[2];
 
 			// Calculate direction vector from player to corner
 			double distX = cornerX - playerPos.x;
@@ -58,15 +58,15 @@ public class Raycast {
 
 				BlockCoord curBlock = applyAsBlock(val -> Math.round(val), curX, curY, curZ);
 
-				// Return early if ray has gone into the ground
-				if (curY < game.world.getGroundY(curBlock.x, curBlock.z))
-					return false;
-
 				// Continue raycasting if current block is not solid
 				if (game.world.isAir(curBlock.x, curBlock.y, curBlock.z))
 					continue;
+				
+				// Block is not visible if not exposed
+				if (!game.world.isExposed(curBlock.x,curBlock.y,curBlock.z))
+					return false;
 
-				// Bisible if current block is the target corner
+				// Visible if current block is the target corner
 				if (curBlock.x == cornerX && curBlock.y == cornerY && curBlock.z == cornerZ)
 					return true;
 			}

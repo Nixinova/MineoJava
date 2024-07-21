@@ -92,11 +92,11 @@ public class World {
 					Block block;
 					if (y == 0)
 						block = Block.BEDROCK;
-					else if ((y * 2 < x + z) && y <= GROUND_Y - 4)
+					else if ((y * 2.5 < x + z) && y <= GROUND_Y - 4)
 						block = Block.STONE;
-					else if ((y * 2 < x + z) && y <= GROUND_Y - 1)
+					else if ((y * 2.5 < x + z) && y <= GROUND_Y - 1)
 						block = Block.DIRT;
-					else if ((y * 2 < x + z) && y <= GROUND_Y)
+					else if ((y * 2.5 < x + z) && y <= GROUND_Y)
 						block = Block.GRASS;
 					else if ((y * 1.5 > x + z) && y <= GROUND_Y - 1)
 						block = Block.DIRT;

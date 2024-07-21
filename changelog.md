@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.17_1
+*2024-07-21 22:11*
+- Changed rendering culling
+- Tweaked world generation
+
 ## 0.0.17
 *2024-07-21 21:47*
 - Re-added distance fog effect
