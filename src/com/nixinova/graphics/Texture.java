@@ -6,7 +6,6 @@ import javax.imageio.ImageIO;
 
 public class Texture {
 	public static final int SIZE = 8;
-	
 	public static final String TEXTURES_FOLDER = "/textures/";
 
 	public static Render loadTexture(String name) {

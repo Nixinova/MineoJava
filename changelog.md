@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.17
+*2024-07-21 21:47*
+- Re-added distance fog effect
+- Blocks are now only rendered within the specified renderDistance
+- Changed default gamma to 1.0
+- Tweaked raycasting start position
+
 ## 0.0.16_1
 *2024-07-19 13:29*
 - Fixed incorrect hovered block calculation

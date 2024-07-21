@@ -5,17 +5,21 @@ import com.nixinova.coords.Coord3;
 import com.nixinova.coords.PxCoord;
 import com.nixinova.coords.TxCoord;
 import com.nixinova.main.Game;
+import com.nixinova.options.Options;
 
 public class BlocksRenderer extends Render {
 	private Game game;
 
-	public BlocksRenderer(Render render, Game game) {
-		super(render.width, render.height);
+	public BlocksRenderer(int width, int height) {
+		super(width, height);
+	}
+
+	public void prepare(Game game) {
 		this.game = game;
 		super.clearImage();
 	}
 
-	public void renderWorld(Game game) {
+	public void renderWorld() {
 		// Loop from bottom to top of world
 		BlockCoord min = this.game.world.minCorner;
 		BlockCoord max = this.game.world.maxCorner;
@@ -23,18 +27,25 @@ public class BlocksRenderer extends Render {
 			for (int y = min.y; y <= max.y; y++) {
 				for (int z = min.z; z <= max.z; z++) {
 					// Ensure block is not air
-					if (this.game.world.isAir(x, y, z))
+					boolean isAir = this.game.world.isAir(x, y, z);
+					if (isAir)
 						continue;
 
-					// Render block if visible
-					boolean isVisible = Raycast.isBlockVisibleToPlayer(this.game, x, y, z);
-					if (isVisible) {
-						this.renderOneBlock(x, y, z);
-					}
+					// Ensure block is within render distance
+					boolean inRenderDist = this.isWithinRenderDistance(x, y, z);
+					if (!inRenderDist)
+						continue;
+
+					// Ensure block is visible to player
+					boolean isInSight = Raycast.isBlockVisibleToPlayer(this.game, x, y, z);
+					if (!isInSight)
+						continue;
+
+					// Render block
+					this.renderOneBlock(x, y, z);
 				}
 			}
 		}
-
 	}
 
 	private void renderOneBlock(int blockX, int blockY, int blockZ) {
@@ -99,10 +110,9 @@ public class BlocksRenderer extends Render {
 		double screenX = (this.width / 2.0) + (xTilt / zTilt) * this.height;
 		double screenY = (this.height / 2.0) - (yTilt / zTilt) * this.height;
 
-		if (zTilt <= 0 || !isValidPosition((int) screenX, (int) screenY)) {
-			// off screen, so return nothing
+		// Early return when pixel is invalid (i.e., offscreen)
+		if (zTilt <= 0 || !super.isValidPosition((int) screenX, (int) screenY))
 			return null;
-		}
 
 		return new PxCoord(screenX, screenY, absDistance);
 	}
@@ -120,10 +130,41 @@ public class BlocksRenderer extends Render {
 
 				// Ensure pixel is within screen bounds
 				if (isValidPosition(screenX, screenY)) {
-					setPixel(screenX, screenY, pixel);
+					int brightAmount = (int) (Options.gamma * 10 * (Options.renderDistance - screenPos.z / 10));
+					int fogAppliedPixel = applyFog(pixel, brightAmount);
+					setPixel(screenX, screenY, fogAppliedPixel);
 				}
 			}
 		}
+	}
+
+	private boolean isWithinRenderDistance(int blockX, int blockY, int blockZ) {
+		BlockCoord playerPos = this.game.controls.getFootPosition().toBlock();
+		int dx = playerPos.x - blockX;
+		int dy = playerPos.y - blockY;
+		int dz = playerPos.z - blockZ;
+		int distance = (int) Math.sqrt(dx * dx + dy * dy + dz * dz);
+		return distance < Options.renderDistance;
+	}
+
+	/** Adds depth-based fog to the pixels */
+	private int applyFog(int colour, int brightness) {
+		// Clamp to 8-bit range
+		if (brightness < 0)
+			brightness = 0;
+		if (brightness > 0xFF)
+			brightness = 0xFF;
+
+		// Calculate final RGB from pixel colour + fog
+		int r = colour >> 16 & 0xFF;
+		int g = colour >> 8 & 0xFF;
+		int b = colour & 0xFF;
+		r = r * brightness / 0xFF;
+		g = g * brightness / 0xFF;
+		b = b * brightness / 0xFF;
+
+		// Save fog-adjusted colour to pixel
+		return r << 16 | g << 8 | b;
 	}
 
 }

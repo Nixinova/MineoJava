@@ -21,7 +21,7 @@ public class Options {
 		public static long seed = 100L;
 		public static int worldSize = 40;
 		public static int renderDistance = 50;
-		public static double gamma = 0.8;
+		public static double gamma = 1.0;
 		public static double gravity = 0.2;
 		public static double sensitivity = 0.005;
 		public static double walkSpeed = 0.5;

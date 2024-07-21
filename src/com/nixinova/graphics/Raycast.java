@@ -13,7 +13,6 @@ public class Raycast {
 
 		// Get player's position
 		SubBlockCoord playerPos = game.controls.getCameraPosition().toSubBlock();
-		playerPos.y += 0.5; // upround
 
 		// Define the corners of the block
 		double[][] corners = {
