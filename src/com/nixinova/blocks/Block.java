@@ -1,4 +1,4 @@
-package com.nixinova.world;
+package com.nixinova.blocks;
 
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.graphics.Render;
@@ -15,17 +15,17 @@ public class Block {
 	public static Block GRASS = new Block("blocks/grass");
 	public static Block DEBUG = new Block("debug");
 	public static Block MISSING = new Block("missing_texture");
-	
+
 	private Render texture;
-	
+
 	public Block(String texture) {
 		this.texture = texture == null ? null : Texture.loadTexture(texture);
 	}
-	
+
 	public Render getTexture() {
 		return this.texture;
 	}
-	
+
 	public static boolean isInsideWorld(BlockCoord coords) {
 		int x = coords.x;
 		int z = coords.z;

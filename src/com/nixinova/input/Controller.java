@@ -1,6 +1,7 @@
 package com.nixinova.input;
 
 import com.nixinova.Vector3;
+import com.nixinova.blocks.Block;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord1;
 import com.nixinova.coords.Coord3;
@@ -9,7 +10,6 @@ import com.nixinova.main.Game;
 import com.nixinova.options.Options;
 import com.nixinova.player.Hotbar;
 import com.nixinova.player.Player;
-import com.nixinova.world.Block;
 
 public class Controller {
 

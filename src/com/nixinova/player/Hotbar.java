@@ -1,7 +1,7 @@
 package com.nixinova.player;
 
+import com.nixinova.blocks.Block;
 import com.nixinova.input.Keys;
-import com.nixinova.world.Block;
 
 public class Hotbar {
 	public static final Block[] SLOTS = new Block[10];

@@ -1,5 +1,7 @@
 package com.nixinova.graphics;
 
+import com.nixinova.blocks.Block;
+import com.nixinova.blocks.BlockFace;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord3;
 import com.nixinova.coords.PxCoord;

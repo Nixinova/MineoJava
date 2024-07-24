@@ -2,6 +2,7 @@ package com.nixinova.world;
 
 import java.util.Random;
 
+import com.nixinova.blocks.Block;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.graphics.Render;
 import com.nixinova.options.Options;

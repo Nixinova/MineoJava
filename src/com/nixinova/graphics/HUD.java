@@ -1,7 +1,7 @@
 package com.nixinova.graphics;
 
+import com.nixinova.blocks.Block;
 import com.nixinova.player.Hotbar;
-import com.nixinova.world.Block;
 
 public class HUD {
 
