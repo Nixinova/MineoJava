@@ -4,6 +4,12 @@
 - Added block face culling
 - World now only generates along the positive axes
 - World now abides by worldSize option again
+- World now generates in layers again
+  - Top layer is now randomly offset by 1 or 2 blocks
+  - Top layer of world is always grass
+  - The three layers below the top layer are dirt
+  - The rest of the layers down to Y=1 are stone
+  - The bottom layer remains bedrock
 
 ## 0.0.17_3
 *2024-07-24 23:03*

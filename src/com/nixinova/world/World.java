@@ -99,41 +99,28 @@ public class World {
 
 	// NOTE: does not abide by this.minCorner
 	private void mapBlockTextures() {
-		int arrSize[] = new int[] { this.maxCorner.x+1, this.maxCorner.y+1, this.maxCorner.z+1 };
-		this.blockTextures = new Render[arrSize[0]][arrSize[1]][arrSize[2]];
+		int maxX = this.maxCorner.x + 1;
+		int maxY = this.maxCorner.y + 1;
+		int maxZ = this.maxCorner.z + 1;
+		this.blockTextures = new Render[maxX][maxY][maxZ];
 
 		Random random = new Random(Options.seed);
 
-		for (int x = 0; x < arrSize[0]; x++) {
-			for (int y = 0; y < arrSize[1]; y++) {
-				for (int z = 0; z < arrSize[2]; z++) {
+		for (int x = 0; x < this.maxCorner.x; x++) {
+			for (int z = 0; z < this.maxCorner.z; z++) {
+				int localGroundY = GROUND_Y + random.nextInt(2);
 
-					if (y < 0)
-						continue;
-
+				for (int y = 0; y < this.maxCorner.y; y++) {
 					Block block;
+
 					if (y == 0)
 						block = Block.BEDROCK;
-					else if ((y * 2.5 < x + z) && y <= GROUND_Y - 4)
+					else if (y <= localGroundY - 4)
 						block = Block.STONE;
-					else if ((y * 2.5 < x + z) && y <= GROUND_Y - 1)
+					else if (y <= localGroundY - 1)
 						block = Block.DIRT;
-					else if ((y * 2.5 < x + z) && y <= GROUND_Y)
+					else if (y <= localGroundY)
 						block = Block.GRASS;
-					else if ((y * 1.5 > x + z) && y <= GROUND_Y - 1)
-						block = Block.DIRT;
-					else if ((y * 1.5 > x + z) && y <= GROUND_Y)
-						block = Block.GRASS;
-					/*
-					else if (y <= GROUND_Y - 4)
-						block = random.nextInt(y) > 1 ? Block.DIRT : Block.STONE;
-					else if (y <= GROUND_Y - 2)
-						block = Block.DIRT;
-					else if (y <= GROUND_Y)
-						block = Block.GRASS;
-					else if (y <= GROUND_Y + 1 && random.nextBoolean())
-						block = Block.GRASS;
-					//*/
 					else
 						block = Block.AIR;
 
