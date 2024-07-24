@@ -2,6 +2,7 @@
 
 ## Next
 - Fixed movement smoothening
+- Improved rendering performance
 
 ## 0.0.17_2
 *2024-07-21 22:28*

@@ -11,6 +11,9 @@ public class BlocksRenderer extends Render {
 	private Game game;
 
 	private float[] pixelCurMinDistances;
+	private double xRot, yRot;
+	private double xRotSin, yRotSin;
+	private double xRotCos, yRotCos;
 
 	public BlocksRenderer(int width, int height) {
 		super(width, height);
@@ -23,6 +26,14 @@ public class BlocksRenderer extends Render {
 		for (int i = 0; i < super.imageSize(); i++) {
 			this.pixelCurMinDistances[i] = Integer.MAX_VALUE;
 		}
+
+		// Cache trig
+		this.xRot = this.game.controls.getMouseHorizRads();
+		this.yRot = this.game.controls.getMouseVertRads();
+		this.xRotSin = Math.sin(this.xRot);
+		this.xRotCos = Math.cos(this.xRot);
+		this.yRotSin = Math.sin(this.yRot);
+		this.yRotCos = Math.cos(this.yRot);
 	}
 
 	public void renderWorld() {
@@ -63,7 +74,7 @@ public class BlocksRenderer extends Render {
 		for (int txX = 0; txX < size; txX++) {
 			for (int txY = 0; txY < size; txY++) {
 				for (int txZ = 0; txZ < size; txZ++) {
-					// Only render outside faces of the block;
+					// Only render outside faces of the block
 					boolean atStart = txX == 0 || txY == 0 || txZ == 0;
 					boolean atEnd = txX == size - 1 || txY == size - 1 || txZ == size - 1;
 					if (!atStart && !atEnd)
@@ -77,6 +88,7 @@ public class BlocksRenderer extends Render {
 	}
 
 	private void renderOneTx(int txX, int txY, int txZ) {
+		// Get texture
 		BlockCoord blockCoord = Coord3.fromTx(txX, txY, txZ).toBlock();
 		Render texture = this.game.world.getTextureAt(blockCoord.x, blockCoord.y, blockCoord.z);
 
@@ -95,22 +107,20 @@ public class BlocksRenderer extends Render {
 
 	private PxCoord txCoordToScreenPx(int txX, int txY, int txZ) {
 		PxCoord camPos = this.game.controls.getCameraPosition().toPx();
-		double rot = this.game.controls.getMouseHorizRads();
-		double tilt = this.game.controls.getMouseVertRads();
 
 		// Relative position of block in world and player pos
 		PxCoord relPos = new PxCoord(txX - camPos.x, txY - camPos.y, txZ - camPos.z);
 		double absDistance = Math.sqrt(relPos.x * relPos.x + relPos.y * relPos.y + relPos.z * relPos.z);
 
 		// Apply Y-axis (horiz) rotation
-		double xRot = relPos.x * Math.cos(rot) - relPos.z * Math.sin(rot);
+		double xRot = relPos.x * this.xRotCos - relPos.z * this.xRotSin;
 		double yRot = relPos.y;
-		double zRot = relPos.x * Math.sin(rot) + relPos.z * Math.cos(rot);
+		double zRot = relPos.x * this.xRotSin + relPos.z * this.xRotCos;
 
 		// Apply X-axis (vertical) tilt
 		double xTilt = xRot;
-		double yTilt = yRot * Math.cos(tilt) - zRot * Math.sin(tilt);
-		double zTilt = yRot * Math.sin(tilt) + zRot * Math.cos(tilt);
+		double yTilt = yRot * this.yRotCos - zRot * this.yRotSin;
+		double zTilt = yRot * this.yRotSin + zRot * this.yRotCos;
 
 		// Project to 2D screen space
 		double screenX = (this.width / 2.0) + (xTilt / zTilt) * this.height;
@@ -134,10 +144,17 @@ public class BlocksRenderer extends Render {
 		int brightAmount = (int) (Options.gamma * 10 * (Options.renderDistance - zIndex / 10));
 		int fogAppliedPixel = applyFog(pixel, brightAmount);
 
-		// Generate texel of given size and save o screen image
-		for (int x = startX; x < startX + TEXEL_SIZE && x < super.width; x++) {
-			for (int y = startY; y < startY + TEXEL_SIZE && y < super.height; y++) {
-				this.savePixel(x, y, fogAppliedPixel, zIndex);
+		// Transform texel coordinates based on camera rotation
+		for (int i = 0; i < TEXEL_SIZE; i++) {
+			for (int j = 0; j < TEXEL_SIZE; j++) {
+				// Convert to screen coordinates
+				int screenX = startX + i;
+				int screenY = startY + j;
+
+				// Check if the position is valid and save the pixel
+				if (super.isValidPosition(screenX, screenY)) {
+					this.savePixel(screenX, screenY, fogAppliedPixel, zIndex);
+				}
 			}
 		}
 	}
