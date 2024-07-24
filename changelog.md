@@ -3,6 +3,7 @@
 ## Next
 - Added block face culling
 - World now only generates along the positive axes
+- World now abides by worldSize option again
 
 ## 0.0.17_3
 *2024-07-24 23:03*

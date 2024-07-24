@@ -125,7 +125,6 @@ public class Options {
 			seed = Long.parseLong(val);
 		if (name.contains(OPTION_STRINGS.worldSize))
 			worldSize = Integer.parseInt(val);
-		worldSize = 10; // Temporary measure for performance in v.14
 		if (name.contains(OPTION_STRINGS.renderDistance))
 			renderDistance = Integer.parseInt(val);
 		if (name.contains(OPTION_STRINGS.gamma))
