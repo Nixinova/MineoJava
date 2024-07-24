@@ -2,9 +2,9 @@ package com.nixinova.main;
 
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.graphics.Raycast;
-import com.nixinova.input.Controller;
 import com.nixinova.input.InputHandler;
 import com.nixinova.options.Options;
+import com.nixinova.player.Controller;
 import com.nixinova.player.Player;
 import com.nixinova.world.World;
 
