@@ -1,6 +1,5 @@
 package com.nixinova.graphics;
 
-import com.nixinova.blocks.Block;
 import com.nixinova.blocks.BlockFace;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord3;
@@ -82,14 +81,22 @@ public class BlocksRenderer extends Render {
 					if (!atStart && !atEnd)
 						continue;
 
+					// Get block face
+					BlockFace face = BlockFace.getFromTx(txX, txY, txZ);
+
+					// Ignore if this block face is not exposed
+					 if (!this.game.world.isFaceExposed(face, blockX, blockY, blockZ)) {
+						continue;
+					 }
+
 					// Render this texel
-					this.renderOneTx(startTx.x + txX, startTx.y + txY, startTx.z + txZ);
+					this.renderOneTx(face, startTx.x + txX, startTx.y + txY, startTx.z + txZ);
 				}
 			}
 		}
 	}
 
-	private void renderOneTx(int txX, int txY, int txZ) {
+	private void renderOneTx(BlockFace face, int txX, int txY, int txZ) {
 		// Get texture
 		BlockCoord blockCoord = Coord3.fromTx(txX, txY, txZ).toBlock();
 		Render texture = this.game.world.getTextureAt(blockCoord.x, blockCoord.y, blockCoord.z);
@@ -107,39 +114,10 @@ public class BlocksRenderer extends Render {
 
 		// Render texel
 		int txPixel = Texture.getTexel(texture, txX, txZ);
-		this.generateRenderedTexel(txPixel, posOnScreen, blockCoord);
-
+		this.generateRenderedTexel(face, txPixel, posOnScreen, blockCoord);
 	}
 
-	private PxCoord txCoordToScreenPx(int txX, int txY, int txZ) {
-		PxCoord camPos = this.game.controls.getCameraPosition().toPx();
-
-		// Relative position of block in world and player pos
-		PxCoord relPos = new PxCoord(txX - camPos.x, txY - camPos.y, txZ - camPos.z);
-		double absDistance = Math.sqrt(relPos.x * relPos.x + relPos.y * relPos.y + relPos.z * relPos.z);
-
-		// Apply Y-axis (horiz) rotation
-		double xRot = relPos.x * this.xRotCos - relPos.z * this.xRotSin;
-		double yRot = relPos.y;
-		double zRot = relPos.x * this.xRotSin + relPos.z * this.xRotCos;
-
-		// Apply X-axis (vertical) tilt
-		double xTilt = xRot;
-		double yTilt = yRot * this.yRotCos - zRot * this.yRotSin;
-		double zTilt = yRot * this.yRotSin + zRot * this.yRotCos;
-
-		// Project to 2D screen space
-		double screenX = (this.width / 2.0) + (xTilt / zTilt) * this.height;
-		double screenY = (this.height / 2.0) - (yTilt / zTilt) * this.height;
-
-		// Early return when pixel is invalid (i.e., offscreen)
-		if (zTilt <= 0 || !super.isValidPosition((int) screenX, (int) screenY))
-			return null;
-
-		return new PxCoord(screenX, screenY, absDistance);
-	}
-
-	private void generateRenderedTexel(int pixelColour, PxCoord screenPos, BlockCoord blockPos) {
+	private void generateRenderedTexel(BlockFace face, int pixelColour, PxCoord screenPos, BlockCoord blockPos) {
 		final int TEXEL_SIZE = 16;
 
 		int startX = (int) screenPos.x;
@@ -172,6 +150,34 @@ public class BlocksRenderer extends Render {
 		int dz = playerPos.z - blockZ;
 		int distance = (int) Math.sqrt(dx * dx + dy * dy + dz * dz);
 		return distance < Options.renderDistance;
+	}
+
+	private PxCoord txCoordToScreenPx(int txX, int txY, int txZ) {
+		PxCoord camPos = this.game.controls.getCameraPosition().toPx();
+
+		// Relative position of block in world and player pos
+		PxCoord relPos = new PxCoord(txX - camPos.x, txY - camPos.y, txZ - camPos.z);
+		double absDistance = Math.sqrt(relPos.x * relPos.x + relPos.y * relPos.y + relPos.z * relPos.z);
+
+		// Apply Y-axis (horiz) rotation
+		double xRot = relPos.x * this.xRotCos - relPos.z * this.xRotSin;
+		double yRot = relPos.y;
+		double zRot = relPos.x * this.xRotSin + relPos.z * this.xRotCos;
+
+		// Apply X-axis (vertical) tilt
+		double xTilt = xRot;
+		double yTilt = yRot * this.yRotCos - zRot * this.yRotSin;
+		double zTilt = yRot * this.yRotSin + zRot * this.yRotCos;
+
+		// Project to 2D screen space
+		double screenX = (this.width / 2.0) + (xTilt / zTilt) * this.height;
+		double screenY = (this.height / 2.0) - (yTilt / zTilt) * this.height;
+
+		// Early return when pixel is invalid (i.e., offscreen)
+		if (zTilt <= 0 || !super.isValidPosition((int) screenX, (int) screenY))
+			return null;
+
+		return new PxCoord(screenX, screenY, absDistance);
 	}
 
 	/** Adds depth-based fog to the pixels */

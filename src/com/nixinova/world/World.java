@@ -1,8 +1,11 @@
 package com.nixinova.world;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import com.nixinova.blocks.Block;
+import com.nixinova.blocks.BlockFace;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.graphics.Render;
 import com.nixinova.options.Options;
@@ -54,6 +57,32 @@ public class World {
 		boolean touchingAir = isAir(x, y + 1, z) || isAir(x, y - 1, z)
 			|| isAir(x + 1, y, z) || isAir(x - 1, y, z) || isAir(x, y, z + 1) || isAir(x, y, z - 1);
 		return touchingAir;
+	}
+
+	public boolean isFaceExposed(BlockFace face, int blockX, int blockY, int blockZ) {
+		// Get adjacent blocks to check
+		List<int[]> offsetsToCheck = new ArrayList<>();
+		if (face.xMax)
+			offsetsToCheck.add(new int[] { +1, 0, 0 });
+		if (face.xMin)
+			offsetsToCheck.add(new int[] { -1, 0, 0 });
+		if (face.yMax)
+			offsetsToCheck.add(new int[] { 0, +1, 0 });
+		if (face.yMin)
+			offsetsToCheck.add(new int[] { 0, -1, 0 });
+		if (face.zMax)
+			offsetsToCheck.add(new int[] { 0, 0, +1 });
+		if (face.zMin)
+			offsetsToCheck.add(new int[] { 0, 0, -1 });
+
+		// Check adjacent blocks and return true if any are air
+		for (int[] coords : offsetsToCheck) {
+			int x = blockX + coords[0], y = blockY + coords[1], z = blockZ + coords[2];
+			boolean isExposed = isWithinWorld(x, y, z) && isAir(x, y, z);
+			if (isExposed)
+				return true;
+		}
+		return false;
 	}
 
 	public boolean isAir(int blockX, int blockY, int blockZ) {

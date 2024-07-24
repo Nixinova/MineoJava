@@ -2,9 +2,17 @@ package com.nixinova.blocks;
 
 import com.nixinova.graphics.Texture;
 
-public enum BlockFace {
-	TOP, BOTTOM, LEFT, RIGHT, FRONT, BACK;
-	
+public class BlockFace {
+	public boolean xMin, xMax;
+	public boolean yMin, yMax;
+	public boolean zMin, zMax;
+
+	public BlockFace() {
+		xMin = xMax = false;
+		yMin = yMax = false;
+		zMin = zMax = false;
+	}
+
 	public static BlockFace getFromTx(int txX, int txY, int txZ) {
 		final int size = Texture.SIZE;
 
@@ -13,23 +21,22 @@ public enum BlockFace {
 		int texIdY = txY % size;
 		int texIdZ = txZ % size;
 
-		// Set block's face
-		BlockFace face = null;
+		// Set block face
+		BlockFace face = new BlockFace();
 		if (texIdX == 0)
-			face = RIGHT;
-		else if (texIdX == size - 1)
-			face = LEFT;
-		else if (texIdY == 0)
-			face = BOTTOM;
-		else if (texIdY == size - 1)
-			face = TOP;
-		else if (texIdZ == 0)
-			face = BACK;
-		else if (texIdZ == size - 1)
-			face = FRONT;
+			face.xMin = true;
+		if (texIdX == size - 1)
+			face.xMax = true;
+		if (texIdY == 0)
+			face.yMin = true;
+		if (texIdY == size - 1)
+			face.yMax = true;
+		if (texIdZ == 0)
+			face.zMin = true;
+		if (texIdZ == size - 1)
+			face.zMax = true;
 
 		return face;
 	}
-
 
 }
