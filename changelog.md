@@ -1,6 +1,7 @@
 # Changelog
 
-## Next
+## 0.0.17_3
+*2024-07-24 23:03*
 - Fixed movement smoothening
 - Improved rendering performance
 

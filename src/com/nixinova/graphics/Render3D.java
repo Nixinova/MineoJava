@@ -1,7 +1,6 @@
 package com.nixinova.graphics;
 
 import com.nixinova.main.Game;
-import com.nixinova.options.Options;
 
 public class Render3D extends Render {
 	private BlocksRenderer blockRender;

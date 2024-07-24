@@ -162,7 +162,7 @@ public class Controller {
 		this.tilt2 *= 0.8D;
 
 		// Modulo'ing
-		this.rot %= Math.TAU;
+		this.rot %= Math.PI * 2;
 	}
 
 	public Coord3 getFootPosition() {

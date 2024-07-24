@@ -92,17 +92,21 @@ public class BlocksRenderer extends Render {
 		BlockCoord blockCoord = Coord3.fromTx(txX, txY, txZ).toBlock();
 		Render texture = this.game.world.getTextureAt(blockCoord.x, blockCoord.y, blockCoord.z);
 
-		// Skip if air
-		if (texture == null) {
+		// Skip if block is air
+		if (texture == null)
 			return;
-		}
 
+		// Get screen pixel position
 		PxCoord posOnScreen = txCoordToScreenPx(txX, txY, txZ);
-		if (posOnScreen != null) {
-			// Render texel
-			int txPixel = Texture.getTexel(texture, txX, txZ);
-			this.generateRenderedTexel(txPixel, posOnScreen, blockCoord);
-		}
+
+		// Exit if position is off screen
+		if (posOnScreen == null)
+			return;
+
+		// Render texel
+		int txPixel = Texture.getTexel(texture, txX, txZ);
+		this.generateRenderedTexel(txPixel, posOnScreen, blockCoord);
+
 	}
 
 	private PxCoord txCoordToScreenPx(int txX, int txY, int txZ) {
@@ -133,7 +137,7 @@ public class BlocksRenderer extends Render {
 		return new PxCoord(screenX, screenY, absDistance);
 	}
 
-	private void generateRenderedTexel(int pixel, PxCoord screenPos, BlockCoord blockPos) {
+	private void generateRenderedTexel(int pixelColour, PxCoord screenPos, BlockCoord blockPos) {
 		final int TEXEL_SIZE = 16;
 
 		int startX = (int) screenPos.x;
@@ -142,7 +146,7 @@ public class BlocksRenderer extends Render {
 
 		// Apply fog to pixel
 		int brightAmount = (int) (Options.gamma * 10 * (Options.renderDistance - zIndex / 10));
-		int fogAppliedPixel = applyFog(pixel, brightAmount);
+		int fogAppliedPixel = applyFog(pixelColour, brightAmount);
 
 		// Transform texel coordinates based on camera rotation
 		for (int i = 0; i < TEXEL_SIZE; i++) {

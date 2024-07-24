@@ -12,7 +12,7 @@ import com.nixinova.input.InputHandler;
 import com.nixinova.options.Options;
 
 public class Mineo {
-	public static final String VERSION = "0.0.17_2";
+	public static final String VERSION = "0.0.17_3";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	private static JFrame frame;
