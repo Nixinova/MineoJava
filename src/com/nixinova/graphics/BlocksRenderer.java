@@ -85,9 +85,9 @@ public class BlocksRenderer extends Render {
 					BlockFace face = BlockFace.getFromTx(txX, txY, txZ);
 
 					// Ignore if this block face is not exposed
-					 if (!this.game.world.isFaceExposed(face, blockX, blockY, blockZ)) {
+					if (!this.game.world.isFaceExposed(face, blockX, blockY, blockZ)) {
 						continue;
-					 }
+					}
 
 					// Render this texel
 					this.renderOneTx(face, startTx.x + txX, startTx.y + txY, startTx.z + txZ);

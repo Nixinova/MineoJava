@@ -23,7 +23,7 @@ public class ScreenText {
 
 	public void drawMainInfo(Game game) {
 		int i = 0;
-		
+
 		Font initialFont = graphics.getFont();
 
 		float headingFontSize = 1.25f;
@@ -34,7 +34,7 @@ public class ScreenText {
 
 		Coord3 position = game.player.getPosition();
 		graphics.setFont(initialFont);
-		
+
 		// FPS
 		var fpsFmt = String.valueOf(game.fps);
 		graphics.drawString("FPS: " + fpsFmt, INDENT, SEP * ++i);
@@ -49,7 +49,8 @@ public class ScreenText {
 		graphics.drawString("Camera: " + camPosFmt, INDENT, SEP * ++i);
 		// Mouse look angle
 		var mouseLookFmt = String.format("%.1f / %.1f",
-			(Math.toDegrees(game.controls.getMouseHorizRads()) + 360) % 360, Math.toDegrees(game.controls.getMouseVertRads()));
+			(Math.toDegrees(game.controls.getMouseHorizRads()) + 360) % 360,
+			Math.toDegrees(game.controls.getMouseVertRads()));
 		graphics.drawString("Angle: " + mouseLookFmt, INDENT, SEP * ++i);
 		// Block being looked at
 		var lookingAt = game.player.getLookingAt();

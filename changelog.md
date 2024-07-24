@@ -1,6 +1,7 @@
 # Changelog
 
-## Next
+## 0.0.18
+*2024-07-25 00:39*
 - Added block face culling
 - World now only generates along the positive axes
 - World now abides by worldSize option again

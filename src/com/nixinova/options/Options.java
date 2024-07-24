@@ -11,9 +11,9 @@ public class Options {
 	public static final String OPTIONS_FILE = "options.txt";
 	/**
 	 * Semantics of version incrementing:
-	 *   +1.00: Major: Fundamental file format changes that make older options.txt files unreadable.
-	 *   +0.10: Minor: Changes to the implementation of a value.
-	 *   +0.01: Micro: Addition of new options, keeps backward compatibility.
+	 * - +1.00: Major: Fundamental file format changes that make older options.txt files unreadable.
+	 * - +0.10: Minor: Changes to the implementation of a value.
+	 * - +0.01: Micro: Addition of new options, keeps backward compatibility.
 	 */
 	public static final float OPTIONS_VERSION = 1.10F;
 
@@ -98,11 +98,11 @@ public class Options {
 			while (scanner.hasNextLine()) {
 				String data = scanner.nextLine();
 				String[] lineParts = data.split("=");
-				
+
 				// Skip if not a key=value pair
 				if (lineParts.length != 2)
 					continue;
-				
+
 				String dataName = lineParts[0].trim();
 				String dataValue = lineParts[1].trim();
 
