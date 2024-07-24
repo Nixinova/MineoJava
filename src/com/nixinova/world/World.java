@@ -17,19 +17,11 @@ public class World {
 	public final BlockCoord minCorner;
 	public final BlockCoord maxCorner;
 
-	private final int[] arrSize;
-
 	private Render[][][] blockTextures;
 
 	public World() {
-		this.minCorner = new BlockCoord(-Options.worldSize, 0, -Options.worldSize);
+		this.minCorner = new BlockCoord(0, 0, 0);
 		this.maxCorner = new BlockCoord(Options.worldSize, SKY_Y, Options.worldSize);
-		this.arrSize = new int[] {
-			// to go from +size to -size incl. 0
-			maxCorner.x - minCorner.x + 1,
-			maxCorner.y - minCorner.y + 1,
-			maxCorner.z - minCorner.z + 1,
-		};
 
 		this.mapBlockTextures();
 	}
@@ -92,8 +84,7 @@ public class World {
 	public Render getTextureAt(int blockX, int blockY, int blockZ) {
 		if (isWithinWorld(blockX, blockY, blockZ)) {
 			// If within the world, return texture
-			BlockCoord coordI = toBlockIndex(blockX, blockY, blockZ);
-			return this.blockTextures[coordI.x][coordI.y][coordI.z];
+			return this.blockTextures[blockX][blockY][blockZ];
 		} else {
 			// When outside of world, return sky
 			return Block.SKY.getTexture();
@@ -102,12 +93,13 @@ public class World {
 
 	public void setTextureAt(int blockX, int blockY, int blockZ, Render texture) {
 		if (isWithinWorld(blockX, blockY, blockZ)) {
-			BlockCoord coordI = toBlockIndex(blockX, blockY, blockZ);
-			this.blockTextures[coordI.x][coordI.y][coordI.z] = texture;
+			this.blockTextures[blockX][blockY][blockZ] = texture;
 		}
 	}
 
+	// NOTE: does not abide by this.minCorner
 	private void mapBlockTextures() {
+		int arrSize[] = new int[] { this.maxCorner.x+1, this.maxCorner.y+1, this.maxCorner.z+1 };
 		this.blockTextures = new Render[arrSize[0]][arrSize[1]][arrSize[2]];
 
 		Random random = new Random(Options.seed);
@@ -149,15 +141,6 @@ public class World {
 				}
 			}
 		}
-	}
-
-	private int toBlockIndex(int blockCoord) {
-		return blockCoord + Options.worldSize;
-	}
-
-	private BlockCoord toBlockIndex(int blockX, int blockY, int blockZ) {
-		// Note: Y cannot be negative, so no blockIndexing
-		return new BlockCoord(toBlockIndex(blockX), blockY, toBlockIndex(blockZ));
 	}
 
 }
