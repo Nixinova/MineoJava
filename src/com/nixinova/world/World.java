@@ -1,7 +1,5 @@
 package com.nixinova.world;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import com.nixinova.blocks.Block;
@@ -34,6 +32,10 @@ public class World {
 		return xValid && yValid && zValid;
 	}
 
+	public boolean isWithinWorld(BlockCoord block) {
+		return isWithinWorld(block.x, block.y, block.z);
+	}
+
 	/** returns -1 if all is air */
 	public int getMinGroundY(int blockX, int blockZ) {
 		for (int i = 0; i < SKY_Y; i++) {
@@ -52,29 +54,11 @@ public class World {
 	}
 
 	public boolean isFaceExposed(BlockFace face, int blockX, int blockY, int blockZ) {
-		// Get adjacent blocks to check
-		List<int[]> offsetsToCheck = new ArrayList<>();
-		if (face.xMax)
-			offsetsToCheck.add(new int[] { +1, 0, 0 });
-		if (face.xMin)
-			offsetsToCheck.add(new int[] { -1, 0, 0 });
-		if (face.yMax)
-			offsetsToCheck.add(new int[] { 0, +1, 0 });
-		if (face.yMin)
-			offsetsToCheck.add(new int[] { 0, -1, 0 });
-		if (face.zMax)
-			offsetsToCheck.add(new int[] { 0, 0, +1 });
-		if (face.zMin)
-			offsetsToCheck.add(new int[] { 0, 0, -1 });
-
-		// Check adjacent blocks and return true if any are air
-		for (int[] coords : offsetsToCheck) {
-			int x = blockX + coords[0], y = blockY + coords[1], z = blockZ + coords[2];
-			boolean isExposed = isWithinWorld(x, y, z) && isAir(x, y, z);
-			if (isExposed)
-				return true;
-		}
-		return false;
+		var offset = face.getOffset();
+		int x = blockX + offset.x;
+		int y = blockY + offset.y;
+		int z = blockZ + offset.z;
+		return isWithinWorld(x, y, z) && isAir(x, y, z);
 	}
 
 	public boolean isAir(int blockX, int blockY, int blockZ) {

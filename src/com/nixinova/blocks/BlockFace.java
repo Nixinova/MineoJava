@@ -1,19 +1,15 @@
 package com.nixinova.blocks;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.nixinova.Vector3;
 import com.nixinova.graphics.Texture;
 
-public class BlockFace {
-	public boolean xMin, xMax;
-	public boolean yMin, yMax;
-	public boolean zMin, zMax;
+public enum BlockFace {
+	XMIN, XMAX, YMIN, YMAX, ZMIN, ZMAX;
 
-	public BlockFace() {
-		xMin = xMax = false;
-		yMin = yMax = false;
-		zMin = zMax = false;
-	}
-
-	public static BlockFace getFromTx(int txX, int txY, int txZ) {
+	public static List<BlockFace> getFacesFromTx(int txX, int txY, int txZ) {
 		final int size = Texture.SIZE;
 
 		// Get 0..7-ranged texel IDs
@@ -21,22 +17,39 @@ public class BlockFace {
 		int texIdY = txY % size;
 		int texIdZ = txZ % size;
 
-		// Set block face
-		BlockFace face = new BlockFace();
+		// Set block faces
+		List<BlockFace> faces = new ArrayList<>();
 		if (texIdX == 0)
-			face.xMin = true;
+			faces.add(XMIN);
 		if (texIdX == size - 1)
-			face.xMax = true;
+			faces.add(XMAX);
 		if (texIdY == 0)
-			face.yMin = true;
+			faces.add(YMIN);
 		if (texIdY == size - 1)
-			face.yMax = true;
+			faces.add(YMAX);
 		if (texIdZ == 0)
-			face.zMin = true;
+			faces.add(ZMIN);
 		if (texIdZ == size - 1)
-			face.zMax = true;
+			faces.add(ZMAX);
 
-		return face;
+		return faces;
+	}
+
+	public Vector3<Integer> getOffset() {
+		int x = 0;
+		int y = 0;
+		int z = 0;
+
+		switch (this) {
+			case XMAX -> x++;
+			case XMIN -> x--;
+			case YMAX -> y++;
+			case YMIN -> y--;
+			case ZMAX -> z++;
+			case ZMIN -> z--;
+		}
+
+		return new Vector3<Integer>(x, y, z);
 	}
 
 }

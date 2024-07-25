@@ -12,11 +12,20 @@ public class Texture {
 		return loadBitmap(name + ".png");
 	}
 
-	public static int getTexel(Render texture, int texelX, int texelY) {
-		int blockTexelX = texelX;
-		int blockTexelY = texelY;
-		int texPx = (blockTexelX & (SIZE - 1)) + (blockTexelY & (SIZE - 1)) * SIZE;
+	public static int getTexel(Render texture, int texelX, int texelY, boolean flipX, boolean flipY) {
+		int textureX = texelX % SIZE;
+		int textureY = texelY % SIZE;
+		if (flipX)
+			textureX = (SIZE - 1) - textureX;
+		if (flipY)
+			textureY = (SIZE - 1) - textureY;
+
+		int texPx = textureX + (textureY * SIZE);
 		return texture.getPixel(texPx);
+	}
+
+	public static int getTexel(Render texture, int texelX, int texelY) {
+		return getTexel(texture, texelX, texelY, false, false);
 	}
 
 	private static Render loadBitmap(String filename) {

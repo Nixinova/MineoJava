@@ -80,7 +80,7 @@ public class Raycast {
 		HoveredBlock result = new HoveredBlock(null, null);
 
 		var camPos = game.controls.getCameraPosition().toSubBlock();
-		Vector3 vect = game.controls.getViewDirection();
+		Vector3<Double> vect = game.controls.getViewDirection();
 
 		// Raycasting loop
 		double x = camPos.x;

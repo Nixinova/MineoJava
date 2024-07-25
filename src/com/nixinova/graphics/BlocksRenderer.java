@@ -1,5 +1,6 @@
 package com.nixinova.graphics;
 
+import com.nixinova.Vector3;
 import com.nixinova.blocks.BlockFace;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord3;
@@ -82,15 +83,20 @@ public class BlocksRenderer extends Render {
 						continue;
 
 					// Get block face
-					BlockFace face = BlockFace.getFromTx(txX, txY, txZ);
+					var blockFaces = BlockFace.getFacesFromTx(txX, txY, txZ);
 
 					// Ignore if this block face is not exposed
-					if (!this.game.world.isFaceExposed(face, blockX, blockY, blockZ)) {
-						continue;
-					}
+					for (BlockFace face : blockFaces) {
+						if (!this.game.world.isFaceExposed(face, blockX, blockY, blockZ)) {
+							continue;
+						}
 
-					// Render this texel
-					this.renderOneTx(face, startTx.x + txX, startTx.y + txY, startTx.z + txZ);
+						// Render this texel
+						int x = startTx.x + txX;
+						int y = startTx.y + txY;
+						int z = startTx.z + txZ;
+						this.renderOneTx(face, x, y, z);
+					}
 				}
 			}
 		}
@@ -106,23 +112,49 @@ public class BlocksRenderer extends Render {
 			return;
 
 		// Get screen pixel position
-		PxCoord posOnScreen = txCoordToScreenPx(txX, txY, txZ);
+		PxCoord posOnScreen = txCoordToScreenPx(txX, txY, txZ, face.getOffset());
 
 		// Exit if position is off screen
 		if (posOnScreen == null)
 			return;
 
+		// Convert 3D world texel to 2D texture coordinate
+		int textureX = 0;
+		int textureY = 0;
+		boolean flipX = false;
+		boolean flipY = false;
+		switch (face) {
+			case XMAX, XMIN -> {
+				textureX = txY;
+				textureY = txZ;
+				flipX = true;
+				flipY = face == BlockFace.XMIN;
+
+			}
+			case YMAX, YMIN -> {
+				textureX = txX;
+				textureY = txZ;
+				flipX = false;
+				flipY = face == BlockFace.YMAX;
+			}
+			case ZMAX, ZMIN -> {
+				textureX = txX;
+				textureY = txY;
+				flipX = face == BlockFace.ZMAX;
+				flipY = true;
+			}
+		}
+
 		// Render texel
-		int txPixel = Texture.getTexel(texture, txX, txZ);
+		int txPixel = Texture.getTexel(texture, textureX, textureY, flipX, flipY);
 		this.generateRenderedTexel(face, txPixel, posOnScreen, blockCoord);
 	}
 
 	private void generateRenderedTexel(BlockFace face, int pixelColour, PxCoord screenPos, BlockCoord blockPos) {
-		int texSize = (int) (1e3 / screenPos.z);
-
 		int startX = (int) screenPos.x;
 		int startY = (int) screenPos.y;
 		double zIndex = screenPos.z;
+		int texSize = 1000 / ((int) zIndex + 1);
 
 		// Apply fog to pixel
 		int brightAmount = (int) (Options.gamma * 10 * (Options.renderDistance - zIndex / 10));
@@ -152,17 +184,19 @@ public class BlocksRenderer extends Render {
 		return distance < Options.renderDistance;
 	}
 
-	private PxCoord txCoordToScreenPx(int txX, int txY, int txZ) {
+	private PxCoord txCoordToScreenPx(int txX, int txY, int txZ, Vector3<Integer> offset) {
 		PxCoord camPos = this.game.controls.getCameraPosition().toPx();
 
 		// Relative position of block in world and player pos
-		PxCoord relPos = new PxCoord(txX - camPos.x, txY - camPos.y, txZ - camPos.z);
-		double absDistance = Math.sqrt(relPos.x * relPos.x + relPos.y * relPos.y + relPos.z * relPos.z);
+		double relX = txX - camPos.x + offset.x * 0.1;
+		double relY = txY - camPos.y + offset.y * 0.1;
+		double relZ = txZ - camPos.z + offset.z * 0.1;
+		double absDistance = Math.sqrt(relX * relX + relY * relY + relZ * relZ);
 
 		// Apply Y-axis (horiz) rotation
-		double xRot = relPos.x * this.xRotCos - relPos.z * this.xRotSin;
-		double yRot = relPos.y;
-		double zRot = relPos.x * this.xRotSin + relPos.z * this.xRotCos;
+		double xRot = relX * this.xRotCos - relZ * this.xRotSin;
+		double yRot = relY;
+		double zRot = relX * this.xRotSin + relZ * this.xRotCos;
 
 		// Apply X-axis (vertical) tilt
 		double xTilt = xRot;

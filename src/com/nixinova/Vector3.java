@@ -1,10 +1,10 @@
 package com.nixinova;
 
-public class Vector3 {
+public class Vector3<T> {
 
-	public double x, y, z;
+	public T x, y, z;
 
-	public Vector3(double x, double y, double z) {
+	public Vector3(T x, T y, T z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;

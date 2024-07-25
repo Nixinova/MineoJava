@@ -202,7 +202,7 @@ public class Controller {
 		return this.tilt;
 	}
 
-	public Vector3 getViewDirection() {
+	public Vector3<Double> getViewDirection() {
 		double x = Math.cos(this.tilt) * Math.sin(this.rot);
 		double y = Math.sin(this.tilt);
 		double z = Math.cos(this.rot) * Math.cos(this.tilt);
@@ -214,7 +214,7 @@ public class Controller {
 		z /= length;
 
 		// Return unit vector
-		return new Vector3(x, y, z);
+		return new Vector3<Double>(x, y, z);
 	}
 
 	private boolean aboveGround() {
