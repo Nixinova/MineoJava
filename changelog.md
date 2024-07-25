@@ -1,5 +1,10 @@
 # Changelog
 
+## Next
+- Collision is now based per-block instead of from the lowest ground in a column
+- Changed player height to 1.8 blocks
+- Removed "floor" debug text line
+
 ## 0.0.18
 *2024-07-25 00:39*
 - Added block face culling

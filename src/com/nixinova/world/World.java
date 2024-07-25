@@ -35,7 +35,7 @@ public class World {
 	}
 
 	/** returns -1 if all is air */
-	public int getGroundY(int blockX, int blockZ) {
+	public int getMinGroundY(int blockX, int blockZ) {
 		for (int i = 0; i < SKY_Y; i++) {
 			if (this.getTextureAt(blockX, i, blockZ) == null) {
 				return i - 1;

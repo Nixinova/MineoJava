@@ -16,6 +16,15 @@ public class Coord3 {
 		this.z = Coord1.fromPx(z);
 	}
 
+	@Override
+	public String toString() {
+		String result = "";
+		result += "block:" + "(" + this.x.toBlock() + "," + this.y.toBlock() + "," + this.z.toBlock() + ")";
+		result += ",";
+		result += "px:" + "(" + this.x.toPx() + "," + this.y.toPx() + "," + this.z.toPx() + ")";
+		return "{ " + result + " }";
+	}
+
 	// World pixel
 
 	public static Coord3 fromPx(double x, double y, double z) {

@@ -5,7 +5,7 @@ import com.nixinova.coords.Coord3;
 import com.nixinova.world.World;
 
 public class Player {
-	public static final double PLAYER_HEIGHT = 2.0;
+	public static final double PLAYER_HEIGHT = 1.8;
 
 	private Coord3 position;
 	private BlockCoord lookingAtBlock;

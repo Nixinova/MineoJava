@@ -6,6 +6,7 @@ import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord1;
 import com.nixinova.coords.Coord3;
 import com.nixinova.coords.PxCoord;
+import com.nixinova.coords.TxCoord;
 import com.nixinova.input.InputHandler;
 import com.nixinova.input.Keys;
 import com.nixinova.main.Game;
@@ -101,25 +102,40 @@ public class Controller {
 
 		// Ground checks
 		if (this.game.player.isWithinWorld(this.game.world)) {
-			if (onGround()) {
+			// Above ground
+			if (aboveGround()) {
+				// Fall due to gravity
+				yMove -= Options.gravity;
+				// Bounce back if put below ground
+				if (belowGround())
+					yMove += Options.gravity;
+			}
+			// Below ground
+			else if (belowGround()) {
+				// Shove player back to surface
+				BlockCoord curBlock = this.pos.toBlock();
+				PxCoord curPx = this.pos.toPx();
+				int newBlockY = this.game.world.getMinGroundY(curBlock.x, curBlock.z);
+				newBlockY += 1; // to put player above the block
+				this.pos = Coord3.fromPx(curPx.x, Coord1.blockToPx(newBlockY), curPx.z);
+			}
+			// On ground
+			else {
+				// Allow jumping
 				if (kbd.pressedKey(Keys.JUMP)) {
-					isJumping = true;
+					this.isJumping = true;
 					kbd.startKeyCooldown(Keys.JUMP);
 				}
-			} else if (aboveGround()) {
-				yMove -= Options.gravity;
-			} else if (belowGround()) {
-				// Push player up to be on the ground
-				this.pos = Coord3.fromPx(this.pos.toPx().x, getGroundY().toPx(), this.pos.toPx().z);
-				yMove = 0.001D;
 			}
-		} else {
+		}
+		// Outside the world
+		else {
 			// Fall when outside of world
 			if (yMove == 0)
 				yMove = -0.5;
-			// Acceleration due to gravity
-			yMove *= 1 + Math.pow(1 + Options.gravity, 2);
 		}
+		// Acceleration due to gravity
+		yMove *= 1 + Math.pow(1 + Options.gravity, 2);
 
 		// Mouse look boundaries
 		double maxTilt = Math.toRadians(90);
@@ -133,7 +149,7 @@ public class Controller {
 			System.exit(1);
 		}
 		if (kbd.pressedKey(Keys.F3)) {
-			debugShown = !debugShown;
+			this.debugShown = !this.debugShown;
 			kbd.startKeyCooldown(Keys.F3);
 		}
 
@@ -198,23 +214,20 @@ public class Controller {
 		return new Vector3(x, y, z);
 	}
 
-	private boolean onGround() {
-		final double groundBuffer = 0.1;
-
-		return Math.abs(this.pos.toPx().y - getGroundY().toPx()) < groundBuffer;
-	}
-
 	private boolean aboveGround() {
-		return !this.onGround() && this.pos.toPx().y > getGroundY().toPx();
+		// Above the ground if the block one texel beneath the player's feet is air
+		TxCoord curTx = this.pos.toTx();
+		BlockCoord blockOneTxDown = Coord3.fromTx(curTx.x,curTx.y-1,curTx.z).toBlock();
+		boolean belowTxIsAir = this.game.world.isAir(blockOneTxDown.x, blockOneTxDown.y, blockOneTxDown.z);
+		return belowTxIsAir;
 	}
 
 	private boolean belowGround() {
-		return !this.onGround() & !this.aboveGround();
-	}
-
-	private Coord1 getGroundY() {
-		BlockCoord blockCoord = this.getFootPosition().toBlock();
-		int groundY = this.game.world.getGroundY(blockCoord.x, blockCoord.z);
-		return Coord1.fromSubBlock(groundY);
+		// Below the ground if the block one texel above the player's feet is air
+		TxCoord footTx = this.pos.toTx();
+		BlockCoord blockOneTxUp = Coord3.fromTx(footTx.x, footTx.y + 1, footTx.z).toBlock();
+		boolean inVoid = footTx.y <= 0;
+		boolean aboveTxIsAir = this.game.world.isAir(blockOneTxUp.x, blockOneTxUp.y, blockOneTxUp.z);
+		return inVoid || !aboveTxIsAir;
 	}
 }

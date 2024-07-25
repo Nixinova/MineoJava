@@ -40,10 +40,6 @@ public class ScreenText {
 		graphics.drawString("FPS: " + fpsFmt, INDENT, SEP * ++i);
 		// Player block at foot
 		graphics.drawString("Block: " + formatCoord(position), INDENT, SEP * ++i);
-		// Lowest ground Y value
-		var blockPos = position.toBlock();
-		var groundY = game.world.getGroundY(blockPos.x, blockPos.z);
-		graphics.drawString("Floor: " + groundY, INDENT, SEP * ++i);
 		// Camera pos and angle
 		var camPosFmt = formatCoord(game.controls.getCameraPosition());
 		graphics.drawString("Camera: " + camPosFmt, INDENT, SEP * ++i);
