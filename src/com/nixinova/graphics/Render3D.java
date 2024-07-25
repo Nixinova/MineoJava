@@ -15,6 +15,7 @@ public class Render3D extends Render {
 		blockRender.prepare(game);
 		// Render blocks
 		blockRender.renderWorld();
+		// Update screen image
 		super.replaceImage(blockRender.getImage());
 	}
 }

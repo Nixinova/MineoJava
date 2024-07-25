@@ -154,7 +154,9 @@ public class BlocksRenderer extends Render {
 		int startX = (int) screenPos.x;
 		int startY = (int) screenPos.y;
 		double zIndex = screenPos.z;
-		int texSize = 1000 / ((int) zIndex + 1);
+
+		final int TEX_SIZE_BASE = 1100; // minimum required for no gaps when looking straight down
+		int texSize = (int) (TEX_SIZE_BASE / (zIndex + 1));
 
 		// Apply fog to pixel
 		int brightAmount = (int) (Options.gamma * 10 * (Options.renderDistance - zIndex / 10));

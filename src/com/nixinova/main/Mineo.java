@@ -12,7 +12,7 @@ import com.nixinova.input.InputHandler;
 import com.nixinova.options.Options;
 
 public class Mineo {
-	public static final String VERSION = "0.0.18_1";
+	public static final String VERSION = "0.0.19";
 	public static final String TITLE = "Mineo " + VERSION;
 
 	private static JFrame frame;
@@ -23,7 +23,7 @@ public class Mineo {
 		Cursor blank = Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "blank");
 
 		frame = new JFrame();
-		
+
 		InputHandler input = new InputHandler(frame);
 		Game game = new Game(input);
 		Display display = new Display(game, input);

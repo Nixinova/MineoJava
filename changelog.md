@@ -1,9 +1,10 @@
 # Changelog
 
-## Next
+## 0.0.19
+*2024-07-25 20:17*
 - Blocks are now placed adjacent to the hovered block face
+- Block textures are now applied to each face separately
 - Block texels are now larger
-- Block textures are now applied to each face individually
 - Fixed orientation of block textures
 
 ## 0.0.18_1
