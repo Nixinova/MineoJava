@@ -1,6 +1,7 @@
 package com.nixinova.graphics;
 
 import com.nixinova.Vector3;
+import com.nixinova.blocks.HoveredBlock;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.main.Game;
@@ -75,7 +76,9 @@ public class Raycast {
 		return false;
 	}
 
-	public static BlockCoord getLookingAt(Game game) {
+	public static HoveredBlock getLookingAt(Game game) {
+		HoveredBlock result = new HoveredBlock(null, null);
+
 		var camPos = game.controls.getCameraPosition().toSubBlock();
 		Vector3 vect = game.controls.getViewDirection();
 
@@ -83,7 +86,9 @@ public class Raycast {
 		double x = camPos.x;
 		double y = camPos.y;
 		double z = camPos.z;
+		double lastX = 0, lastY = 0, lastZ = 0;
 		while (true) {
+			// Step forward
 			x += vect.x * STEP_SIZE;
 			y += vect.y * STEP_SIZE;
 			z += vect.z * STEP_SIZE;
@@ -92,12 +97,20 @@ public class Raycast {
 
 			// Looking outside the world so no block selected
 			if (!game.world.isWithinWorld(curBlock.x, curBlock.y, curBlock.z))
-				return null;
+				return result;
 
-			// If block is solid, return it's coordinates
+			// If block is solid, return the hit block and step backward and return the adjacent block
 			if (!game.world.isAir(curBlock.x, curBlock.y, curBlock.z)) {
-				return curBlock;
+				BlockCoord lastBlock = applyAsBlock(val -> Math.floor(val), lastX, lastY, lastZ);
+				result.hoveredBlock = curBlock;
+				result.adjacentBlock = lastBlock;
+				return result;
 			}
+
+			// Update lasts
+			lastX = x;
+			lastY = y;
+			lastZ = z;
 		}
 	}
 

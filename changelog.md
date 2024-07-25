@@ -1,5 +1,8 @@
 # Changelog
 
+## Next
+- Blocks are now placed adjacent to the hovered block face
+
 ## 0.0.18_1
 *2024-07-25 16:45*
 - Collision is now based per-block instead of from the lowest ground in a column

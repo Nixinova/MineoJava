@@ -81,6 +81,10 @@ public class World {
 		return getTextureAt(blockX, blockY, blockZ) == Block.AIR.getTexture();
 	}
 
+	public boolean isAir(BlockCoord block) {
+		return isAir(block.x, block.y, block.z);
+	}
+
 	public Render getTextureAt(int blockX, int blockY, int blockZ) {
 		if (isWithinWorld(blockX, blockY, blockZ)) {
 			// If within the world, return texture
@@ -91,9 +95,13 @@ public class World {
 		}
 	}
 
-	public void setTextureAt(int blockX, int blockY, int blockZ, Render texture) {
-		if (isWithinWorld(blockX, blockY, blockZ)) {
-			this.blockTextures[blockX][blockY][blockZ] = texture;
+	public Render getTextureAt(BlockCoord block) {
+		return getTextureAt(block.x, block.y, block.z);
+	}
+
+	public void setTextureAt(BlockCoord block, Render texture) {
+		if (isWithinWorld(block.x, block.y, block.z)) {
+			this.blockTextures[block.x][block.y][block.z] = texture;
 		}
 	}
 

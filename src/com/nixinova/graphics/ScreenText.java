@@ -49,7 +49,7 @@ public class ScreenText {
 			Math.toDegrees(game.controls.getMouseVertRads()));
 		graphics.drawString("Angle: " + mouseLookFmt, INDENT, SEP * ++i);
 		// Block being looked at
-		var lookingAt = game.player.getLookingAt();
+		var lookingAt = game.player.getLookingAt().hoveredBlock;
 		var lookingAtFmt = lookingAt == null ? "none" : (lookingAt.x + " / " + lookingAt.y + " / " + lookingAt.z);
 		graphics.drawString("Hovered: " + lookingAtFmt, INDENT, SEP * ++i);
 	}

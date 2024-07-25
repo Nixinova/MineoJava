@@ -99,7 +99,7 @@ public class BlocksRenderer extends Render {
 	private void renderOneTx(BlockFace face, int txX, int txY, int txZ) {
 		// Get texture
 		BlockCoord blockCoord = Coord3.fromTx(txX, txY, txZ).toBlock();
-		Render texture = this.game.world.getTextureAt(blockCoord.x, blockCoord.y, blockCoord.z);
+		Render texture = this.game.world.getTextureAt(blockCoord);
 
 		// Skip if block is air
 		if (texture == null)

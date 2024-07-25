@@ -1,6 +1,6 @@
 package com.nixinova.main;
 
-import com.nixinova.coords.BlockCoord;
+import com.nixinova.blocks.HoveredBlock;
 import com.nixinova.graphics.Raycast;
 import com.nixinova.input.InputHandler;
 import com.nixinova.options.Options;
@@ -43,7 +43,7 @@ public class Game {
 		this.player.updatePosition(this.controls.getFootPosition());
 
 		// Set player looking at
-		BlockCoord lookingAt = Raycast.getLookingAt(this);
+		HoveredBlock lookingAt = Raycast.getLookingAt(this);
 		this.player.setLookingAt(lookingAt);
 	}
 }

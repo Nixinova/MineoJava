@@ -2,6 +2,7 @@ package com.nixinova.player;
 
 import com.nixinova.Vector3;
 import com.nixinova.blocks.Block;
+import com.nixinova.blocks.HoveredBlock;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord1;
 import com.nixinova.coords.Coord3;
@@ -39,19 +40,21 @@ public class Controller {
 		double zMove = 0.0D;
 
 		// Get looking at block
-		BlockCoord lookingAt = this.game.player.getLookingAt();
-		boolean isLookingAtValidBlock = lookingAt != null && Block.isInsideWorld(lookingAt);
+		HoveredBlock lookingAt = this.game.player.getLookingAt();
+		boolean isLookingAtValidBlock = lookingAt.hoveredBlock != null;
 		// Block breaking
-		if (kbd.pressedButton(Keys.LCLICK) && isLookingAtValidBlock) {
-			this.game.world.setTextureAt(lookingAt.x, lookingAt.y, lookingAt.z, Block.AIR.getTexture());
+		if (kbd.pressedButton(Keys.LCLICK) && isLookingAtValidBlock && Block.isInsideWorld(lookingAt.hoveredBlock)) {
+			BlockCoord hoveredBlock = lookingAt.hoveredBlock;
+			this.game.world.setTextureAt(hoveredBlock, Block.AIR.getTexture());
 
 			// Cooldown
 			kbd.startButtonCooldown(Keys.LCLICK);
 		}
 		// Block placing
-		if (kbd.pressedButton(Keys.RCLICK) && isLookingAtValidBlock) {
+		if (kbd.pressedButton(Keys.RCLICK) && isLookingAtValidBlock && Block.isInsideWorld(lookingAt.adjacentBlock)) {
 			Block block = Hotbar.getCurrentBlock();
-			this.game.world.setTextureAt(lookingAt.x, lookingAt.y + 1, lookingAt.z, block.getTexture());
+			BlockCoord adjacentBlock = lookingAt.adjacentBlock;
+			this.game.world.setTextureAt(adjacentBlock, block.getTexture());
 
 			// Cooldown
 			kbd.startButtonCooldown(Keys.RCLICK);
@@ -218,7 +221,7 @@ public class Controller {
 		// Above the ground if the block one texel beneath the player's feet is air
 		TxCoord curTx = this.pos.toTx();
 		BlockCoord blockOneTxDown = Coord3.fromTx(curTx.x, curTx.y - 1, curTx.z).toBlock();
-		boolean belowTxIsAir = this.game.world.isAir(blockOneTxDown.x, blockOneTxDown.y, blockOneTxDown.z);
+		boolean belowTxIsAir = this.game.world.isAir(blockOneTxDown);
 		return belowTxIsAir;
 	}
 
@@ -227,7 +230,7 @@ public class Controller {
 		TxCoord footTx = this.pos.toTx();
 		BlockCoord blockOneTxUp = Coord3.fromTx(footTx.x, footTx.y + 1, footTx.z).toBlock();
 		boolean inVoid = footTx.y <= 0;
-		boolean aboveTxIsAir = this.game.world.isAir(blockOneTxUp.x, blockOneTxUp.y, blockOneTxUp.z);
+		boolean aboveTxIsAir = this.game.world.isAir(blockOneTxUp);
 		return inVoid || !aboveTxIsAir;
 	}
 }
