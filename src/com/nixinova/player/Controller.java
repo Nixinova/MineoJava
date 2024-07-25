@@ -217,7 +217,7 @@ public class Controller {
 	private boolean aboveGround() {
 		// Above the ground if the block one texel beneath the player's feet is air
 		TxCoord curTx = this.pos.toTx();
-		BlockCoord blockOneTxDown = Coord3.fromTx(curTx.x,curTx.y-1,curTx.z).toBlock();
+		BlockCoord blockOneTxDown = Coord3.fromTx(curTx.x, curTx.y - 1, curTx.z).toBlock();
 		boolean belowTxIsAir = this.game.world.isAir(blockOneTxDown.x, blockOneTxDown.y, blockOneTxDown.z);
 		return belowTxIsAir;
 	}

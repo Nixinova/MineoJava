@@ -1,6 +1,7 @@
 # Changelog
 
-## Next
+## 0.0.18_1
+*2024-07-25 16:45*
 - Collision is now based per-block instead of from the lowest ground in a column
 - Changed player height to 1.8 blocks
 - Removed "floor" debug text line

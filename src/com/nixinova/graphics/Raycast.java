@@ -61,9 +61,9 @@ public class Raycast {
 				// Continue raycasting if current block is not solid
 				if (game.world.isAir(curBlock.x, curBlock.y, curBlock.z))
 					continue;
-				
+
 				// Block is not visible if not exposed
-				if (!game.world.isExposed(curBlock.x,curBlock.y,curBlock.z))
+				if (!game.world.isExposed(curBlock.x, curBlock.y, curBlock.z))
 					return false;
 
 				// Visible if current block is the target corner
