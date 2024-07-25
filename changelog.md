@@ -2,6 +2,7 @@
 
 ## Next
 - Blocks are now placed adjacent to the hovered block face
+- Block texels are now larger
 
 ## 0.0.18_1
 *2024-07-25 16:45*

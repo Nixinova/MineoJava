@@ -118,7 +118,7 @@ public class BlocksRenderer extends Render {
 	}
 
 	private void generateRenderedTexel(BlockFace face, int pixelColour, PxCoord screenPos, BlockCoord blockPos) {
-		final int TEXEL_SIZE = 16;
+		int texSize = (int) (1e3 / screenPos.z);
 
 		int startX = (int) screenPos.x;
 		int startY = (int) screenPos.y;
@@ -129,8 +129,8 @@ public class BlocksRenderer extends Render {
 		int fogAppliedPixel = applyFog(pixelColour, brightAmount);
 
 		// Transform texel coordinates based on camera rotation
-		for (int i = 0; i < TEXEL_SIZE; i++) {
-			for (int j = 0; j < TEXEL_SIZE; j++) {
+		for (int i = 0; i < texSize; i++) {
+			for (int j = 0; j < texSize; j++) {
 				// Convert to screen coordinates
 				int screenX = startX + i;
 				int screenY = startY + j;
@@ -173,8 +173,8 @@ public class BlocksRenderer extends Render {
 		double screenX = (this.width / 2.0) + (xTilt / zTilt) * this.height;
 		double screenY = (this.height / 2.0) - (yTilt / zTilt) * this.height;
 
-		// Early return when pixel is invalid (i.e., offscreen)
-		if (zTilt <= 0 || !super.isValidPosition((int) screenX, (int) screenY))
+		// Early return when pixel is invalid
+		if (zTilt <= 0)
 			return null;
 
 		return new PxCoord(screenX, screenY, absDistance);
