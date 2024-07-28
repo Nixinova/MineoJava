@@ -3,7 +3,6 @@ package com.nixinova.graphics;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Polygon;
-import java.awt.image.BufferedImage;
 
 import com.nixinova.PixelColor;
 import com.nixinova.Vector3;
@@ -18,8 +17,6 @@ import com.nixinova.options.Options;
 public class BlocksRenderer extends Render {
 	private Game game;
 	private Graphics graphics;
-	private BufferedImage depthImage;
-	private Graphics depthGraphics;
 
 	private float[] pixelCurMinDistances;
 	private double xRot, yRot;
@@ -34,9 +31,6 @@ public class BlocksRenderer extends Render {
 	public void prepare(Game game, Graphics graphics) {
 		this.game = game;
 		this.graphics = graphics;
-
-		this.depthImage = new BufferedImage(Display.WIDTH, Display.HEIGHT, BufferedImage.TYPE_INT_RGB);
-		this.depthGraphics = depthImage.getGraphics();
 
 		// Clear graphics
 		this.graphics.setColor(Color.black);
@@ -120,8 +114,6 @@ public class BlocksRenderer extends Render {
 	}
 
 	private void renderOneTx(BlockFace face, int txX, int txY, int txZ) {
-		final int SIZE = Texture.SIZE;
-
 		TxCoord txCoord = new TxCoord(txX, txY, txZ);
 		BlockCoord blockCoord = Coord3.fromTx(txCoord).toBlock();
 
@@ -136,23 +128,23 @@ public class BlocksRenderer extends Render {
 		TxCoord tx2 = txCoord;
 		TxCoord tx3 = txCoord;
 		TxCoord tx4 = txCoord;
-			switch (face) {
-				case YMIN, YMAX:
-					tx2 = new TxCoord(txX, txY, txZ + 1);
-					tx3 = new TxCoord(txX + 1, txY, txZ);
-					tx3 = new TxCoord(txX + 1, txY, txZ + 1);
-					break;
-				case XMIN, XMAX:
-					tx2 = new TxCoord(txX, txY, txZ + 1);
-					tx3 = new TxCoord(txX, txY + 1, txZ);
-					tx4 = new TxCoord(txX, txY + 1, txZ + 1);
-					break;
-				case ZMIN, ZMAX:
-					tx2 = new TxCoord(txX, txY + 1, txZ);
-					tx3 = new TxCoord(txX + 1, txY, txZ);
-					tx4 = new TxCoord(txX + 1, txY + 1, txZ);
-					break;
-			}
+		switch (face) {
+			case YMIN, YMAX:
+				tx2 = new TxCoord(txX, txY, txZ + 1);
+				tx3 = new TxCoord(txX + 1, txY, txZ);
+				tx3 = new TxCoord(txX + 1, txY, txZ + 1);
+				break;
+			case XMIN, XMAX:
+				tx2 = new TxCoord(txX, txY, txZ + 1);
+				tx3 = new TxCoord(txX, txY + 1, txZ);
+				tx4 = new TxCoord(txX, txY + 1, txZ + 1);
+				break;
+			case ZMIN, ZMAX:
+				tx2 = new TxCoord(txX, txY + 1, txZ);
+				tx3 = new TxCoord(txX + 1, txY, txZ);
+				tx4 = new TxCoord(txX + 1, txY + 1, txZ);
+				break;
+		}
 		PxCoord posOnScreen1 = txCoordToScreenPx(txCoord, face.getOffset());
 		PxCoord posOnScreen2 = txCoordToScreenPx(tx2, face.getOffset());
 		PxCoord posOnScreen3 = txCoordToScreenPx(tx3, face.getOffset());
@@ -252,39 +244,7 @@ public class BlocksRenderer extends Render {
 	}
 
 	/** Update a pixel in the current screen image if it is closer to the player than any other pixel at that coordinate */
-	private void saveRect2(int screenX, int screenY, int width, int height, int pixel, double zIndex) {
-		// Get the color representing the depth
-		Color depthColor = PixelColor.fromPixel((int) (0x800100 - zIndex));
-
-		// Iterate over the rectangle's pixels
-		int size = 4;
-		for (int x = screenX; x < screenX + width; x += size) {
-			for (int y = screenY; y < screenY + height; y += size) {
-				// Ensure the coordinates are within bounds
-				if (x >= 0 && x < this.depthImage.getWidth() && y >= 0 && y < this.depthImage.getHeight()) {
-					// Do not draw if further away than the current draw
-					if (this.depthImage.getRGB(x, y) > depthColor.getRGB())
-						continue;
-
-					// Update graphics for new depth (closer)
-					this.graphics.setColor(PixelColor.fromPixel(pixel));
-					this.graphics.fillRect(x, y, size, size); // chunked update
-					this.depthGraphics.setColor(depthColor);
-					this.depthGraphics.fillRect(x, y, size, size); // chunked update
-
-				}
-			}
-		}
-
-	}
-
 	private void saveRect(PxCoord[] screenCoords, int pixel, double zIndex) {
-		// Get the color representing the depth
-		Color depthColor = PixelColor.fromPixel((int) (0x800100 - zIndex));
-
-//		var xpoints = new int[] { screenX, screenX + width, screenX + width, screenX };
-//		var ypoints = new int[] { screenY, screenY, screenY + width, screenY + width };
-
 		// Construct polygon to draw texel
 		var xpoints = new int[screenCoords.length];
 		var ypoints = new int[screenCoords.length];
