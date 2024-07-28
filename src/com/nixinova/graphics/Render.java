@@ -31,7 +31,9 @@ public class Render {
 		for (int x = 0; x < width; x++)
 			for (int y = 0; y < height; y++) {
 				int pixelI = getPixelIndex(startX + x, startY + y);
-				this.pixels[pixelI] = color;
+				if (isValidPosition(startX + x, startY + y)) {
+					this.pixels[pixelI] = color;
+				}
 			}
 	}
 

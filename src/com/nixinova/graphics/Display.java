@@ -112,7 +112,7 @@ public class Display extends Canvas implements Runnable {
 		Graphics graphics = buffer.getDrawGraphics();
 
 		// Draw world
-		this.renderer.renderWorld(this.game);
+		this.renderer.renderWorld(this.game, graphics);
 		// Draw UI graphical elements
 		HUD hud = new HUD(this.renderer);
 		hud.drawAll();
@@ -120,7 +120,6 @@ public class Display extends Canvas implements Runnable {
 		for (int i = 0; i < WIDTH * HEIGHT; i++) {
 			this.pixels[i] = this.renderer.getPixel(i);
 		}
-		graphics.drawImage(this.img, 0, 0, WIDTH, HEIGHT, null);
 
 		// Draw UI text elements
 		ScreenText uiText = new ScreenText(graphics);

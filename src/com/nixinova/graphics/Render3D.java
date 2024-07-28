@@ -1,5 +1,7 @@
 package com.nixinova.graphics;
 
+import java.awt.Graphics;
+
 import com.nixinova.main.Game;
 
 public class Render3D extends Render {
@@ -10,9 +12,9 @@ public class Render3D extends Render {
 		this.blockRender = new BlocksRenderer(width, height);
 	}
 
-	public void renderWorld(Game game) {
+	public void renderWorld(Game game, Graphics graphics) {
 		// Prepare renderer
-		blockRender.prepare(game);
+		blockRender.prepare(game, graphics);
 		// Render blocks
 		blockRender.renderWorld();
 		// Update screen image

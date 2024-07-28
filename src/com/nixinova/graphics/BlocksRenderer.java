@@ -1,5 +1,10 @@
 package com.nixinova.graphics;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Polygon;
+import java.awt.image.BufferedImage;
+
 import com.nixinova.Vector3;
 import com.nixinova.blocks.BlockFace;
 import com.nixinova.coords.BlockCoord;
@@ -11,6 +16,9 @@ import com.nixinova.options.Options;
 
 public class BlocksRenderer extends Render {
 	private Game game;
+	private Graphics graphics;
+	private BufferedImage depthImage;
+	private Graphics depthGraphics;
 
 	private float[] pixelCurMinDistances;
 	private double xRot, yRot;
@@ -22,9 +30,18 @@ public class BlocksRenderer extends Render {
 		this.pixelCurMinDistances = new float[width * height];
 	}
 
-	public void prepare(Game game) {
+	public void prepare(Game game, Graphics graphics) {
 		this.game = game;
-		super.clearImage();
+		this.graphics = graphics;
+
+		this.depthImage = new BufferedImage(Display.WIDTH, Display.HEIGHT, BufferedImage.TYPE_INT_RGB);
+		this.depthGraphics = depthImage.getGraphics();
+
+		// Clear graphics
+		this.graphics.setColor(Color.black);
+		this.graphics.fillRect(0, 0, Display.WIDTH, Display.HEIGHT);
+
+		// Clear image
 		for (int i = 0; i < super.imageSize(); i++) {
 			this.pixelCurMinDistances[i] = Integer.MAX_VALUE;
 		}
@@ -71,7 +88,6 @@ public class BlocksRenderer extends Render {
 		final int size = Texture.SIZE;
 
 		// Loop through texels and render
-		// TODO fill inbetween as well
 		TxCoord startTx = Coord3.fromBlock(blockX, blockY, blockZ).toTx();
 		for (int txX = 0; txX < size; txX++) {
 			for (int txY = 0; txY < size; txY++) {
@@ -103,8 +119,12 @@ public class BlocksRenderer extends Render {
 	}
 
 	private void renderOneTx(BlockFace face, int txX, int txY, int txZ) {
+		final int SIZE = Texture.SIZE;
+
+		TxCoord txCoord = new TxCoord(txX, txY, txZ);
+		BlockCoord blockCoord = Coord3.fromTx(txCoord).toBlock();
+
 		// Get texture
-		BlockCoord blockCoord = Coord3.fromTx(txX, txY, txZ).toBlock();
 		Render texture = this.game.world.getTextureAt(blockCoord);
 
 		// Skip if block is air
@@ -112,13 +132,35 @@ public class BlocksRenderer extends Render {
 			return;
 
 		// Get screen pixel position
-		PxCoord posOnScreen = txCoordToScreenPx(txX, txY, txZ, face.getOffset());
+		TxCoord tx2 = txCoord;
+		TxCoord tx3 = txCoord;
+		TxCoord tx4 = txCoord;
+			switch (face) {
+				case YMIN, YMAX:
+					tx2 = new TxCoord(txX, txY, txZ + 1);
+					tx3 = new TxCoord(txX + 1, txY, txZ);
+					tx3 = new TxCoord(txX + 1, txY, txZ + 1);
+					break;
+				case XMIN, XMAX:
+					tx2 = new TxCoord(txX, txY, txZ + 1);
+					tx3 = new TxCoord(txX, txY + 1, txZ);
+					tx4 = new TxCoord(txX, txY + 1, txZ + 1);
+					break;
+				case ZMIN, ZMAX:
+					tx2 = new TxCoord(txX, txY + 1, txZ);
+					tx3 = new TxCoord(txX + 1, txY, txZ);
+					tx4 = new TxCoord(txX + 1, txY + 1, txZ);
+					break;
+			}
+		PxCoord posOnScreen1 = txCoordToScreenPx(txCoord, face.getOffset());
+		PxCoord posOnScreen2 = txCoordToScreenPx(tx2, face.getOffset());
+		PxCoord posOnScreen3 = txCoordToScreenPx(tx3, face.getOffset());
+		PxCoord posOnScreen4 = txCoordToScreenPx(tx4, face.getOffset());
 
-		// Exit if position is off screen
-		if (posOnScreen == null)
+		if (posOnScreen1 == null || posOnScreen2 == null || posOnScreen3 == null || posOnScreen4 == null)
 			return;
 
-		// Convert 3D world texel to 2D texture coordinate
+		// Get texel colour
 		int textureX = 0;
 		int textureY = 0;
 		boolean flipX = false;
@@ -144,37 +186,9 @@ public class BlocksRenderer extends Render {
 				flipY = true;
 			}
 		}
-
-		// Render texel
 		int txPixel = Texture.getTexel(texture, textureX, textureY, flipX, flipY);
-		this.generateRenderedTexel(face, txPixel, posOnScreen, blockCoord);
-	}
-
-	private void generateRenderedTexel(BlockFace face, int pixelColour, PxCoord screenPos, BlockCoord blockPos) {
-		int startX = (int) screenPos.x;
-		int startY = (int) screenPos.y;
-		double zIndex = screenPos.z;
-
-		final int TEX_SIZE_BASE = 1100; // minimum required for no gaps when looking straight down
-		int texSize = (int) (TEX_SIZE_BASE / (zIndex + 1));
-
-		// Apply fog to pixel
-		int brightAmount = (int) (Options.gamma * 10 * (Options.renderDistance - zIndex / 10));
-		int fogAppliedPixel = applyFog(pixelColour, brightAmount);
-
-		// Transform texel coordinates based on camera rotation
-		for (int i = 0; i < texSize; i++) {
-			for (int j = 0; j < texSize; j++) {
-				// Convert to screen coordinates
-				int screenX = startX + i;
-				int screenY = startY + j;
-
-				// Check if the position is valid and save the pixel
-				if (super.isValidPosition(screenX, screenY)) {
-					this.savePixel(screenX, screenY, fogAppliedPixel, zIndex);
-				}
-			}
-		}
+		PxCoord[] screenCoords = new PxCoord[] { posOnScreen1, posOnScreen2, posOnScreen3, posOnScreen4 };
+		this.saveRect(screenCoords, txPixel, posOnScreen1.z);
 	}
 
 	private boolean isWithinRenderDistance(int blockX, int blockY, int blockZ) {
@@ -186,13 +200,13 @@ public class BlocksRenderer extends Render {
 		return distance < Options.renderDistance;
 	}
 
-	private PxCoord txCoordToScreenPx(int txX, int txY, int txZ, Vector3<Integer> offset) {
+	private PxCoord txCoordToScreenPx(TxCoord tx, Vector3<Integer> offset) {
 		PxCoord camPos = this.game.controls.getCameraPosition().toPx();
 
 		// Relative position of block in world and player pos
-		double relX = txX - camPos.x + offset.x * 0.1;
-		double relY = txY - camPos.y + offset.y * 0.1;
-		double relZ = txZ - camPos.z + offset.z * 0.1;
+		double relX = tx.x - camPos.x + offset.x * 0.1;
+		double relY = tx.y - camPos.y + offset.y * 0.1;
+		double relZ = tx.z - camPos.z + offset.z * 0.1;
 		double absDistance = Math.sqrt(relX * relX + relY * relY + relZ * relZ);
 
 		// Apply Y-axis (horiz) rotation
@@ -237,17 +251,77 @@ public class BlocksRenderer extends Render {
 	}
 
 	/** Update a pixel in the current screen image if it is closer to the player than any other pixel at that coordinate */
-	private void savePixel(int screenX, int screenY, int pixel, double zIndex) {
-		int pixelI = super.getPixelIndex(screenX, screenY);
-		double curMinDist = this.pixelCurMinDistances[pixelI];
+	private void saveRect2(int screenX, int screenY, int width, int height, int pixel, double zIndex) {
+		// Get the color representing the depth
+		Color depthColor = pxToColor((int) (0x800100 - zIndex));
 
-		// If distance is greater than current min dist, do not render the pixel
-		if (zIndex >= curMinDist)
-			return;
+		// Iterate over the rectangle's pixels
+		int size = 4;
+		for (int x = screenX; x < screenX + width; x += size) {
+			for (int y = screenY; y < screenY + height; y += size) {
+				// Ensure the coordinates are within bounds
+				if (x >= 0 && x < this.depthImage.getWidth() && y >= 0 && y < this.depthImage.getHeight()) {
+					// Do not draw if further away than the current draw
+					if (this.depthImage.getRGB(x, y) > depthColor.getRGB())
+						continue;
 
-		// Otherwise save pixel for rendering
-		super.setPixel(screenX, screenY, pixel);
-		this.pixelCurMinDistances[pixelI] = (float) zIndex;
+					// Update graphics for new depth (closer)
+					this.graphics.setColor(pxToColor(pixel));
+					this.graphics.fillRect(x, y, size, size); // chunked update
+					this.depthGraphics.setColor(depthColor);
+					this.depthGraphics.fillRect(x, y, size, size); // chunked update
+
+				}
+			}
+		}
+
+	}
+
+	private void saveRect(PxCoord[] screenCoords, int pixel, double zIndex) {
+		// Get the color representing the depth
+		Color depthColor = pxToColor((int) (0x800100 - zIndex));
+
+//		var xpoints = new int[] { screenX, screenX + width, screenX + width, screenX };
+//		var ypoints = new int[] { screenY, screenY, screenY + width, screenY + width };
+
+		// Construct polygon to draw texel
+		var xpoints = new int[screenCoords.length];
+		var ypoints = new int[screenCoords.length];
+		var pixelIs = new int[screenCoords.length];
+		for (short i = 0; i < screenCoords.length; i++) {
+			int screenX = (int) screenCoords[i].x;
+			int screenY = (int) screenCoords[i].y;
+
+			if (!super.isValidPosition(screenX, screenY))
+				return;
+
+			// Don't draw this rectangle if a closer texel has already been drawn
+			int pixelI = super.getPixelIndex(screenX, screenY);
+			pixelIs[i] = pixelI;
+			if (this.pixelCurMinDistances[pixelI] < (int) zIndex)
+				return;
+
+			// Add point to polygon
+			xpoints[i] = screenX;
+			ypoints[i] = screenY;
+		}
+
+		// Update min distances
+		for (short i = 0; i < screenCoords.length; i++) {
+			this.pixelCurMinDistances[pixelIs[i]] = (int) zIndex;
+		}
+
+		// Draw pixel
+		Polygon polygon = new Polygon(xpoints, ypoints, xpoints.length);
+		this.graphics.setColor(pxToColor(pixel));
+		this.graphics.fillPolygon(polygon);
+	}
+
+	private Color pxToColor(int pixelColor) {
+		int r = (pixelColor >> 16) & 0xFF;
+		int g = (pixelColor >> 8) & 0xFF;
+		int b = (pixelColor) & 0xFF;
+		return new Color(r, g, b);
 	}
 
 }
