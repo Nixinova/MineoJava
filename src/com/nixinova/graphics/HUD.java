@@ -1,14 +1,18 @@
 package com.nixinova.graphics;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
+import com.nixinova.PixelColor;
 import com.nixinova.blocks.Block;
 import com.nixinova.player.Hotbar;
 
 public class HUD {
 
-	private Render render;
+	private Graphics graphics;
 
-	public HUD(Render render) {
-		this.render = render;
+	public HUD(Graphics render) {
+		this.graphics = render;
 	}
 
 	public void drawAll() {
@@ -18,19 +22,22 @@ public class HUD {
 	}
 
 	private void drawHotbar() {
-		int size = 60;
+		int size = 64;
 		int sep = 10;
 		int cell = size + sep;
-		int startX = (render.width / 2) - 4 * cell;
-		int startY = render.height - 150;
+		int startX = (Display.WIDTH / 2) - 4 * cell;
+		int startY = Display.HEIGHT - 150;
 
 		// Draw hotbar border
-		render.fill(startX - sep, startY - sep, (9 * cell) + (sep * 2), cell + sep, 0x888888);
+		graphics.setColor(Color.gray);
+		graphics.fillRect(startX - sep, startY - sep, (9 * cell) + (sep * 2), cell + sep);
 		// Draw hotbar background
-		render.fill(startX - sep / 2, startY - sep / 2, (9 * cell) + sep, cell, 0x000000);
+		graphics.setColor(Color.black);
+		graphics.fillRect(startX - sep / 2, startY - sep / 2, (9 * cell) + sep, cell);
 
 		// Draw selected slot
-		render.fill(startX - sep / 2 + (Hotbar.currentBlockID - 1) * cell, startY - sep / 2, cell, cell, 0xEEEEAA);
+		graphics.setColor(Color.yellow);
+		graphics.fillRect(startX - sep / 2 + (Hotbar.currentBlockID - 1) * cell, startY - sep / 2, cell, cell);
 
 		// Draw hotbar slots
 		int curX = startX;
@@ -38,7 +45,7 @@ public class HUD {
 		for (int i = 0; i < 10; i++) {
 			Block block = Hotbar.SLOTS[i];
 			if (block != null) {
-				render.drawTextureOnScreen(block.getTexture(), size, curX, curY);
+				drawTextureOnScreen(block.getTexture(), size, curX, curY);
 				curX += cell;
 			}
 		}
@@ -46,17 +53,29 @@ public class HUD {
 
 	private void drawCursor() {
 		int size = 5;
-		int startX = (render.width - size) / 2;
-		int startY = (render.height - size) / 2;
-		render.fill(startX, startY, size, size, 0xEEEEEE);
+		int startX = (Display.WIDTH - size) / 2;
+		int startY = (Display.HEIGHT - size) / 2;
+		graphics.setColor(Color.yellow);
+		graphics.fillRect(startX, startY, size, size);
 	}
 
 	private void drawSelectedBlock() {
 		final int size = 100;
-		int startX = render.width - size - 50;
-		int startY = 30;
+		final int padding = 30;
+		int startX = Display.WIDTH - size - padding;
+		int startY = padding;
 		Render texture = Hotbar.getCurrentBlock().getTexture();
-		render.drawTextureOnScreen(texture, size, startX, startY);
+		drawTextureOnScreen(texture, size, startX, startY);
+	}
+
+	private void drawTextureOnScreen(Render texture, int maxSize, int startX, int startY) {
+		int size = maxSize / Texture.SIZE;
+		for (int x = 0; x < Texture.SIZE; x++)
+			for (int y = 0; y < Texture.SIZE; y++) {
+				int pixel = Texture.getTexel(texture, x, y);
+				graphics.setColor(PixelColor.fromPixel(pixel));
+				graphics.fillRect(startX + x * size, startY + y * size, size, size);
+			}
 	}
 
 }

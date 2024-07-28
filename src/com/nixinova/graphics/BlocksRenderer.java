@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Polygon;
 import java.awt.image.BufferedImage;
 
+import com.nixinova.PixelColor;
 import com.nixinova.Vector3;
 import com.nixinova.blocks.BlockFace;
 import com.nixinova.coords.BlockCoord;
@@ -253,7 +254,7 @@ public class BlocksRenderer extends Render {
 	/** Update a pixel in the current screen image if it is closer to the player than any other pixel at that coordinate */
 	private void saveRect2(int screenX, int screenY, int width, int height, int pixel, double zIndex) {
 		// Get the color representing the depth
-		Color depthColor = pxToColor((int) (0x800100 - zIndex));
+		Color depthColor = PixelColor.fromPixel((int) (0x800100 - zIndex));
 
 		// Iterate over the rectangle's pixels
 		int size = 4;
@@ -266,7 +267,7 @@ public class BlocksRenderer extends Render {
 						continue;
 
 					// Update graphics for new depth (closer)
-					this.graphics.setColor(pxToColor(pixel));
+					this.graphics.setColor(PixelColor.fromPixel(pixel));
 					this.graphics.fillRect(x, y, size, size); // chunked update
 					this.depthGraphics.setColor(depthColor);
 					this.depthGraphics.fillRect(x, y, size, size); // chunked update
@@ -279,7 +280,7 @@ public class BlocksRenderer extends Render {
 
 	private void saveRect(PxCoord[] screenCoords, int pixel, double zIndex) {
 		// Get the color representing the depth
-		Color depthColor = pxToColor((int) (0x800100 - zIndex));
+		Color depthColor = PixelColor.fromPixel((int) (0x800100 - zIndex));
 
 //		var xpoints = new int[] { screenX, screenX + width, screenX + width, screenX };
 //		var ypoints = new int[] { screenY, screenY, screenY + width, screenY + width };
@@ -313,15 +314,8 @@ public class BlocksRenderer extends Render {
 
 		// Draw pixel
 		Polygon polygon = new Polygon(xpoints, ypoints, xpoints.length);
-		this.graphics.setColor(pxToColor(pixel));
+		this.graphics.setColor(PixelColor.fromPixel(pixel));
 		this.graphics.fillPolygon(polygon);
-	}
-
-	private Color pxToColor(int pixelColor) {
-		int r = (pixelColor >> 16) & 0xFF;
-		int g = (pixelColor >> 8) & 0xFF;
-		int b = (pixelColor) & 0xFF;
-		return new Color(r, g, b);
 	}
 
 }

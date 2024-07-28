@@ -113,15 +113,10 @@ public class Display extends Canvas implements Runnable {
 
 		// Draw world
 		this.renderer.renderWorld(this.game, graphics);
-		// Draw UI graphical elements
-		HUD hud = new HUD(this.renderer);
+		// Draw HUD
+		HUD hud = new HUD(graphics);
 		hud.drawAll();
-		// Apply and render nontext elements
-		for (int i = 0; i < WIDTH * HEIGHT; i++) {
-			this.pixels[i] = this.renderer.getPixel(i);
-		}
-
-		// Draw UI text elements
+		// Draw UI text
 		ScreenText uiText = new ScreenText(graphics);
 		if (game.controls.debugShown)
 			uiText.drawMainInfo(this.game);
