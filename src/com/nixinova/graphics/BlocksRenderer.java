@@ -272,9 +272,13 @@ public class BlocksRenderer extends Render {
 			this.pixelCurMinDistances[pixelIs[i]] = (int) zIndex;
 		}
 
+		// Apply fog to pixel
+		double brightAmount = Options.gamma * 10 * (Options.renderDistance - zIndex / 10);
+		int fogAppliedPixel = applyFog(pixel, (int) brightAmount);
+
 		// Draw pixel
 		Polygon polygon = new Polygon(xpoints, ypoints, xpoints.length);
-		this.graphics.setColor(PixelColor.fromPixel(pixel));
+		this.graphics.setColor(PixelColor.fromPixel(fogAppliedPixel));
 		this.graphics.fillPolygon(polygon);
 	}
 
