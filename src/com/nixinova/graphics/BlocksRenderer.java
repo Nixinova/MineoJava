@@ -5,19 +5,17 @@ import java.awt.Graphics;
 import java.awt.Polygon;
 
 import com.nixinova.PixelColor;
-import com.nixinova.Vector3;
 import com.nixinova.blocks.BlockFace;
 import com.nixinova.coords.BlockCoord;
-import com.nixinova.coords.Coord3;
+import com.nixinova.coords.Coord1;
 import com.nixinova.coords.PxCoord;
-import com.nixinova.coords.TxCoord;
+import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.main.Game;
 import com.nixinova.options.Options;
 
 public class BlocksRenderer extends Render {
 	private Game game;
 	private Graphics graphics;
-
 	private float[] pixelCurMinDistances;
 	private double xRot, yRot;
 	private double xRotSin, yRotSin;
@@ -51,6 +49,10 @@ public class BlocksRenderer extends Render {
 	}
 
 	public void renderWorld() {
+		this.renderOneBlock(0, 10, 0);
+		if (1 == 2)
+			return;
+
 		// Loop from bottom to top of world
 		BlockCoord min = this.game.world.minCorner;
 		BlockCoord max = this.game.world.maxCorner;
@@ -80,108 +82,84 @@ public class BlocksRenderer extends Render {
 	}
 
 	private void renderOneBlock(int blockX, int blockY, int blockZ) {
-		final int size = Texture.SIZE;
-
-		// Loop through texels and render
-		TxCoord startTx = Coord3.fromBlock(blockX, blockY, blockZ).toTx();
-		for (int txX = 0; txX < size; txX++) {
-			for (int txY = 0; txY < size; txY++) {
-				for (int txZ = 0; txZ < size; txZ++) {
-					// Only render outside faces of the block
-					boolean atStart = txX == 0 || txY == 0 || txZ == 0;
-					boolean atEnd = txX == size - 1 || txY == size - 1 || txZ == size - 1;
-					if (!atStart && !atEnd)
-						continue;
-
-					// Get block face
-					var blockFaces = BlockFace.getFacesFromTx(txX, txY, txZ);
-
-					// Ignore if this block face is not exposed
-					for (BlockFace face : blockFaces) {
-						if (!this.game.world.isFaceExposed(face, blockX, blockY, blockZ)) {
-							continue;
-						}
-
-						// Render this texel
-						int x = startTx.x + txX;
-						int y = startTx.y + txY;
-						int z = startTx.z + txZ;
-						this.renderOneTx(face, x, y, z);
-					}
-				}
-			}
+		final BlockFace[] faces = {
+			BlockFace.XMIN, BlockFace.XMAX,
+			BlockFace.YMIN, BlockFace.YMAX,
+			BlockFace.ZMIN, BlockFace.ZMAX,
+		};
+		for (BlockFace face : faces) {
+			renderBlockFace(face, blockX, blockY, blockZ);
 		}
 	}
 
-	private void renderOneTx(BlockFace face, int txX, int txY, int txZ) {
-		TxCoord txCoord = new TxCoord(txX, txY, txZ);
-		BlockCoord blockCoord = Coord3.fromTx(txCoord).toBlock();
-
-		// Get texture
-		Render texture = this.game.world.getTextureAt(blockCoord);
-
-		// Skip if block is air
-		if (texture == null)
+	private void renderBlockFace(BlockFace face, int blockX, int blockY, int blockZ) {
+		// Exit if face is not exposed
+		if (!this.game.world.isFaceExposed(face, blockX, blockY, blockZ)) {
 			return;
-
-		// Get screen pixel position
-		TxCoord tx2 = txCoord;
-		TxCoord tx3 = txCoord;
-		TxCoord tx4 = txCoord;
-		switch (face) {
-			case YMIN, YMAX:
-				tx2 = new TxCoord(txX, txY, txZ + 1);
-				tx3 = new TxCoord(txX + 1, txY, txZ);
-				tx3 = new TxCoord(txX + 1, txY, txZ + 1);
-				break;
-			case XMIN, XMAX:
-				tx2 = new TxCoord(txX, txY, txZ + 1);
-				tx3 = new TxCoord(txX, txY + 1, txZ);
-				tx4 = new TxCoord(txX, txY + 1, txZ + 1);
-				break;
-			case ZMIN, ZMAX:
-				tx2 = new TxCoord(txX, txY + 1, txZ);
-				tx3 = new TxCoord(txX + 1, txY, txZ);
-				tx4 = new TxCoord(txX + 1, txY + 1, txZ);
-				break;
 		}
-		PxCoord posOnScreen1 = txCoordToScreenPx(txCoord, face.getOffset());
-		PxCoord posOnScreen2 = txCoordToScreenPx(tx2, face.getOffset());
-		PxCoord posOnScreen3 = txCoordToScreenPx(tx3, face.getOffset());
-		PxCoord posOnScreen4 = txCoordToScreenPx(tx4, face.getOffset());
 
-		if (posOnScreen1 == null || posOnScreen2 == null || posOnScreen3 == null || posOnScreen4 == null)
-			return;
+		// Get corners
+		SubBlockCoord[] corners = getCornersForFace(face, blockX, blockY, blockZ);
 
-		// Get texel colour
-		int textureX = 0;
-		int textureY = 0;
-		boolean flipX = false;
-		boolean flipY = false;
-		switch (face) {
-			case XMAX, XMIN -> {
-				textureX = txY;
-				textureY = txZ;
-				flipX = true;
-				flipY = face == BlockFace.XMIN;
-
-			}
-			case YMAX, YMIN -> {
-				textureX = txX;
-				textureY = txZ;
-				flipX = false;
-				flipY = face == BlockFace.YMAX;
-			}
-			case ZMAX, ZMIN -> {
-				textureX = txX;
-				textureY = txY;
-				flipX = face == BlockFace.ZMAX;
-				flipY = true;
-			}
+		// Get screen coords
+		PxCoord[] polygonCorners = new PxCoord[4];
+		for (int i = 0; i < polygonCorners.length; i++) {
+			polygonCorners[i] = coordToScreenPx(corners[i]);
 		}
-		int txPixel = Texture.getTexel(texture, textureX, textureY, flipX, flipY);
-		PxCoord[] screenCoords = new PxCoord[] { posOnScreen1, posOnScreen2, posOnScreen3, posOnScreen4 };
-		this.saveRect(screenCoords, txPixel, posOnScreen1.z);
+
+		// Save texel
+		Render texture = this.game.world.getTextureAt(blockX, blockY, blockZ);
+		int txPixel = Texture.getTexel(texture, 0, 0);
+		saveRect(polygonCorners, txPixel);
+	}
+
+	private SubBlockCoord[] getCornersForFace(BlockFace face, int blockX, int blockY, int blockZ) {
+		final double offset = 0.999;
+		return switch (face) {
+			case XMAX -> new SubBlockCoord[] {
+				// X=+1; four corners of Y/Z
+				new SubBlockCoord(blockX + 1, blockY, blockZ),
+				new SubBlockCoord(blockX + 1, blockY, blockZ + offset),
+				new SubBlockCoord(blockX + 1, blockY + offset, blockZ + offset),
+				new SubBlockCoord(blockX + 1, blockY + offset, blockZ),
+			};
+			case XMIN -> new SubBlockCoord[] {
+				// X=+0; four corners of Y/Z
+				new SubBlockCoord(blockX + 0, blockY, blockZ),
+				new SubBlockCoord(blockX + 0, blockY, blockZ + offset),
+				new SubBlockCoord(blockX + 0, blockY + offset, blockZ + offset),
+				new SubBlockCoord(blockX + 0, blockY + offset, blockZ),
+			};
+			case YMAX -> new SubBlockCoord[] {
+				// Y=+1; four corners of X/Z
+				new SubBlockCoord(blockX, blockY + 1, blockZ),
+				new SubBlockCoord(blockX, blockY + 1, blockZ + offset),
+				new SubBlockCoord(blockX + offset, blockY + 1, blockZ + offset),
+				new SubBlockCoord(blockX + offset, blockY + 1, blockZ),
+			};
+			case YMIN -> new SubBlockCoord[] {
+				// Y=+0; four corners of X/Z
+				new SubBlockCoord(blockX, blockY + 0, blockZ),
+				new SubBlockCoord(blockX, blockY + 0, blockZ + offset),
+				new SubBlockCoord(blockX + offset, blockY + 0, blockZ + offset),
+				new SubBlockCoord(blockX + offset, blockY + 0, blockZ),
+			};
+			case ZMAX -> new SubBlockCoord[] {
+				// Z=+1; four corners of X/Y
+				new SubBlockCoord(blockX, blockY, blockZ + 1),
+				new SubBlockCoord(blockX, blockY + offset, blockZ + 1),
+				new SubBlockCoord(blockX + offset, blockY + offset, blockZ + 1),
+				new SubBlockCoord(blockX + offset, blockY, blockZ + 1),
+			};
+			case ZMIN -> new SubBlockCoord[] {
+				// Z=+0; four corners of X/Y
+				new SubBlockCoord(blockX, blockY, blockZ + 0),
+				new SubBlockCoord(blockX, blockY + offset, blockZ + 0),
+				new SubBlockCoord(blockX + offset, blockY + offset, blockZ + 0),
+				new SubBlockCoord(blockX + offset, blockY, blockZ),
+			};
+			default -> null;
+		};
 	}
 
 	private boolean isWithinRenderDistance(int blockX, int blockY, int blockZ) {
@@ -193,13 +171,13 @@ public class BlocksRenderer extends Render {
 		return distance < Options.renderDistance;
 	}
 
-	private PxCoord txCoordToScreenPx(TxCoord tx, Vector3<Integer> offset) {
-		PxCoord camPos = this.game.controls.getCameraPosition().toPx();
+	private PxCoord coordToScreenPx(SubBlockCoord block) {
+		var camPos = this.game.controls.getCameraPosition().toSubBlock();
 
 		// Relative position of block in world and player pos
-		double relX = tx.x - camPos.x + offset.x * 0.1;
-		double relY = tx.y - camPos.y + offset.y * 0.1;
-		double relZ = tx.z - camPos.z + offset.z * 0.1;
+		double relX = block.x - camPos.x;
+		double relY = block.y - camPos.y;
+		double relZ = block.z - camPos.z;
 		double absDistance = Math.sqrt(relX * relX + relY * relY + relZ * relZ);
 
 		// Apply Y-axis (horiz) rotation
@@ -216,14 +194,11 @@ public class BlocksRenderer extends Render {
 		double screenX = (this.width / 2.0) + (xTilt / zTilt) * this.height;
 		double screenY = (this.height / 2.0) - (yTilt / zTilt) * this.height;
 
-		// Early return when pixel is invalid
-		if (zTilt <= 0)
-			return null;
-
 		return new PxCoord(screenX, screenY, absDistance);
 	}
 
 	/** Adds depth-based fog to the pixels */
+
 	private int applyFog(int colour, int brightness) {
 		// Clamp to 8-bit range
 		if (brightness < 0)
@@ -244,11 +219,12 @@ public class BlocksRenderer extends Render {
 	}
 
 	/** Update a pixel in the current screen image if it is closer to the player than any other pixel at that coordinate */
-	private void saveRect(PxCoord[] screenCoords, int pixel, double zIndex) {
+	private void saveRect(PxCoord[] screenCoords, int pixel) {
 		// Construct polygon to draw texel
 		var xpoints = new int[screenCoords.length];
 		var ypoints = new int[screenCoords.length];
 		var pixelIs = new int[screenCoords.length];
+		int zIndex = 0;
 		for (short i = 0; i < screenCoords.length; i++) {
 			int screenX = (int) screenCoords[i].x;
 			int screenY = (int) screenCoords[i].y;
@@ -256,20 +232,23 @@ public class BlocksRenderer extends Render {
 			if (!super.isValidPosition(screenX, screenY))
 				return;
 
+			// Average z-index
+			zIndex += (int) screenCoords[i].z;
+			zIndex /= (i + 1);
+
 			// Don't draw this rectangle if a closer texel has already been drawn
+			final int zIndexPadding = 10; // margin of error
 			int pixelI = super.getPixelIndex(screenX, screenY);
 			pixelIs[i] = pixelI;
-			if (this.pixelCurMinDistances[pixelI] < (int) zIndex)
+			if (this.pixelCurMinDistances[pixelI] < zIndex - zIndexPadding)
 				return;
+
+			// Update min distance
+			this.pixelCurMinDistances[pixelIs[i]] = zIndex;
 
 			// Add point to polygon
 			xpoints[i] = screenX;
 			ypoints[i] = screenY;
-		}
-
-		// Update min distances
-		for (short i = 0; i < screenCoords.length; i++) {
-			this.pixelCurMinDistances[pixelIs[i]] = (int) zIndex;
 		}
 
 		// Apply fog to pixel
