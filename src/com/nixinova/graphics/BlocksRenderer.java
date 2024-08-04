@@ -5,9 +5,9 @@ import java.awt.Graphics;
 import java.awt.Polygon;
 
 import com.nixinova.PixelColor;
+import com.nixinova.blocks.BlockCorners;
 import com.nixinova.blocks.BlockFace;
 import com.nixinova.coords.BlockCoord;
-import com.nixinova.coords.Coord1;
 import com.nixinova.coords.PxCoord;
 import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.main.Game;
@@ -49,10 +49,6 @@ public class BlocksRenderer extends Render {
 	}
 
 	public void renderWorld() {
-		this.renderOneBlock(0, 10, 0);
-		if (1 == 2)
-			return;
-
 		// Loop from bottom to top of world
 		BlockCoord min = this.game.world.minCorner;
 		BlockCoord max = this.game.world.maxCorner;
@@ -99,7 +95,8 @@ public class BlocksRenderer extends Render {
 		}
 
 		// Get corners
-		SubBlockCoord[] corners = getCornersForFace(face, blockX, blockY, blockZ);
+		BlockCorners blockCorners = new BlockCorners(blockX, blockY, blockZ, face);
+		SubBlockCoord[] corners = blockCorners.toArray();
 
 		// Get screen coords
 		PxCoord[] polygonCorners = new PxCoord[4];
@@ -111,55 +108,6 @@ public class BlocksRenderer extends Render {
 		Render texture = this.game.world.getTextureAt(blockX, blockY, blockZ);
 		int txPixel = Texture.getTexel(texture, 0, 0);
 		saveRect(polygonCorners, txPixel);
-	}
-
-	private SubBlockCoord[] getCornersForFace(BlockFace face, int blockX, int blockY, int blockZ) {
-		final double offset = 0.999;
-		return switch (face) {
-			case XMAX -> new SubBlockCoord[] {
-				// X=+1; four corners of Y/Z
-				new SubBlockCoord(blockX + 1, blockY, blockZ),
-				new SubBlockCoord(blockX + 1, blockY, blockZ + offset),
-				new SubBlockCoord(blockX + 1, blockY + offset, blockZ + offset),
-				new SubBlockCoord(blockX + 1, blockY + offset, blockZ),
-			};
-			case XMIN -> new SubBlockCoord[] {
-				// X=+0; four corners of Y/Z
-				new SubBlockCoord(blockX + 0, blockY, blockZ),
-				new SubBlockCoord(blockX + 0, blockY, blockZ + offset),
-				new SubBlockCoord(blockX + 0, blockY + offset, blockZ + offset),
-				new SubBlockCoord(blockX + 0, blockY + offset, blockZ),
-			};
-			case YMAX -> new SubBlockCoord[] {
-				// Y=+1; four corners of X/Z
-				new SubBlockCoord(blockX, blockY + 1, blockZ),
-				new SubBlockCoord(blockX, blockY + 1, blockZ + offset),
-				new SubBlockCoord(blockX + offset, blockY + 1, blockZ + offset),
-				new SubBlockCoord(blockX + offset, blockY + 1, blockZ),
-			};
-			case YMIN -> new SubBlockCoord[] {
-				// Y=+0; four corners of X/Z
-				new SubBlockCoord(blockX, blockY + 0, blockZ),
-				new SubBlockCoord(blockX, blockY + 0, blockZ + offset),
-				new SubBlockCoord(blockX + offset, blockY + 0, blockZ + offset),
-				new SubBlockCoord(blockX + offset, blockY + 0, blockZ),
-			};
-			case ZMAX -> new SubBlockCoord[] {
-				// Z=+1; four corners of X/Y
-				new SubBlockCoord(blockX, blockY, blockZ + 1),
-				new SubBlockCoord(blockX, blockY + offset, blockZ + 1),
-				new SubBlockCoord(blockX + offset, blockY + offset, blockZ + 1),
-				new SubBlockCoord(blockX + offset, blockY, blockZ + 1),
-			};
-			case ZMIN -> new SubBlockCoord[] {
-				// Z=+0; four corners of X/Y
-				new SubBlockCoord(blockX, blockY, blockZ + 0),
-				new SubBlockCoord(blockX, blockY + offset, blockZ + 0),
-				new SubBlockCoord(blockX + offset, blockY + offset, blockZ + 0),
-				new SubBlockCoord(blockX + offset, blockY, blockZ),
-			};
-			default -> null;
-		};
 	}
 
 	private boolean isWithinRenderDistance(int blockX, int blockY, int blockZ) {
