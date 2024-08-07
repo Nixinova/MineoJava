@@ -19,4 +19,8 @@ public class Vector3<T extends Number> {
 		return new Vector3<Double>(dx, dy, dz);
 	}
 
+	public static Vector3<Double> add(Vector3<Double> a, Vector3<Double> b) {
+		return new Vector3<Double>(a.x + b.x, a.y + b.y, a.z + b.z);
+	}
+
 }

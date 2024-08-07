@@ -1,5 +1,7 @@
 package com.nixinova.coords;
 
+import com.nixinova.Vector3;
+
 public class TxCoord implements ICoord<Integer> {
 	
 	public int x;
@@ -22,6 +24,16 @@ public class TxCoord implements ICoord<Integer> {
 	
 	public Integer value() {
 		return this.x;
+	}
+
+	public void add(Vector3<Integer> vec) {
+		this.x += vec.x;
+		this.y += vec.y;
+		this.z += vec.z;
+	}
+
+	public TxCoord applyVector(Vector3<Integer> vec) {
+		return new TxCoord(this.x + vec.x, this.y + vec.y, this.z + vec.z);
 	}
 
 }
