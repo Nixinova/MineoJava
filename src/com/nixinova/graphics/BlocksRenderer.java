@@ -109,8 +109,20 @@ public class BlocksRenderer extends Render {
 				// Get screen coords for each corner
 				PxCoord[] polygonCorners = new PxCoord[curTexCorners.length];
 				for (int i = 0; i < polygonCorners.length; i++) {
-					polygonCorners[i] = coordToScreenPx(curTexCorners[i]);
+					PxCoord screenPos = coordToScreenPx(curTexCorners[i]);
+					
+					// Kill polygon if one corner position is not valid
+					if (screenPos == null) {
+						polygonCorners = null;
+						break;
+					}
+					
+					polygonCorners[i] = screenPos;
 				}
+
+				// Skip rendering if no polygon created
+				if (polygonCorners == null)
+					continue;
 
 				// Save texel
 				int txPixel = Texture.getTexel(texture, texX, texY);
@@ -148,6 +160,10 @@ public class BlocksRenderer extends Render {
 		double yTilt = yRot * this.yRotCos - zRot * this.yRotSin;
 		double zTilt = yRot * this.yRotSin + zRot * this.yRotCos;
 
+		// Early return when pixel is invalid
+		if (zTilt < 0)
+			return null;
+
 		// Project to 2D screen space
 		double screenX = (this.width / 2.0) + (xTilt / zTilt) * this.height;
 		double screenY = (this.height / 2.0) - (yTilt / zTilt) * this.height;
@@ -183,6 +199,7 @@ public class BlocksRenderer extends Render {
 		var ypoints = new int[screenCoords.length];
 		var pixelIs = new int[screenCoords.length];
 		int zIndex = 0;
+
 		for (short i = 0; i < screenCoords.length; i++) {
 			int screenX = (int) screenCoords[i].x;
 			int screenY = (int) screenCoords[i].y;

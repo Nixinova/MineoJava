@@ -57,7 +57,7 @@ public class Coord1 {
 	// Basic quick conversions
 
 	public static double pxToBlock(double px) {
-		return Math.floor(px) / Texture.SIZE;
+		return px / Texture.SIZE;
 	}
 
 	public static double blockToPx(double block) {

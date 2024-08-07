@@ -100,7 +100,7 @@ public class World {
 
 		for (int x = 0; x < this.maxCorner.x; x++) {
 			for (int z = 0; z < this.maxCorner.z; z++) {
-				int localGroundY = GROUND_Y + random.nextInt(2);
+				int localGroundY = GROUND_Y;
 
 				for (int y = 0; y < this.maxCorner.y; y++) {
 					Block block;
