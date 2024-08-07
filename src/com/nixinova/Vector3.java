@@ -13,9 +13,9 @@ public class Vector3<T extends Number> {
 	}
 
 	public static Vector3<Double> blockDistance(SubBlockCoord a, SubBlockCoord b) {
-		double dx = a.x - b.x;
-		double dy = a.y - b.y;
-		double dz = a.z - b.z;
+		double dx = b.x - a.x;
+		double dy = b.y - a.y;
+		double dz = b.z - a.z;
 		return new Vector3<Double>(dx, dy, dz);
 	}
 

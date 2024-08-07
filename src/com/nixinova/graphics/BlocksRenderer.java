@@ -3,6 +3,11 @@ package com.nixinova.graphics;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Polygon;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.nixinova.PixelColor;
 import com.nixinova.blocks.BlockCorners;
@@ -18,6 +23,7 @@ public class BlocksRenderer extends Render {
 	private Game game;
 	private Graphics graphics;
 	private float[] pixelCurMinDistances;
+	private Map<Integer, List<SavedPolygon>> savedPolygons;
 	private double xRot, yRot;
 	private double xRotSin, yRotSin;
 	private double xRotCos, yRotCos;
@@ -39,6 +45,7 @@ public class BlocksRenderer extends Render {
 		for (int i = 0; i < super.imageSize(); i++) {
 			this.pixelCurMinDistances[i] = Integer.MAX_VALUE;
 		}
+		savedPolygons = new HashMap<>();
 
 		// Cache trig
 		this.xRot = this.game.controls.getMouseHorizRads();
@@ -50,6 +57,22 @@ public class BlocksRenderer extends Render {
 	}
 
 	public void renderWorld() {
+		// Generate world drawing
+		drawWorld();
+
+		// Render world from far to near, so closer blocks render over farther blocks
+		var zIndexesSet = this.savedPolygons.keySet();
+		var zIndexesList = new ArrayList<>(zIndexesSet);
+		Collections.sort(zIndexesList, Collections.reverseOrder()); // sort far to near
+		for (int zIndex : zIndexesList) {
+			// Render all polygons
+			for (SavedPolygon savedPolygon : this.savedPolygons.get(zIndex)) {
+				drawPolygon(savedPolygon);
+			}
+		}
+	}
+
+	private void drawWorld() {
 		// Loop from bottom to top of world
 		BlockCoord min = this.game.world.minCorner;
 		BlockCoord max = this.game.world.maxCorner;
@@ -72,24 +95,24 @@ public class BlocksRenderer extends Render {
 						continue;
 
 					// Render block
-					this.renderOneBlock(x, y, z);
+					drawOneBlock(x, y, z);
 				}
 			}
 		}
 	}
 
-	private void renderOneBlock(int blockX, int blockY, int blockZ) {
+	private void drawOneBlock(int blockX, int blockY, int blockZ) {
 		final BlockFace[] faces = {
 			BlockFace.XMIN, BlockFace.XMAX,
 			BlockFace.YMIN, BlockFace.YMAX,
 			BlockFace.ZMIN, BlockFace.ZMAX,
 		};
 		for (BlockFace face : faces) {
-			renderBlockFace(face, blockX, blockY, blockZ);
+			drawBlockFace(face, blockX, blockY, blockZ);
 		}
 	}
 
-	private void renderBlockFace(BlockFace face, int blockX, int blockY, int blockZ) {
+	private void drawBlockFace(BlockFace face, int blockX, int blockY, int blockZ) {
 		// Exit if face is not exposed
 		if (!this.game.world.isFaceExposed(face, blockX, blockY, blockZ)) {
 			return;
@@ -110,13 +133,13 @@ public class BlocksRenderer extends Render {
 				PxCoord[] polygonCorners = new PxCoord[curTexCorners.length];
 				for (int i = 0; i < polygonCorners.length; i++) {
 					PxCoord screenPos = coordToScreenPx(curTexCorners[i]);
-					
+
 					// Kill polygon if one corner position is not valid
 					if (screenPos == null) {
 						polygonCorners = null;
 						break;
 					}
-					
+
 					polygonCorners[i] = screenPos;
 				}
 
@@ -198,7 +221,7 @@ public class BlocksRenderer extends Render {
 		var xpoints = new int[screenCoords.length];
 		var ypoints = new int[screenCoords.length];
 		var pixelIs = new int[screenCoords.length];
-		int zIndex = 0;
+		double zIndex = 0;
 
 		for (short i = 0; i < screenCoords.length; i++) {
 			int screenX = (int) screenCoords[i].x;
@@ -208,7 +231,7 @@ public class BlocksRenderer extends Render {
 				return;
 
 			// Average z-index
-			zIndex += (int) screenCoords[i].z;
+			zIndex += screenCoords[i].z;
 			zIndex /= (i + 1);
 
 			// Don't draw this rectangle if a closer texel has already been drawn
@@ -219,7 +242,7 @@ public class BlocksRenderer extends Render {
 				return;
 
 			// Update min distance
-			this.pixelCurMinDistances[pixelIs[i]] = zIndex;
+			this.pixelCurMinDistances[pixelIs[i]] = (int) zIndex;
 
 			// Add point to polygon
 			xpoints[i] = screenX;
@@ -230,10 +253,20 @@ public class BlocksRenderer extends Render {
 		double brightAmount = Options.gamma * 10 * (Options.renderDistance - zIndex / 10);
 		int fogAppliedPixel = applyFog(pixel, (int) brightAmount);
 
-		// Draw pixel
-		Polygon polygon = new Polygon(xpoints, ypoints, xpoints.length);
-		this.graphics.setColor(PixelColor.fromPixel(fogAppliedPixel));
-		this.graphics.fillPolygon(polygon);
+		// Save polygon data to list
+		var polygon = new Polygon(xpoints, ypoints, xpoints.length);
+		var savedPolygon = new SavedPolygon(polygon, fogAppliedPixel);
+		int zKey = (int) (zIndex * Texture.SIZE);
+		// Initialise array at z index if not present
+		if (!this.savedPolygons.containsKey(zKey)) {
+			this.savedPolygons.put(zKey, new ArrayList<>());
+		}
+		this.savedPolygons.get(zKey).add(savedPolygon);
+	}
+
+	private void drawPolygon(SavedPolygon savedPolygon) {
+		this.graphics.setColor(PixelColor.fromPixel(savedPolygon.pixel));
+		this.graphics.fillPolygon(savedPolygon.polygon);
 	}
 
 }
