@@ -7,6 +7,7 @@ import java.awt.Polygon;
 import com.nixinova.PixelColor;
 import com.nixinova.blocks.BlockCorners;
 import com.nixinova.blocks.BlockFace;
+import com.nixinova.blocks.TexelCorners;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.PxCoord;
 import com.nixinova.coords.SubBlockCoord;
@@ -94,20 +95,29 @@ public class BlocksRenderer extends Render {
 			return;
 		}
 
-		// Get corners
-		BlockCorners blockCorners = new BlockCorners(blockX, blockY, blockZ, face);
-		SubBlockCoord[] corners = blockCorners.toArray();
+		Render texture = this.game.world.getTextureAt(blockX, blockY, blockZ);
 
-		// Get screen coords
-		PxCoord[] polygonCorners = new PxCoord[4];
-		for (int i = 0; i < polygonCorners.length; i++) {
-			polygonCorners[i] = coordToScreenPx(corners[i]);
+		// Get corners of block
+		BlockCorners blockCorners = new BlockCorners(blockX, blockY, blockZ, face);
+		TexelCorners texCornersList = new TexelCorners(blockCorners);
+
+		// Get corners of each texel and render
+		for (int texX = 0; texX < Texture.SIZE; texX++) {
+			for (int texY = 0; texY < Texture.SIZE; texY++) {
+				SubBlockCoord[] curTexCorners = texCornersList.getTexelCorners(texX, texY);
+
+				// Get screen coords for each corner
+				PxCoord[] polygonCorners = new PxCoord[curTexCorners.length];
+				for (int i = 0; i < polygonCorners.length; i++) {
+					polygonCorners[i] = coordToScreenPx(curTexCorners[i]);
+				}
+
+				// Save texel
+				int txPixel = Texture.getTexel(texture, 0, 0);
+				saveRect(polygonCorners, txPixel);
+			}
 		}
 
-		// Save texel
-		Render texture = this.game.world.getTextureAt(blockX, blockY, blockZ);
-		int txPixel = Texture.getTexel(texture, 0, 0);
-		saveRect(polygonCorners, txPixel);
 	}
 
 	private boolean isWithinRenderDistance(int blockX, int blockY, int blockZ) {
