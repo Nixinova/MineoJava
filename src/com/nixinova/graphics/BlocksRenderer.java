@@ -126,7 +126,7 @@ public class BlocksRenderer extends Render {
 
 		// Get corners of each texel and render
 		for (int texX = 0; texX < Texture.SIZE; texX++) {
-			for (int texY = 0; texY < Texture.SIZE; texY++) {
+			yloop: for (int texY = 0; texY < Texture.SIZE; texY++) {
 				SubBlockCoord[] curTexCorners = texCornersList.getTexelCorners(texX, texY);
 
 				// Get screen coords for each corner
@@ -136,16 +136,11 @@ public class BlocksRenderer extends Render {
 
 					// Kill polygon if one corner position is not valid
 					if (screenPos == null) {
-						polygonCorners = null;
-						break;
+						continue yloop;
 					}
 
 					polygonCorners[i] = screenPos;
 				}
-
-				// Skip rendering if no polygon created
-				if (polygonCorners == null)
-					continue;
 
 				// Save texel
 				int txPixel = Texture.getTexel(texture, texX, texY);
@@ -195,7 +190,6 @@ public class BlocksRenderer extends Render {
 	}
 
 	/** Adds depth-based fog to the pixels */
-
 	private int applyFog(int colour, int brightness) {
 		// Clamp to 8-bit range
 		if (brightness < 0)
@@ -227,22 +221,30 @@ public class BlocksRenderer extends Render {
 			int screenX = (int) screenCoords[i].x;
 			int screenY = (int) screenCoords[i].y;
 
-			if (!super.isValidPosition(screenX, screenY))
-				return;
-
 			// Average z-index
 			zIndex += screenCoords[i].z;
 			zIndex /= (i + 1);
 
-			// Don't draw this rectangle if a closer texel has already been drawn
-			final int zIndexPadding = 10; // margin of error
-			int pixelI = super.getPixelIndex(screenX, screenY);
-			pixelIs[i] = pixelI;
-			if (this.pixelCurMinDistances[pixelI] < zIndex - zIndexPadding)
-				return;
+			// For texels entirely within the screen
+			if (super.isValidPosition(screenX, screenY)) {
+				// Don't draw this rectangle if a closer texel has already been drawn
+				final int zIndexPadding = 10; // margin of error
+				int pixelI = super.getPixelIndex(screenX, screenY);
+				pixelIs[i] = pixelI;
+				if (this.pixelCurMinDistances[pixelI] < zIndex - zIndexPadding)
+					return;
 
-			// Update min distance
-			this.pixelCurMinDistances[pixelIs[i]] = (int) zIndex;
+				// Update min distance
+				this.pixelCurMinDistances[pixelIs[i]] = (int) zIndex;
+			}
+			// For texels that render partially offscreen
+			else {
+				final int screenPadding = 20; // render only this distance off the side of the screen
+				boolean offScreenX = screenX < -screenPadding || screenX > width + screenPadding;
+				boolean offScreenY = screenY < -screenPadding || screenY > height + screenPadding;
+				if (offScreenX && offScreenY)
+					return;
+			}
 
 			// Add point to polygon
 			xpoints[i] = screenX;
