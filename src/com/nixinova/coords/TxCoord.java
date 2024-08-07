@@ -2,7 +2,7 @@ package com.nixinova.coords;
 
 import com.nixinova.Vector3;
 
-public class TxCoord implements ICoord<Integer> {
+public class TxCoord extends BaseCoord<Integer> {
 	
 	public int x;
 	public int y;
@@ -20,10 +20,6 @@ public class TxCoord implements ICoord<Integer> {
 	
 	public Coord3 toCoord() {
 		return Coord3.fromTx(this);
-	}
-	
-	public Integer value() {
-		return this.x;
 	}
 
 	public void add(Vector3<Integer> vec) {

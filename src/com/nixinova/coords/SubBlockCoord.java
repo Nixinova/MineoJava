@@ -2,7 +2,7 @@ package com.nixinova.coords;
 
 import com.nixinova.Vector3;
 
-public class SubBlockCoord implements ICoord<Double> {
+public class SubBlockCoord extends BaseCoord<Double> {
 
 	public double x;
 	public double y;
@@ -20,10 +20,6 @@ public class SubBlockCoord implements ICoord<Double> {
 
 	public Coord3 toCoord() {
 		return Coord3.fromSubBlock(this);
-	}
-
-	public Double value() {
-		return this.x;
 	}
 
 	public void add(Vector3<Double> vec) {
