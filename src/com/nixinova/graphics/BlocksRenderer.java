@@ -113,7 +113,7 @@ public class BlocksRenderer extends Render {
 				}
 
 				// Save texel
-				int txPixel = Texture.getTexel(texture, 0, 0);
+				int txPixel = Texture.getTexel(texture, texX, texY);
 				saveRect(polygonCorners, txPixel);
 			}
 		}

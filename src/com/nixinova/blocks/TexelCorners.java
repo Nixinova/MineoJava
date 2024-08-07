@@ -4,6 +4,14 @@ import com.nixinova.Vector3;
 import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.graphics.Texture;
 
+/*
+ * Corners of a block:
+ * 
+ * A--B
+ * |  |
+ * C--D
+ */
+
 public class TexelCorners {
 
 	public SubBlockCoord cornerA, cornerB, cornerC, cornerD;
@@ -44,13 +52,14 @@ public class TexelCorners {
 				var dVert = new Vector3<Double>(vertVec.x * texY, vertVec.y * texY, vertVec.z * texY);
 
 				// Current texture coord starting offset vs start position (corner A)
-				var offset = new Vector3<Double>(dHoriz.x + dVert.x, dHoriz.y + dVert.y, dHoriz.z + dVert.z);
+				Vector3<Double> dStart = Vector3.add(dHoriz, dVert);
 
 				// Calculate texture coord corners
-				var texA = new SubBlockCoord(cornerA.x + offset.x, cornerA.y + offset.y, cornerA.z + offset.z);
-				var texB = new SubBlockCoord(cornerB.x + offset.x, cornerB.y + offset.y, cornerB.z + offset.z);
-				var texC = new SubBlockCoord(cornerC.x + offset.x, cornerC.y + offset.y, cornerC.z + offset.z);
-				var texD = new SubBlockCoord(cornerD.x + offset.x, cornerD.y + offset.y, cornerD.z + offset.z);
+				// Apply offset to corner A and then apply horiz and vert vectors to B,C,D
+				SubBlockCoord texA = cornerA.applyVector(dStart);
+				SubBlockCoord texB = texA.applyVector(horizVec);
+				SubBlockCoord texC = texA.applyVector(vertVec);
+				SubBlockCoord texD = texB.applyVector(vertVec);
 
 				// Save texel corners to array
 				var texCorners = BlockCorners.abcdToArray(texA, texB, texC, texD);
