@@ -22,7 +22,6 @@ import com.nixinova.options.Options;
 public class BlocksRenderer extends Render {
 	private Game game;
 	private Graphics graphics;
-	private float[] pixelCurMinDistances;
 	private Map<Integer, List<SavedPolygon>> savedPolygons;
 	private double xRot, yRot;
 	private double xRotSin, yRotSin;
@@ -30,7 +29,6 @@ public class BlocksRenderer extends Render {
 
 	public BlocksRenderer(int width, int height) {
 		super(width, height);
-		this.pixelCurMinDistances = new float[width * height];
 	}
 
 	public void prepare(Game game, Graphics graphics) {
@@ -42,9 +40,6 @@ public class BlocksRenderer extends Render {
 		this.graphics.fillRect(0, 0, Display.WIDTH, Display.HEIGHT);
 
 		// Clear image
-		for (int i = 0; i < super.imageSize(); i++) {
-			this.pixelCurMinDistances[i] = Integer.MAX_VALUE;
-		}
 		savedPolygons = new HashMap<>();
 
 		// Cache trig
@@ -214,7 +209,6 @@ public class BlocksRenderer extends Render {
 		// Construct polygon to draw texel
 		var xpoints = new int[screenCoords.length];
 		var ypoints = new int[screenCoords.length];
-		var pixelIs = new int[screenCoords.length];
 		double zIndex = 0;
 
 		for (short i = 0; i < screenCoords.length; i++) {
@@ -225,21 +219,8 @@ public class BlocksRenderer extends Render {
 			zIndex += screenCoords[i].z;
 			zIndex /= 2;
 
-			// For texels entirely within the screen
-			if (super.isValidPosition(screenX, screenY)) {
-				// Don't draw this rectangle if a closer texel has already been drawn
-				final int zIndexPadding = 10; // margin of error
-				int pixelI = super.getPixelIndex(screenX, screenY);
-				pixelIs[i] = pixelI;
-
-				if (this.pixelCurMinDistances[pixelI] < zIndex - zIndexPadding)
-					return;
-
-				// Update min distance
-				this.pixelCurMinDistances[pixelIs[i]] = (int) zIndex;
-			}
-			// For texels that render partially offscreen
-			else {
+			// Ignore pixels that are too far off-screen
+			if (!super.isValidPosition(screenX, screenY)) {
 				final int screenPadding = 10; // render only this distance off the side of the screen
 				boolean offScreenX = screenX < -screenPadding || screenX > width + screenPadding;
 				boolean offScreenY = screenY < -screenPadding || screenY > height + screenPadding;

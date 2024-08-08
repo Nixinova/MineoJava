@@ -1,7 +1,8 @@
 # Changelog
 
-## Next
-- Changed display of game information
+## 0.0.20_1
+*2024-08-08 21:59*
+- Changed display of game information lines
   - Changed information lines to be hidden by default
   - Merged "Block" and "Camera" lines into one "Position" line
   - Changed name of "Angle" line to "Rotation"
