@@ -1,9 +1,7 @@
 package com.nixinova.blocks;
 
-import com.nixinova.coords.BlockCoord;
 import com.nixinova.graphics.Render;
 import com.nixinova.graphics.Texture;
-import com.nixinova.options.Options;
 
 public class Block {
 	public static Block SKY = new Block("env/sky");
@@ -24,13 +22,6 @@ public class Block {
 
 	public Render getTexture() {
 		return this.texture;
-	}
-
-	public static boolean isInsideWorld(BlockCoord coords) {
-		int x = coords.x;
-		int z = coords.z;
-		int size = Options.worldSize;
-		return x >= -size && x <= size && z >= -size && z <= size;
 	}
 
 }

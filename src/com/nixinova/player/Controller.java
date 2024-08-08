@@ -39,25 +39,26 @@ public class Controller {
 		double yMove = 0.0D;
 		double zMove = 0.0D;
 
-		// Get looking at block
+		// Block actions
 		HoveredBlock lookingAt = this.game.player.getLookingAt();
-		boolean isLookingAtValidBlock = lookingAt.hoveredBlock != null;
-		// Block breaking
-		if (kbd.pressedButton(Keys.LCLICK) && isLookingAtValidBlock && Block.isInsideWorld(lookingAt.hoveredBlock)) {
-			BlockCoord hoveredBlock = lookingAt.hoveredBlock;
-			this.game.world.setTextureAt(hoveredBlock, Block.AIR.getTexture());
+		boolean isLookingAtBlock = lookingAt.hoveredBlock != null;
+		if (isLookingAtBlock) {
+			// Block breaking
+			if (kbd.pressedButton(Keys.LCLICK) && this.game.world.isWithinWorld(lookingAt.hoveredBlock)) {
+				this.game.world.setTextureAt(lookingAt.hoveredBlock, Block.AIR.getTexture());
 
-			// Cooldown
-			kbd.startButtonCooldown(Keys.LCLICK);
-		}
-		// Block placing
-		if (kbd.pressedButton(Keys.RCLICK) && isLookingAtValidBlock && Block.isInsideWorld(lookingAt.adjacentBlock)) {
-			Block block = Hotbar.getCurrentBlock();
-			BlockCoord adjacentBlock = lookingAt.adjacentBlock;
-			this.game.world.setTextureAt(adjacentBlock, block.getTexture());
+				// Cooldown
+				kbd.startButtonCooldown(Keys.LCLICK);
+			}
 
-			// Cooldown
-			kbd.startButtonCooldown(Keys.RCLICK);
+			// Block placing
+			if (kbd.pressedButton(Keys.RCLICK) && this.game.world.isWithinWorld(lookingAt.adjacentBlock)) {
+				Block selectedBlock = Hotbar.getCurrentBlock();
+				this.game.world.setTextureAt(lookingAt.adjacentBlock, selectedBlock.getTexture());
+
+				// Cooldown
+				kbd.startButtonCooldown(Keys.RCLICK);
+			}
 		}
 
 		// Hotbar

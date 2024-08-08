@@ -3,6 +3,7 @@
 ## Next
 - Fixed a rounding issue causing the world boundary to be offset by 1 block
 - Fixed two sides of the world not rendering
+- Fixed being able to place blocks outside of the world
 
 ## 0.0.20
 *2024-08-08 19:52*

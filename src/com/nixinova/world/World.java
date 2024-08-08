@@ -1,5 +1,6 @@
 package com.nixinova.world;
 
+import java.util.Optional;
 import java.util.Random;
 
 import com.nixinova.blocks.Block;
@@ -12,7 +13,9 @@ public class World {
 	public static final int SKY_Y = 18;
 	public static final int GROUND_Y = 10;
 
+	/** Inclusive (>=) */
 	public final BlockCoord minCorner;
+	/** Exclusive (<) */
 	public final BlockCoord maxCorner;
 
 	private Render[][][] blockTextures;
@@ -26,10 +29,14 @@ public class World {
 
 	public boolean isWithinWorld(int blockX, int blockY, int blockZ) {
 		final BlockCoord min = minCorner, max = maxCorner;
-		boolean xValid = blockX >= min.x && blockX <= max.x;
-		boolean yValid = blockY >= min.y && blockY <= max.y;
-		boolean zValid = blockZ >= min.z && blockZ <= max.z;
+		boolean xValid = blockX >= min.x && blockX < max.x;
+		boolean yValid = blockY >= min.y && blockY < max.y;
+		boolean zValid = blockZ >= min.z && blockZ < max.z;
 		return xValid && yValid && zValid;
+	}
+
+	public boolean isWithinWorld(BlockCoord block) {
+		return isWithinWorld(block.x, block.y, block.z);
 	}
 
 	/** returns -1 if all is air */
@@ -54,11 +61,13 @@ public class World {
 		int x = blockX + offset.x;
 		int y = blockY + offset.y;
 		int z = blockZ + offset.z;
-		return !isWithinWorld(x, y, z) || isAir(x, y, z);
+		return isAir(x, y, z);
 	}
 
 	public boolean isAir(int blockX, int blockY, int blockZ) {
-		return getTextureAt(blockX, blockY, blockZ) == Block.AIR.getTexture();
+		boolean isOutsideWorld = !isWithinWorld(blockX, blockY, blockZ);
+		boolean isAir = getTextureAt(blockX, blockY, blockZ) == Block.AIR.getTexture();
+		return isOutsideWorld || isAir;
 	}
 
 	public boolean isAir(BlockCoord block) {
