@@ -54,7 +54,7 @@ public class World {
 		int x = blockX + offset.x;
 		int y = blockY + offset.y;
 		int z = blockZ + offset.z;
-		return isWithinWorld(x, y, z) && isAir(x, y, z);
+		return !isWithinWorld(x, y, z) || isAir(x, y, z);
 	}
 
 	public boolean isAir(int blockX, int blockY, int blockZ) {
