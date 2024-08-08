@@ -3,6 +3,7 @@ package com.nixinova.player;
 import com.nixinova.blocks.HoveredBlock;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord3;
+import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.world.World;
 
 public class Player {
@@ -33,7 +34,7 @@ public class Player {
 	}
 
 	public boolean isWithinWorld(World world) {
-		BlockCoord pos = this.position.toBlock();
+		SubBlockCoord pos = this.position.toSubBlock();
 		BlockCoord min = world.minCorner;
 		BlockCoord max = world.maxCorner;
 		return pos.x >= min.x && pos.x <= max.x && pos.y >= min.y && pos.y <= max.y && pos.z >= min.z && pos.z <= max.z;

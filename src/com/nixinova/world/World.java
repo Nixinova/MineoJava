@@ -32,10 +32,6 @@ public class World {
 		return xValid && yValid && zValid;
 	}
 
-	public boolean isWithinWorld(BlockCoord block) {
-		return isWithinWorld(block.x, block.y, block.z);
-	}
-
 	/** returns -1 if all is air */
 	public int getMinGroundY(int blockX, int blockZ) {
 		for (int i = 0; i < SKY_Y; i++) {
