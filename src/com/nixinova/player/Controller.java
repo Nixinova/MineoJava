@@ -25,9 +25,9 @@ public class Controller {
 	private boolean isJumping = false;
 	private double jumpY = 0;
 
-	public Controller(Game game) {
+	public Controller(Game game, Player player) {
 		this.game = game;
-		this.pos = new Coord3();
+		this.pos = player.getPosition();
 		this.pos2 = new Coord3();
 	}
 

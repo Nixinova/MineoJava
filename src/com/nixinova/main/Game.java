@@ -1,6 +1,7 @@
 package com.nixinova.main;
 
 import com.nixinova.blocks.HoveredBlock;
+import com.nixinova.coords.Coord3;
 import com.nixinova.graphics.Raycast;
 import com.nixinova.input.InputHandler;
 import com.nixinova.options.Options;
@@ -18,8 +19,9 @@ public class Game {
 
 	public Game(InputHandler input) {
 		this.world = new World();
-		this.player = new Player();
-		this.controls = new Controller(this);
+		Coord3 startPosition = Coord3.fromSubBlock(world.minCorner.x + 0.5, World.GROUND_Y, world.minCorner.z + 0.5);
+		this.player = new Player(startPosition);
+		this.controls = new Controller(this, this.player);
 		this.input = input;
 		Options.createOptions();
 	}

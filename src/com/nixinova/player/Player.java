@@ -12,8 +12,8 @@ public class Player {
 	private Coord3 position;
 	private HoveredBlock lookingAtBlock;
 
-	public Player() {
-		this.position = new Coord3();
+	public Player(Coord3 startPosition) {
+		this.position = startPosition;
 		this.lookingAtBlock = new HoveredBlock(null, null);
 	}
 
