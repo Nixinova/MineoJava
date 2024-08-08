@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 
+import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord3;
 import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.main.Game;
@@ -16,42 +17,40 @@ public class ScreenText {
 	private static final int SEP = 15;
 
 	private Graphics graphics;
+	private int curLineIndex = 1;
 
 	public ScreenText(Graphics graphics) {
 		this.graphics = graphics;
 	}
 
-	public void drawMainInfo(Game game) {
-		int i = 0;
+	public void drawMainInfo(Game game, boolean fullInfo) {
 
 		Font initialFont = graphics.getFont();
 
+		// Draw heading
 		float headingFontSize = 1.25f;
 		Font headingFont = initialFont.deriveFont(initialFont.getSize() * headingFontSize);
 		graphics.setFont(headingFont);
 		graphics.setColor(Color.white);
-		graphics.drawString(Mineo.TITLE, INDENT, SEP * ++i);
+		drawInfoLine(Mineo.TITLE);
 
-		Coord3 position = game.player.getPosition();
+		if (!fullInfo)
+			return;
+
+		// Draw info contents
 		graphics.setFont(initialFont);
-
 		// FPS
-		var fpsFmt = String.valueOf(game.fps);
-		graphics.drawString("FPS: " + fpsFmt, INDENT, SEP * ++i);
+		drawInfoLine("FPS: %d", game.fps);
 		// Player block at foot
-		graphics.drawString("Block: " + formatCoord(position), INDENT, SEP * ++i);
-		// Camera pos and angle
-		var camPosFmt = formatCoord(game.controls.getCameraPosition());
-		graphics.drawString("Camera: " + camPosFmt, INDENT, SEP * ++i);
+		var blockPos = game.player.getPosition().toSubBlock();
+		var camPos = game.controls.getCameraPosition().toSubBlock();
+		drawInfoLine("Position: %.1f / %.1f..%.1f / %.1f", blockPos.x, blockPos.y, camPos.y, blockPos.z);
 		// Mouse look angle
-		var mouseLookFmt = String.format("%.1f / %.1f",
-			(Math.toDegrees(game.controls.getMouseHorizRads()) + 360) % 360,
-			Math.toDegrees(game.controls.getMouseVertRads()));
-		graphics.drawString("Angle: " + mouseLookFmt, INDENT, SEP * ++i);
+		drawInfoLine("Rotation: %.1f / %.1f", game.controls.getMouseHorizDeg(), game.controls.getMouseVertDeg());
 		// Block being looked at
 		var lookingAt = game.player.getLookingAt().hoveredBlock;
-		var lookingAtFmt = lookingAt == null ? "none" : (lookingAt.x + " / " + lookingAt.y + " / " + lookingAt.z);
-		graphics.drawString("Hovered: " + lookingAtFmt, INDENT, SEP * ++i);
+		if (lookingAt != null)
+			drawInfoLine("Hovered: %d / %d / %d", lookingAt.x, lookingAt.y, lookingAt.z);
 	}
 
 	public void drawOptionsWarning() {
@@ -78,6 +77,11 @@ public class ScreenText {
 		graphics.drawString(msg1, INDENT, Display.HEIGHT - SEP * 8);
 		graphics.drawString(msg2, INDENT, Display.HEIGHT - SEP * 7);
 		graphics.drawString(msg3, INDENT, Display.HEIGHT - SEP * 6);
+	}
+
+	private void drawInfoLine(String fStr, Object... args) {
+		String fmtdString = String.format(fStr, args);
+		graphics.drawString(fmtdString, INDENT, SEP * curLineIndex++);
 	}
 
 	private String formatCoord(Coord3 coord) {

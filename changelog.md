@@ -1,6 +1,11 @@
 # Changelog
 
 ## Next
+- Changed display of game information
+  - Changed information lines to be hidden by default
+  - Merged "Block" and "Camera" lines into one "Position" line
+  - Changed name of "Angle" line to "Rotation"
+  - Changed "Hovered" line to only appear when looking at a block
 - Fixed a rounding issue causing the world boundary to be offset by 1 block
 - Fixed two sides of the world not rendering
 - Fixed being able to place blocks outside of the world

@@ -15,7 +15,7 @@ import com.nixinova.options.Options;
 
 public class Controller {
 
-	public boolean debugShown = true;
+	public boolean debugShown = false;
 	public boolean isWalking = false;
 
 	private Game game;
@@ -199,8 +199,16 @@ public class Controller {
 		return this.rot;
 	}
 
+	public double getMouseHorizDeg() {
+		return (Math.toDegrees(getMouseHorizRads()) + 360) % 360;
+	}
+
 	public double getMouseVertRads() {
 		return this.tilt;
+	}
+
+	public double getMouseVertDeg() {
+		return Math.toDegrees(game.controls.getMouseVertRads());
 	}
 
 	public Vector3<Double> getViewDirection() {

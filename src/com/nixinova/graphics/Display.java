@@ -118,8 +118,7 @@ public class Display extends Canvas implements Runnable {
 		hud.drawAll();
 		// Draw UI text
 		ScreenText uiText = new ScreenText(graphics);
-		if (game.controls.debugShown)
-			uiText.drawMainInfo(this.game);
+		uiText.drawMainInfo(this.game, this.game.controls.debugShown);
 		uiText.drawOptionsWarning();
 
 		// Done
