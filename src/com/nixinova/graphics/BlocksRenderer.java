@@ -223,7 +223,7 @@ public class BlocksRenderer extends Render {
 
 			// Average z-index
 			zIndex += screenCoords[i].z;
-			zIndex /= (i + 1);
+			zIndex /= 2;
 
 			// For texels entirely within the screen
 			if (super.isValidPosition(screenX, screenY)) {
@@ -231,6 +231,7 @@ public class BlocksRenderer extends Render {
 				final int zIndexPadding = 10; // margin of error
 				int pixelI = super.getPixelIndex(screenX, screenY);
 				pixelIs[i] = pixelI;
+
 				if (this.pixelCurMinDistances[pixelI] < zIndex - zIndexPadding)
 					return;
 
@@ -239,7 +240,7 @@ public class BlocksRenderer extends Render {
 			}
 			// For texels that render partially offscreen
 			else {
-				final int screenPadding = 20; // render only this distance off the side of the screen
+				final int screenPadding = 10; // render only this distance off the side of the screen
 				boolean offScreenX = screenX < -screenPadding || screenX > width + screenPadding;
 				boolean offScreenY = screenY < -screenPadding || screenY > height + screenPadding;
 				if (offScreenX && offScreenY)
@@ -252,7 +253,7 @@ public class BlocksRenderer extends Render {
 		}
 
 		// Apply fog to pixel
-		double brightAmount = Options.gamma * 10 * (Options.renderDistance - zIndex / 10);
+		double brightAmount = Options.gamma * 10 * (Options.renderDistance - zIndex);
 		int fogAppliedPixel = applyFog(pixel, (int) brightAmount);
 
 		// Save polygon data to list

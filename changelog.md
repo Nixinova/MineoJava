@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.20
+*2024-08-08 19:52*
+- Added proper block texture rendering
+- Changed top world layer to be flat
+- Changed default renderDistance to 15 blocks for performance reasons
+
 ## 0.0.19
 *2024-07-25 20:17*
 - Blocks are now placed adjacent to the hovered block face

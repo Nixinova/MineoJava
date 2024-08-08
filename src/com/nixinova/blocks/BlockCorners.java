@@ -27,7 +27,7 @@ public class BlockCorners {
 	}
 
 	private void loadCornersForFace(BlockFace face) {
-		final double offset = 0.999;
+		final int offset = 1;
 		switch (face) {
 			// Note: ()-parts are the unchanging axis
 			case XMIN -> {
