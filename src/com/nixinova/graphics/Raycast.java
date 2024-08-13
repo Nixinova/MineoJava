@@ -8,7 +8,7 @@ import com.nixinova.main.Game;
 
 public class Raycast {
 
-	private static final double STEP_SIZE = 0.2;
+	private static final double STEP_SIZE = 0.7;
 
 	public static boolean isBlockVisibleToPlayer(Game game, int blockX, int blockY, int blockZ) {
 
@@ -59,17 +59,14 @@ public class Raycast {
 
 				BlockCoord curBlock = applyAsBlock(val -> Math.round(val), curX, curY, curZ);
 
-				// Continue raycasting if current block is not solid
-				if (game.world.isAir(curBlock.x, curBlock.y, curBlock.z))
-					continue;
-
-				// Block is not visible if not exposed
-				if (!game.world.isExposed(curBlock.x, curBlock.y, curBlock.z))
-					return false;
-
 				// Visible if current block is the target corner
 				if (curBlock.x == cornerX && curBlock.y == cornerY && curBlock.z == cornerZ)
 					return true;
+
+				// Fail raycasting if ray enters a solid block
+				if (!game.world.isAir(curBlock.x, curBlock.y, curBlock.z))
+					break;
+
 			}
 		}
 

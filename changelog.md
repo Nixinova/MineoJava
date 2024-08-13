@@ -1,5 +1,9 @@
 # Changelog
 
+# Next
+- Changed default renderDistance to 20 blocks
+- Fixed raycast culling
+
 ## 0.0.20_1
 *2024-08-08 21:59*
 - Changed display of game information lines

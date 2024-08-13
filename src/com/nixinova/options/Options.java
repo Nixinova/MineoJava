@@ -20,7 +20,7 @@ public class Options {
 	private static final class DEFAULT_OPTIONS {
 		public static long seed = 100L;
 		public static int worldSize = 40;
-		public static int renderDistance = 15;
+		public static int renderDistance = 20;
 		public static double gamma = 1.0;
 		public static double gravity = 0.2;
 		public static double sensitivity = 0.005;
