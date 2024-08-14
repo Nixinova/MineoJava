@@ -1,6 +1,7 @@
 # Changelog
 
-# Next
+# 0.0.20_2
+*2024-08-15 01:40*
 - Added options groundLevel (defaults to 10) and buildHeight (defaults to 18)
 - Changed distance fog effect to applied nonlinearly
 - Changed default renderDistance to 20 blocks
