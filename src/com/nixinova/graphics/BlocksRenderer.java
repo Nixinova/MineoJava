@@ -185,7 +185,9 @@ public class BlocksRenderer extends Render {
 	}
 
 	/** Adds depth-based fog to the pixels */
-	private int applyFog(int colour, int brightness) {
+	private int applyFog(int colour, double distance) {
+		double base = Options.gamma * (Options.renderDistance - distance);
+		short brightness = (short) (base * base);
 		// Clamp to 8-bit range
 		if (brightness < 0)
 			brightness = 0;
@@ -234,8 +236,7 @@ public class BlocksRenderer extends Render {
 		}
 
 		// Apply fog to pixel
-		double brightAmount = Options.gamma * 10 * (Options.renderDistance - zIndex);
-		int fogAppliedPixel = applyFog(pixel, (int) brightAmount);
+		int fogAppliedPixel = applyFog(pixel, zIndex);
 
 		// Save polygon data to list
 		var polygon = new Polygon(xpoints, ypoints, xpoints.length);

@@ -1,6 +1,7 @@
 # Changelog
 
 # Next
+- Changed distance fog effect to applied nonlinearly
 - Changed default renderDistance to 20 blocks
 - Fixed raycast culling
 
