@@ -1,5 +1,8 @@
 # Changelog
 
+## Next
+- Added side hitboxes to blocks
+
 # 0.0.20_2
 *2024-08-15 01:40*
 - Added options groundLevel (defaults to 10) and buildHeight (defaults to 18)

@@ -7,6 +7,7 @@ import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord1;
 import com.nixinova.coords.Coord3;
 import com.nixinova.coords.PxCoord;
+import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.coords.TxCoord;
 import com.nixinova.input.InputHandler;
 import com.nixinova.input.Keys;
@@ -162,27 +163,53 @@ public class Controller {
 		newPos2.x += (xMove * Math.cos(this.rot) + zMove * Math.sin(this.rot)) * Options.walkSpeed;
 		newPos2.y += yMove;
 		newPos2.z += (zMove * Math.cos(this.rot) - xMove * Math.sin(this.rot)) * Options.walkSpeed;
-		this.pos2 = Coord3.fromPx(newPos2);
 
 		// apply differentials
 		PxCoord newPos = this.pos.toPx();
 		newPos.x += newPos2.x;
 		newPos.y += newPos2.y;
 		newPos.z += newPos2.z;
-		this.pos = Coord3.fromPx(newPos);
+
+		// rotation: update and decelerate
 		this.rot += this.rot2;
 		this.tilt += this.tilt2;
+		this.rot2 *= 0.8D;
+		this.tilt2 *= 0.8D;
+		this.rot %= Math.PI * 2; // modulo to be 0..360
+
+		// check if the player will end up inside a block if the move delta is applied
+		SubBlockCoord blockPos = Coord3.fromPx(newPos).toSubBlock();
+		int[][] playerCornerOffsets = {
+			// X, Y, Z
+			{ -1, -0, -1 },
+			{ +1, -0, -1 },
+			{ -1, +1, -1 },
+			{ -1, -0, +1 },
+			{ +1, +1, -1 },
+			{ +1, -0, +1 },
+			{ -1, +1, +1 },
+			{ +1, +1, +1 },
+		};
+		// check each corner of the player's hitbox for being inside a block at the position-to-be
+		for (int[] corner : playerCornerOffsets) {
+			int posX = Coord1.fromSubBlock(blockPos.x + Player.PLAYER_RADIUS * corner[0]).toBlock();
+			int posY = Coord1.fromSubBlock(blockPos.y + Player.PLAYER_HEIGHT * corner[1]).toBlock();
+			int posZ = Coord1.fromSubBlock(blockPos.z + Player.PLAYER_RADIUS * corner[2]).toBlock();
+
+			// exit early to avoid applying move delta if player will end up inside a block
+			if (!this.game.world.isAir(posX, posY, posZ))
+				return;
+		}
+
+		// update position
+		this.pos = Coord3.fromPx(newPos);
+		this.pos2 = Coord3.fromPx(newPos2);
 
 		// decel/interpolate
 		newPos2.x *= 0.3D;
 		newPos2.y *= 0.3D;
 		newPos2.z *= 0.3D;
 		this.pos2 = Coord3.fromPx(newPos2);
-		this.rot2 *= 0.8D;
-		this.tilt2 *= 0.8D;
-
-		// Modulo'ing
-		this.rot %= Math.PI * 2;
 	}
 
 	public Coord3 getFootPosition() {
@@ -226,6 +253,7 @@ public class Controller {
 		return new Vector3<Double>(x, y, z);
 	}
 
+	// TODO check player hitbox
 	private boolean aboveGround() {
 		// Above the ground if the block one texel beneath the player's feet is air
 		TxCoord curTx = this.pos.toTx();
@@ -235,6 +263,7 @@ public class Controller {
 		return belowTxIsNotVoid && belowTxIsAir;
 	}
 
+	// TODO check player hitbox
 	private boolean belowGround() {
 		// Below the ground if the block one texel above the player's feet is air
 		TxCoord footTx = this.pos.toTx();

@@ -8,6 +8,7 @@ import com.nixinova.world.World;
 
 public class Player {
 	public static final double PLAYER_HEIGHT = 1.8;
+	public static final double PLAYER_RADIUS = 0.4;
 
 	private Coord3 position;
 	private HoveredBlock lookingAtBlock;
