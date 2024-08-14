@@ -3,40 +3,40 @@ package com.nixinova.graphics;
 import com.nixinova.Vector3;
 import com.nixinova.blocks.HoveredBlock;
 import com.nixinova.coords.BlockCoord;
-import com.nixinova.coords.SubBlockCoord;
+import com.nixinova.coords.Coord1;
+import com.nixinova.coords.Coord3;
 import com.nixinova.main.Game;
 
 public class Raycast {
 
-	private static final double STEP_SIZE = 0.7;
-
 	public static boolean isBlockVisibleToPlayer(Game game, int blockX, int blockY, int blockZ) {
+		final double stepSize = Coord1.blockToPx(0.5);
 
-		// Get player's position
-		SubBlockCoord playerPos = game.controls.getCameraPosition().toSubBlock();
+		// Get camera position of player
+		var camPos = game.controls.getCameraPosition().toPx();
 
 		// Define the corners of the block
-		int[][] corners = {
-			{ blockX, blockY, blockZ },
-			{ blockX + 1, blockY, blockZ },
-			{ blockX, blockY + 1, blockZ },
-			{ blockX, blockY, blockZ + 1 },
-			{ blockX + 1, blockY + 1, blockZ },
-			{ blockX + 1, blockY, blockZ + 1 },
-			{ blockX, blockY + 1, blockZ + 1 },
-			{ blockX + 1, blockY + 1, blockZ + 1 },
+		int[][] cornerOffsets = {
+			{ 0, 0, 0 },
+			{ 1, 0, 0 },
+			{ 0, 1, 0 },
+			{ 0, 0, 1 },
+			{ 1, 1, 0 },
+			{ 1, 0, 1 },
+			{ 0, 1, 1 },
+			{ 1, 1, 1 },
 		};
 
 		// Check visibility for each corner
-		for (int[] corner : corners) {
-			int cornerX = corner[0];
-			int cornerY = corner[1];
-			int cornerZ = corner[2];
+		for (int[] offsets : cornerOffsets) {
+			int blockCornerX = blockX + offsets[0];
+			int blockCornerY = blockY + offsets[1];
+			int blockCornerZ = blockZ + offsets[2];
 
 			// Calculate direction vector from player to corner
-			double distX = cornerX - playerPos.x;
-			double distY = cornerY - playerPos.y;
-			double distZ = cornerZ - playerPos.z;
+			double distX = Coord1.blockToPx(blockCornerX) - camPos.x;
+			double distY = Coord1.blockToPx(blockCornerY) - camPos.y;
+			double distZ = Coord1.blockToPx(blockCornerZ) - camPos.z;
 
 			// Normalize the direction vector
 			double length = Math.sqrt(distX * distX + distY * distY + distZ * distZ);
@@ -45,28 +45,40 @@ public class Raycast {
 			double vecZ = distZ / length;
 
 			// Number of steps to reach the block
-			int steps = (int) (length / STEP_SIZE);
+			int stepCount = (int) (length / stepSize);
 
 			// Raycasting loop
-			double curX = playerPos.x;
-			double curY = playerPos.y;
-			double curZ = playerPos.z;
+			double curX = camPos.x;
+			double curY = camPos.y;
+			double curZ = camPos.z;
 
-			for (int i = 0; i < steps; i++) {
-				curX += vecX * STEP_SIZE;
-				curY += vecY * STEP_SIZE;
-				curZ += vecZ * STEP_SIZE;
+			BlockCoord lastCur = new BlockCoord(-1, -1, -1);
+			for (int i = 0; i < stepCount; i++) {
+				curX += vecX * stepSize;
+				curY += vecY * stepSize;
+				curZ += vecZ * stepSize;
 
-				BlockCoord curBlock = applyAsBlock(val -> Math.round(val), curX, curY, curZ);
+				BlockCoord curBlock = Coord3.fromPx(curX, curY, curZ).toBlock();
 
-				// Visible if current block is the target corner
-				if (curBlock.x == cornerX && curBlock.y == cornerY && curBlock.z == cornerZ)
+				// Ensure we don't check the same block multiple times in a row
+				if (curBlock.x == lastCur.x && curBlock.y == lastCur.y && curBlock.z == lastCur.z) {
+					// If we've reached the end of the steps loop, the block must not be blocked by anything, so it is visible
+					if (i == stepCount - 1)
+						return true;
+					// Otherwise continue the ray forward
+					else
+						continue;
+				}
+
+				lastCur = curBlock;
+
+				// Success if the target corner is the current block
+				if (curBlock.x == blockCornerX && curBlock.y == blockCornerY && curBlock.z == blockCornerZ)
 					return true;
 
 				// Fail raycasting if ray enters a solid block
 				if (!game.world.isAir(curBlock.x, curBlock.y, curBlock.z))
 					break;
-
 			}
 		}
 
@@ -74,6 +86,8 @@ public class Raycast {
 	}
 
 	public static HoveredBlock getLookingAt(Game game) {
+		final double stepSize = 0.5;
+
 		HoveredBlock result = new HoveredBlock(null, null);
 
 		var camPos = game.controls.getCameraPosition().toSubBlock();
@@ -86,9 +100,9 @@ public class Raycast {
 		double lastX = 0, lastY = 0, lastZ = 0;
 		while (true) {
 			// Step forward
-			x += vect.x * STEP_SIZE;
-			y += vect.y * STEP_SIZE;
-			z += vect.z * STEP_SIZE;
+			x += vect.x * stepSize;
+			y += vect.y * stepSize;
+			z += vect.z * stepSize;
 
 			BlockCoord curBlock = applyAsBlock(val -> Math.floor(val), x, y, z);
 

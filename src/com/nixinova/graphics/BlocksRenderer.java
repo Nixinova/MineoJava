@@ -84,6 +84,10 @@ public class BlocksRenderer extends Render {
 					if (!inRenderDist)
 						continue;
 
+					// Early return if block is exposed to air
+					if (!game.world.isExposed(x, y, z))
+						continue;
+
 					// Ensure block is visible to player
 					boolean isInSight = Raycast.isBlockVisibleToPlayer(this.game, x, y, z);
 					if (!isInSight)
