@@ -15,11 +15,13 @@ public class Options {
 	 * - +0.10: Minor: Changes to the implementation of a value.
 	 * - +0.01: Micro: Addition of new options, keeps backward compatibility.
 	 */
-	public static final float OPTIONS_VERSION = 1.10F;
+	public static final float OPTIONS_VERSION = 1.11F;
 
 	private static final class DEFAULT_OPTIONS {
 		public static long seed = 100L;
 		public static int worldSize = 40;
+		public static int groundLevel = 10;
+		public static int buildHeight = 18;
 		public static int renderDistance = 20;
 		public static double gamma = 1.0;
 		public static double gravity = 0.2;
@@ -33,6 +35,8 @@ public class Options {
 		public static String fileVersion = "fileVersion";
 		public static String seed = "seed";
 		public static String worldSize = "worldSize";
+		public static String groundLevel = "groundLevel";
+		public static String buildHeight = "buildHeight";
 		public static String renderDistance = "renderDistance";
 		public static String gamma = "gamma";
 		public static String gravity = "gravity";
@@ -45,6 +49,8 @@ public class Options {
 	public static float fileVersion = OPTIONS_VERSION;
 	public static long seed = DEFAULT_OPTIONS.seed;
 	public static int worldSize = DEFAULT_OPTIONS.worldSize;
+	public static int groundLevel = DEFAULT_OPTIONS.groundLevel;
+	public static int buildHeight = DEFAULT_OPTIONS.buildHeight;
 	public static int renderDistance = DEFAULT_OPTIONS.renderDistance;
 	public static double gamma = DEFAULT_OPTIONS.gamma;
 	public static double gravity = DEFAULT_OPTIONS.gravity;
@@ -78,6 +84,8 @@ public class Options {
 				writer.write(writeValue(OPTION_STRINGS.fileVersion, OPTIONS_VERSION));
 				writer.write(writeValue(OPTION_STRINGS.seed, DEFAULT_OPTIONS.seed));
 				writer.write(writeValue(OPTION_STRINGS.worldSize, DEFAULT_OPTIONS.worldSize));
+				writer.write(writeValue(OPTION_STRINGS.groundLevel, DEFAULT_OPTIONS.groundLevel));
+				writer.write(writeValue(OPTION_STRINGS.buildHeight, DEFAULT_OPTIONS.buildHeight));
 				writer.write(writeValue(OPTION_STRINGS.renderDistance, DEFAULT_OPTIONS.renderDistance));
 				writer.write(writeValue(OPTION_STRINGS.gamma, DEFAULT_OPTIONS.gamma));
 				writer.write(writeValue(OPTION_STRINGS.gravity, DEFAULT_OPTIONS.gravity));
@@ -125,6 +133,10 @@ public class Options {
 			seed = Long.parseLong(val);
 		if (name.contains(OPTION_STRINGS.worldSize))
 			worldSize = Integer.parseInt(val);
+		if (name.contains(OPTION_STRINGS.groundLevel))
+			groundLevel = Integer.parseInt(val);
+		if (name.contains(OPTION_STRINGS.buildHeight))
+			buildHeight = Integer.parseInt(val);
 		if (name.contains(OPTION_STRINGS.renderDistance))
 			renderDistance = Integer.parseInt(val);
 		if (name.contains(OPTION_STRINGS.gamma))

@@ -1,6 +1,5 @@
 package com.nixinova.world;
 
-import java.util.Optional;
 import java.util.Random;
 
 import com.nixinova.blocks.Block;
@@ -10,9 +9,6 @@ import com.nixinova.graphics.Render;
 import com.nixinova.options.Options;
 
 public class World {
-	public static final int SKY_Y = 18;
-	public static final int GROUND_Y = 10;
-
 	/** Inclusive (>=) */
 	public final BlockCoord minCorner;
 	/** Exclusive (<) */
@@ -22,7 +18,7 @@ public class World {
 
 	public World() {
 		this.minCorner = new BlockCoord(0, 0, 0);
-		this.maxCorner = new BlockCoord(Options.worldSize, SKY_Y, Options.worldSize);
+		this.maxCorner = new BlockCoord(Options.worldSize, Options.buildHeight, Options.worldSize);
 
 		this.mapBlockTextures();
 	}
@@ -41,7 +37,7 @@ public class World {
 
 	/** returns -1 if all is air */
 	public int getMinGroundY(int blockX, int blockZ) {
-		for (int i = 0; i < SKY_Y; i++) {
+		for (int i = 0; i < Options.buildHeight; i++) {
 			if (this.getTextureAt(blockX, i, blockZ) == null) {
 				return i - 1;
 			}
@@ -105,7 +101,7 @@ public class World {
 
 		for (int x = 0; x < this.maxCorner.x; x++) {
 			for (int z = 0; z < this.maxCorner.z; z++) {
-				int localGroundY = GROUND_Y;
+				int localGroundY = Options.groundLevel;
 
 				for (int y = 0; y < this.maxCorner.y; y++) {
 					Block block;
