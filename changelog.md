@@ -1,6 +1,7 @@
 # Changelog
 
 ## Next
+- Added sky
 - Added horizontal collision box to blocks
 - Added collision boundary box to the player
 - Changed renderer to only render blocks within view of the player

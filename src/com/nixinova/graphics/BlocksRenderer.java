@@ -18,8 +18,11 @@ import com.nixinova.coords.PxCoord;
 import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.main.Game;
 import com.nixinova.options.Options;
+import com.nixinova.world.World;
 
 public class BlocksRenderer extends Render {
+	private static final double SKY_SIZE = 1.5;
+
 	private Game game;
 	private Graphics graphics;
 	private Map<Integer, List<SavedPolygon>> savedPolygons;
@@ -53,6 +56,7 @@ public class BlocksRenderer extends Render {
 
 	public void renderWorld() {
 		// Generate world drawing
+		drawSky();
 		drawWorld();
 
 		// Render world from far to near, so closer blocks render over farther blocks
@@ -64,6 +68,38 @@ public class BlocksRenderer extends Render {
 			for (SavedPolygon savedPolygon : this.savedPolygons.get(zIndex)) {
 				drawPolygon(savedPolygon);
 			}
+		}
+	}
+
+	private void drawSky() {
+		final int baseBlue = 0x0000AA;
+		final int bandHeight = 10;
+		final double gradientMult = 0.97;
+
+		double camPos = this.game.controls.getMouseVertRads();
+		double skySize = Display.HEIGHT * (SKY_SIZE + camPos) + this.game.player.getPosition().toBlock().y;
+
+		// Generate starting blue colour from mouse angle
+		int currentBlue = baseBlue;
+		for (double i = camPos; i > 0; i -= 0.01) {
+			// brighten blue as player is looking upwards
+			currentBlue /= gradientMult;
+		}
+		for (double i = camPos; i < 0; i += 0.01) {
+			// darken blue as player is looking downwards
+			currentBlue *= gradientMult;
+		}
+		// create bands of sky colour
+		for (int vert = 0; vert < skySize; vert += bandHeight) {
+			currentBlue *= gradientMult;
+			int gradientedBlue = currentBlue;
+			if (gradientedBlue > 0xFF)
+				gradientedBlue = 0xFF;
+			if (gradientedBlue < 0)
+				gradientedBlue = 0;
+
+			this.graphics.setColor(PixelColor.fromPixel(gradientedBlue));
+			this.graphics.fillRect(0, vert, Display.WIDTH, vert + bandHeight);
 		}
 	}
 
@@ -131,7 +167,7 @@ public class BlocksRenderer extends Render {
 				// Get screen coords for each corner
 				PxCoord[] polygonCorners = new PxCoord[curTexCorners.length];
 				for (int i = 0; i < polygonCorners.length; i++) {
-					PxCoord screenPos = coordToScreenPx(curTexCorners[i]);
+					PxCoord screenPos = coordToScreenPx(curTexCorners[i], false);
 
 					// Kill polygon if one corner position is not valid
 					if (screenPos == null) {
@@ -158,7 +194,7 @@ public class BlocksRenderer extends Render {
 		return distance < Options.renderDistance;
 	}
 
-	private PxCoord coordToScreenPx(SubBlockCoord block) {
+	private PxCoord coordToScreenPx(SubBlockCoord block, boolean force) {
 		var camPos = this.game.controls.getCameraPosition().toSubBlock();
 
 		// Relative position of block in world and player pos
@@ -178,7 +214,7 @@ public class BlocksRenderer extends Render {
 		double zTilt = yRot * this.yRotSin + zRot * this.yRotCos;
 
 		// Early return when pixel is invalid
-		if (zTilt < 0)
+		if (zTilt < 0 && !force)
 			return null;
 
 		// Project to 2D screen space
