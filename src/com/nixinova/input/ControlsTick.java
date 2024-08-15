@@ -1,6 +1,5 @@
-package com.nixinova.player;
+package com.nixinova.input;
 
-import com.nixinova.Vector3;
 import com.nixinova.blocks.Block;
 import com.nixinova.blocks.HoveredBlock;
 import com.nixinova.coords.BlockCoord;
@@ -9,30 +8,80 @@ import com.nixinova.coords.Coord3;
 import com.nixinova.coords.PxCoord;
 import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.coords.TxCoord;
-import com.nixinova.input.InputHandler;
-import com.nixinova.input.Keys;
 import com.nixinova.main.Game;
 import com.nixinova.options.Options;
+import com.nixinova.player.Hotbar;
+import com.nixinova.player.Player;
 
-public class Controller {
-
-	public boolean debugShown = false;
-	public boolean isWalking = false;
+public class ControlsTick {
 
 	private Game game;
-	private Coord3 pos, pos2;
-	private double rot, rot2;
-	private double tilt, tilt2;
+	private Controller controls;
+
+	private Coord3 dpos;
+	private double drot;
+	private double dtilt;
+
 	private boolean isJumping = false;
 	private double jumpY = 0;
 
-	public Controller(Game game, Player player) {
+	public ControlsTick(Game game, Controller controls) {
 		this.game = game;
-		this.pos = player.getPosition();
-		this.pos2 = new Coord3();
+		this.controls = controls;
 	}
 
 	public void tick(InputHandler input) {
+		// Prepare
+		this.dpos = new Coord3();
+
+		// Tick
+		boolean aboveGround = aboveGround();
+		boolean belowGround = belowGround();
+		boolean onGround = this.game.player.isWithinWorld(this.game.world) && !aboveGround && !belowGround;
+		// Natural events like gravity, etc
+		tickUninputted(aboveGround, belowGround);
+		// Player-controlled movement
+		tickInputted(input, onGround);
+	}
+
+	private void tickUninputted(boolean aboveGround, boolean belowGround) {
+
+		// Setup movement
+		double xMove = 0.0D;
+		double yMove = 0.0D;
+		double zMove = 0.0D;
+
+		// Ground checks
+		if (this.game.player.isWithinWorld(this.game.world)) {
+			// Inside a block
+			if (aboveGround) {
+				// Fall due to gravity
+				yMove -= Options.gravity;
+			}
+			// Below ground
+			else if (belowGround) {
+				// Shove player back to surface
+				BlockCoord curBlock = controls.pos.toBlock();
+				PxCoord curPx = controls.pos.toPx();
+				int newBlockY = this.game.world.getMinGroundY(curBlock.x, curBlock.z);
+				newBlockY += 1; // to put player above the block
+				controls.pos = Coord3.fromPx(curPx.x, Coord1.blockToPx(newBlockY), curPx.z);
+			}
+		}
+		// Outside the world
+		else {
+			// Fall when outside of world
+			if (yMove == 0)
+				yMove = -0.5;
+		}
+		// Acceleration due to gravity
+		yMove *= 1 + Math.pow(1 + Options.gravity, 2);
+
+		// Update position
+		updatePos(xMove, yMove, zMove);
+	}
+
+	private void tickInputted(InputHandler input, boolean onGround) {
 		Keys kbd = input.keys;
 
 		// Setup movement
@@ -79,20 +128,20 @@ public class Controller {
 		if (kbd.pressedKey(Keys.LEFT)) {
 			xMove += -mvChange;
 		}
-		isWalking = kbd.pressedAnyKey(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
+		controls.isWalking = kbd.pressedAnyKey(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
 
 		// Mouse look
 		double mouseDX = Options.sensitivity * input.deltaX;
 		double mouseDY = Options.sensitivity * input.deltaY;
 		if (mouseDX != 0) {
-			this.rot2 += mouseDX;
+			this.drot += mouseDX;
 		}
 		if (mouseDY != 0) {
-			this.tilt2 += -mouseDY;
+			this.dtilt += -mouseDY;
 		}
 
 		// Jumping
-		if (isJumping) {
+		if (this.isJumping) {
 			yMove += Options.jumpHeight;
 
 			// Keep track of Y-increase from jumping as this.y2 decelerates
@@ -100,85 +149,68 @@ public class Controller {
 
 			// Once maximum height reached, stop isJumping
 			if (this.jumpY >= Options.jumpHeight) {
-				isJumping = false;
+				this.isJumping = false;
 				this.jumpY = 0;
 			}
 		}
-
-		// Ground checks
-		if (this.game.player.isWithinWorld(this.game.world)) {
-			// Above ground
-			if (aboveGround()) {
-				// Fall due to gravity
-				yMove -= Options.gravity;
-				// Bounce back if put below ground
-				if (belowGround())
-					yMove += Options.gravity;
-			}
-			// Below ground
-			else if (belowGround()) {
-				// Shove player back to surface
-				BlockCoord curBlock = this.pos.toBlock();
-				PxCoord curPx = this.pos.toPx();
-				int newBlockY = this.game.world.getMinGroundY(curBlock.x, curBlock.z);
-				newBlockY += 1; // to put player above the block
-				this.pos = Coord3.fromPx(curPx.x, Coord1.blockToPx(newBlockY), curPx.z);
-			}
-			// On ground
-			else {
-				// Allow jumping
-				if (kbd.pressedKey(Keys.JUMP)) {
-					this.isJumping = true;
-					kbd.startKeyCooldown(Keys.JUMP);
-				}
+		// Allow jumping if on ground
+		if (onGround) {
+			if (kbd.pressedKey(Keys.JUMP)) {
+				this.isJumping = true;
+				kbd.startKeyCooldown(Keys.JUMP);
 			}
 		}
-		// Outside the world
-		else {
-			// Fall when outside of world
-			if (yMove == 0)
-				yMove = -0.5;
-		}
-		// Acceleration due to gravity
-		yMove *= 1 + Math.pow(1 + Options.gravity, 2);
 
 		// Mouse look boundaries
 		double maxTilt = Math.toRadians(90);
-		if (tilt < -maxTilt)
-			tilt = -maxTilt;
-		if (tilt > maxTilt)
-			tilt = maxTilt;
+		if (controls.tilt < -maxTilt)
+			controls.tilt = -maxTilt;
+		if (controls.tilt > maxTilt)
+			controls.tilt = maxTilt;
 
 		// System keys
 		if (kbd.pressedKey(Keys.ESCAPE)) {
 			System.exit(1);
 		}
 		if (kbd.pressedKey(Keys.F3)) {
-			this.debugShown = !this.debugShown;
+			controls.debugShown = !controls.debugShown;
 			kbd.startKeyCooldown(Keys.F3);
 		}
 
+		// Update position
+		updatePos(xMove, yMove, zMove);
+	}
+
+	private void updatePos(double xMove, double yMove, double zMove) {
 		// differentials for controls
-		PxCoord newPos2 = this.pos2.toPx();
-		newPos2.x += (xMove * Math.cos(this.rot) + zMove * Math.sin(this.rot)) * Options.walkSpeed;
-		newPos2.y += yMove;
-		newPos2.z += (zMove * Math.cos(this.rot) - xMove * Math.sin(this.rot)) * Options.walkSpeed;
+		PxCoord curdpos = this.dpos.toPx();
+		double ddposX = (xMove * Math.cos(controls.rot) + zMove * Math.sin(controls.rot)) * Options.walkSpeed;
+		double ddposY = yMove;
+		double ddposZ = (zMove * Math.cos(controls.rot) - xMove * Math.sin(controls.rot)) * Options.walkSpeed;
+		PxCoord newdpos = new PxCoord(curdpos.x + ddposX, curdpos.y + ddposY, curdpos.z + ddposZ);
 
 		// apply differentials
-		PxCoord newPos = this.pos.toPx();
-		newPos.x += newPos2.x;
-		newPos.y += newPos2.y;
-		newPos.z += newPos2.z;
+		PxCoord curpos = controls.pos.toPx();
+		PxCoord newpos = new PxCoord(curpos.x + newdpos.x, curpos.y + newdpos.y, curpos.z + newdpos.z);
 
 		// rotation: update and decelerate
-		this.rot += this.rot2;
-		this.tilt += this.tilt2;
-		this.rot2 *= 0.8D;
-		this.tilt2 *= 0.8D;
-		this.rot %= Math.PI * 2; // modulo to be 0..360
+		controls.rot += this.drot;
+		controls.tilt += this.dtilt;
+		this.drot *= 0.8D;
+		this.dtilt *= 0.8D;
+		controls.rot %= Math.PI * 2; // modulo to be 0..360
 
-		// check if the player will end up inside a block if the move delta is applied
-		SubBlockCoord blockPos = Coord3.fromPx(newPos).toSubBlock();
+		// position: update and decelerate
+		controls.pos = Coord3.fromPx(newpos);
+		this.dpos = Coord3.fromPx(newdpos);
+		newdpos.x *= 0.3D;
+		newdpos.y *= 0.3D;
+		newdpos.z *= 0.3D;
+		this.dpos = Coord3.fromPx(newdpos);
+	}
+
+	private boolean insideBlock(PxCoord position) {
+		SubBlockCoord blockPos = Coord3.fromPx(position).toSubBlock();
 		int[][] playerCornerOffsets = {
 			// X, Y, Z
 			{ -1, -0, -1 },
@@ -190,73 +222,24 @@ public class Controller {
 			{ -1, +1, +1 },
 			{ +1, +1, +1 },
 		};
-		// check each corner of the player's hitbox for being inside a block at the position-to-be
+		// check each corner of the player's hitbox for being inside a block at the new position
 		for (int[] corner : playerCornerOffsets) {
 			int posX = Coord1.fromSubBlock(blockPos.x + Player.PLAYER_RADIUS * corner[0]).toBlock();
 			int posY = Coord1.fromSubBlock(blockPos.y + Player.PLAYER_HEIGHT * corner[1]).toBlock();
 			int posZ = Coord1.fromSubBlock(blockPos.z + Player.PLAYER_RADIUS * corner[2]).toBlock();
 
-			// exit early to avoid applying move delta if player will end up inside a block
+			// if player ends up inside a block then return
 			if (!this.game.world.isAir(posX, posY, posZ))
-				return;
+				return true;
 		}
-
-		// update position
-		this.pos = Coord3.fromPx(newPos);
-		this.pos2 = Coord3.fromPx(newPos2);
-
-		// decel/interpolate
-		newPos2.x *= 0.3D;
-		newPos2.y *= 0.3D;
-		newPos2.z *= 0.3D;
-		this.pos2 = Coord3.fromPx(newPos2);
-	}
-
-	public Coord3 getFootPosition() {
-		return this.pos;
-	}
-
-	public Coord3 getCameraPosition() {
-		PxCoord posPx = this.pos.toPx();
-		double heightPx = Coord1.fromSubBlock(Player.PLAYER_HEIGHT).toPx();
-		return Coord3.fromPx(posPx.x, posPx.y + heightPx, posPx.z);
-	}
-
-	public double getMouseHorizRads() {
-		return this.rot;
-	}
-
-	public double getMouseHorizDeg() {
-		return (Math.toDegrees(getMouseHorizRads()) + 360) % 360;
-	}
-
-	public double getMouseVertRads() {
-		return this.tilt;
-	}
-
-	public double getMouseVertDeg() {
-		return Math.toDegrees(game.controls.getMouseVertRads());
-	}
-
-	public Vector3<Double> getViewDirection() {
-		double x = Math.cos(this.tilt) * Math.sin(this.rot);
-		double y = Math.sin(this.tilt);
-		double z = Math.cos(this.rot) * Math.cos(this.tilt);
-
-		// Normalize
-		double length = Math.sqrt(x * x + y * y + z * z);
-		x /= length;
-		y /= length;
-		z /= length;
-
-		// Return unit vector
-		return new Vector3<Double>(x, y, z);
+		// if no block collision found then player is not inside a block
+		return false;
 	}
 
 	// TODO check player hitbox
 	private boolean aboveGround() {
 		// Above the ground if the block one texel beneath the player's feet is air
-		TxCoord curTx = this.pos.toTx();
+		TxCoord curTx = controls.pos.toTx();
 		BlockCoord blockOneTxDown = Coord3.fromTx(curTx.x, curTx.y - 1, curTx.z).toBlock();
 		boolean belowTxIsNotVoid = this.game.world.isWithinWorld(blockOneTxDown);
 		boolean belowTxIsAir = this.game.world.isAir(blockOneTxDown);
@@ -266,9 +249,10 @@ public class Controller {
 	// TODO check player hitbox
 	private boolean belowGround() {
 		// Below the ground if the block one texel above the player's feet is air
-		TxCoord footTx = this.pos.toTx();
+		TxCoord footTx = controls.pos.toTx();
 		BlockCoord blockOneTxUp = Coord3.fromTx(footTx.x, footTx.y + 1, footTx.z).toBlock();
 		boolean aboveTxIsAir = this.game.world.isAir(blockOneTxUp);
 		return !aboveTxIsAir;
 	}
+
 }
