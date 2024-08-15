@@ -8,15 +8,18 @@ import com.nixinova.coords.Coord3;
 import com.nixinova.main.Game;
 
 public class Raycast {
+	private static final double VIEWPORT = 0.75;
 
 	public static boolean isBlockVisibleToPlayer(Game game, int blockX, int blockY, int blockZ) {
 		final double stepSize = Coord1.blockToPx(0.5);
 
 		// Get camera position of player
 		var camPos = game.controls.getCameraPosition().toPx();
+		var camRot = game.controls.getViewDirection();
 
 		// Define the corners of the block
 		int[][] cornerOffsets = {
+			// X, Y, Z
 			{ 0, 0, 0 },
 			{ 1, 0, 0 },
 			{ 0, 1, 0 },
@@ -43,6 +46,13 @@ public class Raycast {
 			double vecX = distX / length;
 			double vecY = distY / length;
 			double vecZ = distZ / length;
+
+			// Early return if block is not within the player's view
+			double dxRot = Math.abs(vecX - camRot.x);
+			double dyRot = Math.abs(vecY - camRot.y);
+			double dzRot = Math.abs(vecZ - camRot.z);
+			if (dxRot > VIEWPORT || dyRot > VIEWPORT || dzRot > VIEWPORT)
+				continue;
 
 			// Number of steps to reach the block
 			int stepCount = (int) (length / stepSize);
