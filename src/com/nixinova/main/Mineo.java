@@ -9,26 +9,22 @@ import javax.swing.JFrame;
 
 import com.nixinova.graphics.Display;
 import com.nixinova.input.InputHandler;
+import com.nixinova.menu.MenuDisplay;
 import com.nixinova.options.Options;
 
 public class Mineo {
 	public static final String VERSION = "0.0.21_1";
 	public static final String TITLE = "Mineo " + VERSION;
 
-	private static JFrame frame;
-
 	public static void main(String[] args) {
 		Options.createOptions();
 		BufferedImage cursor = new BufferedImage(16, 16, 2);
 		Cursor blank = Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "blank");
 
-		frame = new JFrame();
+		JFrame frame = new JFrame();
 
-		InputHandler input = new InputHandler(frame);
-		Game game = new Game(input);
-		Display display = new Display(game, input);
+		loadMainMenu(frame);
 
-		frame.add(display);
 		frame.pack();
 		frame.getContentPane().setCursor(blank);
 		frame.setDefaultCloseOperation(3);
@@ -38,8 +34,26 @@ public class Mineo {
 		frame.setVisible(true);
 		frame.setFocusable(true);
 		frame.requestFocus();
+	}
 
+	public static void loadGame(JFrame frame) {
+		InputHandler input = new InputHandler(frame);
+		Game game = new Game(input);
+		Display display = new Display(game, input);
+
+		frame.add(display);
+		frame.pack();
 		display.start();
 		display.requestFocusInWindow();
+	}
+
+	public static void loadMainMenu(JFrame frame) {
+		InputHandler input = new InputHandler(frame);
+		MenuDisplay menuDisplay = new MenuDisplay(input);
+
+		frame.add(menuDisplay);
+		frame.pack();
+		menuDisplay.start();
+		menuDisplay.requestFocusInWindow();
 	}
 }

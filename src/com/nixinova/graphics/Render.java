@@ -1,5 +1,7 @@
 package com.nixinova.graphics;
 
+import java.awt.image.BufferedImage;
+
 public class Render {
 	public final int width;
 	public final int height;
@@ -43,6 +45,12 @@ public class Render {
 		int pixelI = this.getPixelIndex(screenX, screenY);
 		boolean indexValid = pixelI >= 0 && pixelI < this.imageSize();
 		return widthValid && heightValid && indexValid;
+	}
+
+	public BufferedImage getBufferedImage() {
+		BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		bufferedImage.setRGB(0, 0, width, height, getImage(), 0, width);
+		return bufferedImage;
 	}
 
 	public int getPixel(int pixelI) {
