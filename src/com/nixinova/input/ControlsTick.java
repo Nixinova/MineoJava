@@ -1,5 +1,6 @@
 package com.nixinova.input;
 
+import com.nixinova.Vector3;
 import com.nixinova.blocks.Block;
 import com.nixinova.blocks.HoveredBlock;
 import com.nixinova.coords.BlockCoord;
@@ -56,26 +57,6 @@ public class ControlsTick {
 		double xMove = 0.0D;
 		double yMove = 0.0D;
 		double zMove = 0.0D;
-
-		// Shove in a particular direction if currently inside a block
-		CornersList collisionPoints = Hitbox.getCollisionPoints(this.game.world, controls.pos);
-		if (collisionPoints.list.size() > 0) {
-			// Along all planes at foot
-			if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_xZ, Corner.FOOT_Xz, Corner.FOOT_XZ))
-				yMove = +Options.gravity;
-			// Along negative X plane at foot
-			else if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_xZ))
-				xMove = +Options.walkSpeed;
-			// Along positive X plane at foot
-			else if (collisionPoints.containsAll(Corner.FOOT_Xz, Corner.FOOT_XZ))
-				xMove = -Options.walkSpeed;
-			// Along negative Z plane at foot
-			else if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_Xz))
-				zMove = +Options.walkSpeed;
-			// Along positive Z plane at foot
-			else if (collisionPoints.containsAll(Corner.FOOT_xZ, Corner.FOOT_XZ))
-				zMove = -Options.walkSpeed;
-		}
 
 		// Ground checks
 		if (this.game.player.isWithinWorld(this.game.world)) {
@@ -142,6 +123,7 @@ public class ControlsTick {
 		Hotbar.updateFromKbd(kbd);
 
 		// Movement
+		controls.isWalking = kbd.pressedAnyKey(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
 		double mvChange = kbd.pressedKey(Keys.SPRINT) ? Options.sprintSpeed : Options.walkSpeed;
 		if (kbd.pressedKey(Keys.FORWARD)) {
 			zMove += mvChange;
@@ -155,7 +137,30 @@ public class ControlsTick {
 		if (kbd.pressedKey(Keys.LEFT)) {
 			xMove += -mvChange;
 		}
-		controls.isWalking = kbd.pressedAnyKey(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
+		// Shove the player if if movement takes them inside a block
+		Coord3 nextMove = resultFromMove(xMove, yMove, zMove).pos;
+		CornersList collisionPoints = Hitbox.getCollisionPoints(this.game.world, nextMove);
+		if (collisionPoints.list.size() > 0) {
+			Vector3<Double> shove = new Vector3<Double>(0d, 0d, 0d);
+			// Along all planes at foot
+			if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_xZ, Corner.FOOT_Xz, Corner.FOOT_XZ))
+				shove.y = Options.gravity;
+			// Along negative X plane at foot
+			else if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_xZ))
+				shove.x = mvChange;
+			// Along positive X plane at foot
+			else if (collisionPoints.containsAll(Corner.FOOT_Xz, Corner.FOOT_XZ))
+				shove.x = -mvChange;
+			// Along negative Z plane at foot
+			else if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_Xz))
+				shove.z = mvChange;
+			// Along positive Z plane at foot
+			else if (collisionPoints.containsAll(Corner.FOOT_xZ, Corner.FOOT_XZ))
+				shove.z = -mvChange;
+			// Shove player in the given direction
+			PxCoord curPos = controls.pos.toPx();
+			controls.pos = Coord3.fromPx(curPos.x + shove.x, curPos.y + shove.y, curPos.z + shove.z);
+		}
 
 		// Mouse look
 		double mouseDX = Options.sensitivity * input.deltaX;
