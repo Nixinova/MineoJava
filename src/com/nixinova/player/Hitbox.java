@@ -59,7 +59,7 @@ public class Hitbox {
 		for (var hitboxEntry : playerCornerOffsets.entrySet()) {
 			Corner collisionPoint = hitboxEntry.getKey();
 			Vector3<Integer> corner = hitboxEntry.getValue();
-			
+
 			// get block at each corner of the player's hitbox
 			int posX = Coord1.fromSubBlock(blockPos.x + Player.PLAYER_WIDTH / 2 * corner.x).toBlock();
 			int posY = Coord1.fromSubBlock(blockPos.y + Player.PLAYER_HEIGHT * corner.y).toBlock();

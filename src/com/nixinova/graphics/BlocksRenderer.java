@@ -18,7 +18,6 @@ import com.nixinova.coords.PxCoord;
 import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.main.Game;
 import com.nixinova.options.Options;
-import com.nixinova.world.World;
 
 public class BlocksRenderer extends Render {
 	private static final double SKY_SIZE = 1.5;

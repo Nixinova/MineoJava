@@ -75,11 +75,9 @@ public class ControlsTick {
 				controls.pos = Coord3.fromPx(curPx.x, Coord1.blockToPx(newBlockY), curPx.z);
 			}
 		}
-		// Outside the world
-		else {
-			// Fall when outside of world
-			if (yMove == 0)
-				yMove = -0.5;
+		// Fall when outside the world
+		else if (yMove == 0) {
+			yMove = -0.5;
 		}
 		// Acceleration due to gravity
 		yMove *= 1 + Math.pow(1 + Options.gravity, 2);
@@ -133,18 +131,14 @@ public class ControlsTick {
 		// Movement
 		controls.isWalking = kbd.pressedAnyKey(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
 		double mvChange = kbd.pressedKey(Keys.SPRINT) ? Options.sprintSpeed : Options.walkSpeed;
-		if (kbd.pressedKey(Keys.FORWARD)) {
+		if (kbd.pressedKey(Keys.FORWARD))
 			zMove += mvChange;
-		}
-		if (kbd.pressedKey(Keys.BACK)) {
+		if (kbd.pressedKey(Keys.BACK))
 			zMove += -mvChange;
-		}
-		if (kbd.pressedKey(Keys.RIGHT)) {
+		if (kbd.pressedKey(Keys.RIGHT))
 			xMove += mvChange;
-		}
-		if (kbd.pressedKey(Keys.LEFT)) {
+		if (kbd.pressedKey(Keys.LEFT))
 			xMove += -mvChange;
-		}
 
 		// Shove the player if movement takes them inside a block
 		Coord3 nextMove = resultFromMove(xMove, yMove, zMove).pos;
@@ -160,12 +154,10 @@ public class ControlsTick {
 		// Mouse look
 		double mouseDX = Options.sensitivity * input.deltaX;
 		double mouseDY = Options.sensitivity * input.deltaY;
-		if (mouseDX != 0) {
+		if (mouseDX != 0)
 			this.drot += mouseDX;
-		}
-		if (mouseDY != 0) {
+		if (mouseDY != 0)
 			this.dtilt += -mouseDY;
-		}
 
 		// Jumping
 		if (this.isJumping) {
@@ -179,12 +171,10 @@ public class ControlsTick {
 			}
 		}
 		// Allow jumping if on ground
-		if (onGround) {
-			if (kbd.pressedKey(Keys.JUMP)) {
-				this.isJumping = true;
-				this.jumpBase = controls.pos.toSubBlock().y;
-				kbd.startKeyCooldown(Keys.JUMP);
-			}
+		if (onGround && kbd.pressedKey(Keys.JUMP)) {
+			this.isJumping = true;
+			this.jumpBase = controls.pos.toSubBlock().y;
+			kbd.startKeyCooldown(Keys.JUMP);
 		}
 
 		// Mouse look boundaries
@@ -247,7 +237,6 @@ public class ControlsTick {
 		this.dpos = move.dpos;
 	}
 
-	// TODO check player hitbox
 	private boolean isAboveGround() {
 		// Above the ground if the block one texel beneath the player's feet is air
 		TxCoord curTx = controls.pos.toTx();
@@ -257,7 +246,6 @@ public class ControlsTick {
 		return belowTxIsNotVoid && belowTxIsAir;
 	}
 
-	// TODO check player hitbox
 	private boolean isBelowGround() {
 		// Below the ground if the block one texel above the player's feet is air
 		TxCoord footTx = controls.pos.toTx();

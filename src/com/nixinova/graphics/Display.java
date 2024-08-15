@@ -9,8 +9,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 
 import com.nixinova.input.InputHandler;
 import com.nixinova.main.Game;
@@ -25,24 +23,19 @@ public class Display extends Canvas implements Runnable {
 
 	private Thread thread;
 	private Render3D renderer;
-	private BufferedImage img;
 	private Game game;
 	private InputHandler input;
 	private boolean running = false;
-	private int[] pixels;
 
 	public Display(Game game, InputHandler input) {
 		this.input = input;
 		this.game = game;
+		this.renderer = new Render3D(WIDTH, HEIGHT);
 
 		Dimension size = new Dimension(WIDTH, HEIGHT);
 		setPreferredSize(size);
 		setMinimumSize(size);
 		setMaximumSize(size);
-
-		this.renderer = new Render3D(WIDTH, HEIGHT);
-		this.img = new BufferedImage(WIDTH, HEIGHT, 1);
-		this.pixels = ((DataBufferInt) this.img.getRaster().getDataBuffer()).getData();
 
 		addKeyListener((KeyListener) this.input);
 		addFocusListener((FocusListener) this.input);

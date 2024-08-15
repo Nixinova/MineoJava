@@ -1,7 +1,8 @@
 # Changelog
 
-## Next
-- Added sky
+## 0.0.21
+*2024-08-15 23:19*
+- Added sky with gradient
 - Added horizontal collision box to blocks
 - Added collision boundary box to the player
 - Changed renderer to only render blocks within view of the player
@@ -11,7 +12,7 @@
 - Removed ability to place blocks inside the player's body
 - Fixed jumping not pertaining to the specified jumpHeight
 
-# 0.0.20_2
+## 0.0.20_2
 *2024-08-15 01:40*
 - Added options groundLevel (defaults to 10) and buildHeight (defaults to 18)
 - Changed distance fog effect to applied nonlinearly
