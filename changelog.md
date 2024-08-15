@@ -3,6 +3,7 @@
 ## Next
 - Added side hitboxes to blocks
 - Changed renderer to only render blocks within view of the player
+- Changed player spawn point to centre of world
 
 # 0.0.20_2
 *2024-08-15 01:40*

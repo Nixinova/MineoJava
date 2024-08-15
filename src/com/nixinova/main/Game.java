@@ -20,9 +20,9 @@ public class Game {
 	public Game(InputHandler input) {
 		this.world = new World();
 
-		double startX = world.minCorner.x + 0.5; // centre of block
+		double startX = (world.maxCorner.x + world.minCorner.x) / 2 + 0.5; // centre of block in centre of world
 		double startY = Options.groundLevel + 1; // one block above the ground
-		double startZ = world.minCorner.z + 0.5; // centre of block
+		double startZ = (world.maxCorner.z + world.minCorner.z) / 2 + 0.5; // centre of block in centre of world
 		Coord3 startPosition = Coord3.fromSubBlock(startX, startY, startZ);
 		this.player = new Player(startPosition);
 
