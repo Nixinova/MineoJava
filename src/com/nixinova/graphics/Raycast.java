@@ -41,6 +41,11 @@ public class Raycast {
 			double distY = Coord1.blockToPx(blockCornerY) - camPos.y;
 			double distZ = Coord1.blockToPx(blockCornerZ) - camPos.z;
 
+			// Early return if block is directly adjacent to camera
+			double oneBlock = Coord1.blockToPx(1);
+			if (Math.abs(distX) < oneBlock && Math.abs(distY) < oneBlock && Math.abs(distZ) < oneBlock)
+				return true;
+
 			// Normalize the direction vector
 			double length = Math.sqrt(distX * distX + distY * distY + distZ * distZ);
 			double vecX = distX / length;
