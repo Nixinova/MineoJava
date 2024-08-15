@@ -28,7 +28,7 @@ public class Options {
 		public static double sensitivity = 0.005;
 		public static double walkSpeed = 0.5;
 		public static double sprintSpeed = 0.8;
-		public static double jumpHeight = 1.0;
+		public static double jumpHeight = 1.5;
 	}
 
 	private static final class OPTION_STRINGS {

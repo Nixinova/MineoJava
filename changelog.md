@@ -5,6 +5,8 @@
 - Added collision boundary box to the player
 - Changed renderer to only render blocks within view of the player
 - Changed player spawn point to centre of world
+- Changed default jumpHeight to 1.5
+- Fixed jumping not pertaining to the specified jumpHeight
 
 # 0.0.20_2
 *2024-08-15 01:40*

@@ -30,7 +30,7 @@ public class ControlsTick {
 	private double dtilt;
 
 	private boolean isJumping = false;
-	private double jumpY = 0;
+	private double jumpBase;
 
 	public ControlsTick(Game game, Controller controls) {
 		this.game = game;
@@ -176,19 +176,18 @@ public class ControlsTick {
 		if (this.isJumping) {
 			yMove += Options.jumpHeight;
 
-			// Keep track of Y-increase from jumping as this.y2 decelerates
-			this.jumpY += Options.jumpHeight;
-
 			// Once maximum height reached, stop isJumping
-			if (this.jumpY >= Options.jumpHeight) {
+			double curHeight = controls.pos.toSubBlock().y;
+			double maxHeight = this.jumpBase + Options.jumpHeight;
+			if (curHeight >= maxHeight) {
 				this.isJumping = false;
-				this.jumpY = 0;
 			}
 		}
 		// Allow jumping if on ground
 		if (onGround) {
 			if (kbd.pressedKey(Keys.JUMP)) {
 				this.isJumping = true;
+				this.jumpBase = controls.pos.toSubBlock().y;
 				kbd.startKeyCooldown(Keys.JUMP);
 			}
 		}
