@@ -19,10 +19,16 @@ public class Game {
 
 	public Game(InputHandler input) {
 		this.world = new World();
-		Coord3 startPosition = Coord3.fromSubBlock(world.minCorner.x + 0.5, Options.groundLevel, world.minCorner.z + 0.5);
+
+		double startX = world.minCorner.x + 0.5; // centre of block
+		double startY = Options.groundLevel + 1; // one block above the ground
+		double startZ = world.minCorner.z + 0.5; // centre of block
+		Coord3 startPosition = Coord3.fromSubBlock(startX, startY, startZ);
 		this.player = new Player(startPosition);
+
 		this.controls = new Controller(this, this.player);
 		this.input = input;
+
 		Options.createOptions();
 	}
 
