@@ -137,7 +137,8 @@ public class ControlsTick {
 		if (kbd.pressedKey(Keys.LEFT)) {
 			xMove += -mvChange;
 		}
-		// Shove the player if if movement takes them inside a block
+
+		// Shove the player if movement takes them inside a block
 		Coord3 nextMove = resultFromMove(xMove, yMove, zMove).pos;
 		CornersList collisionPoints = Hitbox.getCollisionPoints(this.game.world, nextMove);
 		if (collisionPoints.list.size() > 0) {
@@ -161,11 +162,23 @@ public class ControlsTick {
 				shove.z = -mvChange;
 
 			// Collision with head
-			// along any plane at head
-			if (collisionPoints.containsAny(Corner.HEAD_xz, Corner.HEAD_xZ, Corner.HEAD_Xz, Corner.HEAD_XZ)) {
+			// along all planes at head
+			else if (collisionPoints.containsAll(Corner.HEAD_xz, Corner.HEAD_xZ, Corner.HEAD_Xz, Corner.HEAD_XZ)) {
 				this.isJumping = false;
 				shove.y = -Options.gravity;
 			}
+			// along negative X plane at head
+			else if (collisionPoints.containsAll(Corner.HEAD_xz, Corner.HEAD_xZ))
+				shove.x = mvChange;
+			// along positive X plane at head
+			else if (collisionPoints.containsAll(Corner.HEAD_Xz, Corner.HEAD_XZ))
+				shove.x = -mvChange;
+			// along negative Z plane at head
+			else if (collisionPoints.containsAll(Corner.HEAD_xz, Corner.HEAD_Xz))
+				shove.z = mvChange;
+			// along positive Z plane at head
+			else if (collisionPoints.containsAll(Corner.HEAD_xZ, Corner.HEAD_XZ))
+				shove.z = -mvChange;
 
 			// Shove player in the given direction
 			PxCoord curPos = controls.pos.toPx();

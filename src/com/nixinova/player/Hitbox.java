@@ -22,14 +22,6 @@ public class Hitbox {
 	public static class CornersList {
 		public List<Corner> list = new ArrayList<>();
 
-		public boolean containsAny(Corner... providedCorners) {
-			for (Corner corner : providedCorners) {
-				if (list.contains(corner))
-					return true;
-			}
-			return false;
-		}
-
 		public boolean containsAll(Corner... providedCorners) {
 			for (Corner corner : providedCorners) {
 				if (!list.contains(corner))
