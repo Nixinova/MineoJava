@@ -6,14 +6,20 @@ import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord1;
 import com.nixinova.coords.Coord3;
 import com.nixinova.coords.PxCoord;
-import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.coords.TxCoord;
 import com.nixinova.main.Game;
 import com.nixinova.options.Options;
+import com.nixinova.player.Hitbox;
+import com.nixinova.player.Hitbox.Corner;
+import com.nixinova.player.Hitbox.CornersList;
 import com.nixinova.player.Hotbar;
-import com.nixinova.player.Player;
 
 public class ControlsTick {
+
+	private class PositionChange {
+		public Coord3 pos;
+		public Coord3 dpos;
+	}
 
 	private Game game;
 	private Controller controls;
@@ -35,8 +41,8 @@ public class ControlsTick {
 		this.dpos = new Coord3();
 
 		// Tick
-		boolean aboveGround = aboveGround();
-		boolean belowGround = belowGround();
+		boolean aboveGround = isAboveGround();
+		boolean belowGround = isBelowGround();
 		boolean onGround = this.game.player.isWithinWorld(this.game.world) && !aboveGround && !belowGround;
 		// Natural events like gravity, etc
 		tickUninputted(aboveGround, belowGround);
@@ -51,9 +57,29 @@ public class ControlsTick {
 		double yMove = 0.0D;
 		double zMove = 0.0D;
 
+		// Shove in a particular direction if currently inside a block
+		CornersList collisionPoints = Hitbox.getCollisionPoints(this.game.world, controls.pos);
+		if (collisionPoints.list.size() > 0) {
+			// Along all planes at foot
+			if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_xZ, Corner.FOOT_Xz, Corner.FOOT_XZ))
+				yMove = +Options.gravity;
+			// Along negative X plane at foot
+			else if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_xZ))
+				xMove = +Options.walkSpeed;
+			// Along positive X plane at foot
+			else if (collisionPoints.containsAll(Corner.FOOT_Xz, Corner.FOOT_XZ))
+				xMove = -Options.walkSpeed;
+			// Along negative Z plane at foot
+			else if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_Xz))
+				zMove = +Options.walkSpeed;
+			// Along positive Z plane at foot
+			else if (collisionPoints.containsAll(Corner.FOOT_xZ, Corner.FOOT_XZ))
+				zMove = -Options.walkSpeed;
+		}
+
 		// Ground checks
 		if (this.game.player.isWithinWorld(this.game.world)) {
-			// Inside a block
+			// Above ground
 			if (aboveGround) {
 				// Fall due to gravity
 				yMove -= Options.gravity;
@@ -78,7 +104,8 @@ public class ControlsTick {
 		yMove *= 1 + Math.pow(1 + Options.gravity, 2);
 
 		// Update position
-		updatePos(xMove, yMove, zMove);
+		PositionChange move = resultFromMove(xMove, yMove, zMove);
+		makeMove(move);
 	}
 
 	private void tickInputted(InputHandler input, boolean onGround) {
@@ -177,67 +204,52 @@ public class ControlsTick {
 			kbd.startKeyCooldown(Keys.F3);
 		}
 
-		// Update position
-		updatePos(xMove, yMove, zMove);
-	}
-
-	private void updatePos(double xMove, double yMove, double zMove) {
-		// differentials for controls
-		PxCoord curdpos = this.dpos.toPx();
-		double ddposX = (xMove * Math.cos(controls.rot) + zMove * Math.sin(controls.rot)) * Options.walkSpeed;
-		double ddposY = yMove;
-		double ddposZ = (zMove * Math.cos(controls.rot) - xMove * Math.sin(controls.rot)) * Options.walkSpeed;
-		PxCoord newdpos = new PxCoord(curdpos.x + ddposX, curdpos.y + ddposY, curdpos.z + ddposZ);
-
-		// apply differentials
-		PxCoord curpos = controls.pos.toPx();
-		PxCoord newpos = new PxCoord(curpos.x + newdpos.x, curpos.y + newdpos.y, curpos.z + newdpos.z);
-
-		// rotation: update and decelerate
+		// Update and decelerate rotation
 		controls.rot += this.drot;
 		controls.tilt += this.dtilt;
 		this.drot *= 0.8D;
 		this.dtilt *= 0.8D;
 		controls.rot %= Math.PI * 2; // modulo to be 0..360
 
-		// position: update and decelerate
-		controls.pos = Coord3.fromPx(newpos);
-		this.dpos = Coord3.fromPx(newdpos);
+		// Update position
+		PositionChange move = resultFromMove(xMove, yMove, zMove);
+		makeMove(move);
+	}
+
+	private PositionChange resultFromMove(double xMove, double yMove, double zMove) {
+		PositionChange result = new PositionChange();
+		result.pos = controls.pos;
+		result.dpos = this.dpos;
+
+		// differentials for controls
+		PxCoord curdpos = result.dpos.toPx();
+		double ddposX = (xMove * Math.cos(controls.rot) + zMove * Math.sin(controls.rot)) * Options.walkSpeed;
+		double ddposY = yMove;
+		double ddposZ = (zMove * Math.cos(controls.rot) - xMove * Math.sin(controls.rot)) * Options.walkSpeed;
+		PxCoord newdpos = new PxCoord(curdpos.x + ddposX, curdpos.y + ddposY, curdpos.z + ddposZ);
+
+		// apply differentials
+		PxCoord curpos = result.pos.toPx();
+		PxCoord newpos = new PxCoord(curpos.x + newdpos.x, curpos.y + newdpos.y, curpos.z + newdpos.z);
+
+		// update and decelerate position
+		result.pos = Coord3.fromPx(newpos);
+		result.dpos = Coord3.fromPx(newdpos);
 		newdpos.x *= 0.3D;
 		newdpos.y *= 0.3D;
 		newdpos.z *= 0.3D;
-		this.dpos = Coord3.fromPx(newdpos);
+		result.dpos = Coord3.fromPx(newdpos);
+
+		return result;
 	}
 
-	private boolean insideBlock(PxCoord position) {
-		SubBlockCoord blockPos = Coord3.fromPx(position).toSubBlock();
-		int[][] playerCornerOffsets = {
-			// X, Y, Z
-			{ -1, -0, -1 },
-			{ +1, -0, -1 },
-			{ -1, +1, -1 },
-			{ -1, -0, +1 },
-			{ +1, +1, -1 },
-			{ +1, -0, +1 },
-			{ -1, +1, +1 },
-			{ +1, +1, +1 },
-		};
-		// check each corner of the player's hitbox for being inside a block at the new position
-		for (int[] corner : playerCornerOffsets) {
-			int posX = Coord1.fromSubBlock(blockPos.x + Player.PLAYER_RADIUS * corner[0]).toBlock();
-			int posY = Coord1.fromSubBlock(blockPos.y + Player.PLAYER_HEIGHT * corner[1]).toBlock();
-			int posZ = Coord1.fromSubBlock(blockPos.z + Player.PLAYER_RADIUS * corner[2]).toBlock();
-
-			// if player ends up inside a block then return
-			if (!this.game.world.isAir(posX, posY, posZ))
-				return true;
-		}
-		// if no block collision found then player is not inside a block
-		return false;
+	private void makeMove(PositionChange move) {
+		controls.pos = move.pos;
+		this.dpos = move.dpos;
 	}
 
 	// TODO check player hitbox
-	private boolean aboveGround() {
+	private boolean isAboveGround() {
 		// Above the ground if the block one texel beneath the player's feet is air
 		TxCoord curTx = controls.pos.toTx();
 		BlockCoord blockOneTxDown = Coord3.fromTx(curTx.x, curTx.y - 1, curTx.z).toBlock();
@@ -247,7 +259,7 @@ public class ControlsTick {
 	}
 
 	// TODO check player hitbox
-	private boolean belowGround() {
+	private boolean isBelowGround() {
 		// Below the ground if the block one texel above the player's feet is air
 		TxCoord footTx = controls.pos.toTx();
 		BlockCoord blockOneTxUp = Coord3.fromTx(footTx.x, footTx.y + 1, footTx.z).toBlock();

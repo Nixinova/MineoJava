@@ -1,7 +1,8 @@
 # Changelog
 
 ## Next
-- Added side hitboxes to blocks
+- Added horizontal collision box to blocks
+- Added collision boundary box to the player
 - Changed renderer to only render blocks within view of the player
 - Changed player spawn point to centre of world
 
