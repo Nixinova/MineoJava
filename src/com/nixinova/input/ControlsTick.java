@@ -150,43 +150,7 @@ public class ControlsTick {
 		Coord3 nextMove = resultFromMove(xMove, yMove, zMove).pos;
 		CornersList collisionPoints = Hitbox.getCollisionPoints(this.game.world, nextMove);
 		if (collisionPoints.list.size() > 0) {
-			Vector3<Double> shove = new Vector3<Double>(0d, 0d, 0d);
-
-			// Collision with foot
-			// along all planes at foot
-			if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_xZ, Corner.FOOT_Xz, Corner.FOOT_XZ))
-				shove.y = Options.gravity;
-			// along negative X plane at foot
-			else if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_xZ))
-				shove.x = mvChange;
-			// along positive X plane at foot
-			else if (collisionPoints.containsAll(Corner.FOOT_Xz, Corner.FOOT_XZ))
-				shove.x = -mvChange;
-			// along negative Z plane at foot
-			else if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_Xz))
-				shove.z = mvChange;
-			// along positive Z plane at foot
-			else if (collisionPoints.containsAll(Corner.FOOT_xZ, Corner.FOOT_XZ))
-				shove.z = -mvChange;
-
-			// Collision with head
-			// along all planes at head
-			else if (collisionPoints.containsAll(Corner.HEAD_xz, Corner.HEAD_xZ, Corner.HEAD_Xz, Corner.HEAD_XZ)) {
-				this.isJumping = false;
-				shove.y = -Options.gravity;
-			}
-			// along negative X plane at head
-			else if (collisionPoints.containsAll(Corner.HEAD_xz, Corner.HEAD_xZ))
-				shove.x = mvChange;
-			// along positive X plane at head
-			else if (collisionPoints.containsAll(Corner.HEAD_Xz, Corner.HEAD_XZ))
-				shove.x = -mvChange;
-			// along negative Z plane at head
-			else if (collisionPoints.containsAll(Corner.HEAD_xz, Corner.HEAD_Xz))
-				shove.z = mvChange;
-			// along positive Z plane at head
-			else if (collisionPoints.containsAll(Corner.HEAD_xZ, Corner.HEAD_XZ))
-				shove.z = -mvChange;
+			Vector3<Double> shove = calculateShoveFactor(collisionPoints, mvChange, Options.gravity);
 
 			// Shove player in the given direction
 			PxCoord curPos = controls.pos.toPx();
@@ -300,6 +264,97 @@ public class ControlsTick {
 		BlockCoord blockOneTxUp = Coord3.fromTx(footTx.x, footTx.y + 1, footTx.z).toBlock();
 		boolean aboveTxIsAir = this.game.world.isAir(blockOneTxUp);
 		return !aboveTxIsAir;
+	}
+
+	/**
+	 * Calculates an opposing vector to the direction the player is moving in,
+	 * as apparent by which (combination of) vertices of their hitbox are in collision with a solid block.
+	 */
+	private Vector3<Double> calculateShoveFactor(CornersList collisionPoints, double horizMove, double vertMove) {
+		Vector3<Double> shove = new Vector3<Double>(0d, 0d, 0d);
+
+		// Collision with foot
+		// along all planes at foot
+		if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_xZ, Corner.FOOT_Xz, Corner.FOOT_XZ)) {
+			shove.y = vertMove;
+		}
+		// along negative X plane at foot
+		else if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_xZ)) {
+			shove.x = horizMove;
+		}
+		// along positive X plane at foot
+		else if (collisionPoints.containsAll(Corner.FOOT_Xz, Corner.FOOT_XZ)) {
+			shove.x = -horizMove;
+		}
+		// along negative Z plane at foot
+		else if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_Xz)) {
+			shove.z = horizMove;
+		}
+		// along positive Z plane at foot
+		else if (collisionPoints.containsAll(Corner.FOOT_xZ, Corner.FOOT_XZ)) {
+			shove.z = -horizMove;
+		}
+		// with a single point
+		else if (collisionPoints.contains(Corner.FOOT_xz)) {
+			// collision with minX,minZ so push +x,+z
+			shove.x = horizMove;
+			shove.z = horizMove;
+		} else if (collisionPoints.contains(Corner.FOOT_xZ)) {
+			// collision with minX,maxZ so push +x,-z
+			shove.x = horizMove;
+			shove.z = -horizMove;
+		} else if (collisionPoints.contains(Corner.FOOT_Xz)) {
+			// collision with maxX,minZ so push -x,+z
+			shove.x = -horizMove;
+			shove.z = horizMove;
+		} else if (collisionPoints.contains(Corner.FOOT_XZ)) {
+			// collision with maxX,maxZ so push -x,-z
+			shove.x = -horizMove;
+			shove.z = -horizMove;
+		}
+
+		// Collision with head
+		// along all planes at head
+		else if (collisionPoints.containsAll(Corner.HEAD_xz, Corner.HEAD_xZ, Corner.HEAD_Xz, Corner.HEAD_XZ)) {
+			this.isJumping = false;
+			shove.y = -vertMove;
+		}
+		// along negative X plane at head
+		else if (collisionPoints.containsAll(Corner.HEAD_xz, Corner.HEAD_xZ)) {
+			shove.x = horizMove;
+		}
+		// along positive X plane at head
+		else if (collisionPoints.containsAll(Corner.HEAD_Xz, Corner.HEAD_XZ)) {
+			shove.x = -horizMove;
+		}
+		// along negative Z plane at head
+		else if (collisionPoints.containsAll(Corner.HEAD_xz, Corner.HEAD_Xz)) {
+			shove.z = horizMove;
+		}
+		// along positive Z plane at head
+		else if (collisionPoints.containsAll(Corner.HEAD_xZ, Corner.HEAD_XZ)) {
+			shove.z = -horizMove;
+		}
+		// with a single point
+		else if (collisionPoints.contains(Corner.HEAD_xz)) {
+			// collision with minX,minZ so push +x,+z
+			shove.x = horizMove;
+			shove.z = horizMove;
+		} else if (collisionPoints.contains(Corner.HEAD_xZ)) {
+			// collision with minX,maxZ so push +x,-z
+			shove.x = horizMove;
+			shove.z = -horizMove;
+		} else if (collisionPoints.contains(Corner.HEAD_Xz)) {
+			// collision with maxX,minZ so push -x,+z
+			shove.x = -horizMove;
+			shove.z = horizMove;
+		} else if (collisionPoints.contains(Corner.HEAD_XZ)) {
+			// collision with maxX,maxZ so push -x,-z
+			shove.x = -horizMove;
+			shove.z = -horizMove;
+		}
+
+		return shove;
 	}
 
 }
