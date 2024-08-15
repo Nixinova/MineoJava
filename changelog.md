@@ -7,6 +7,7 @@
 - Changed player spawn point to centre of world
 - Changed player height to 1.6 blocks
 - Changed default jumpHeight to 1.5
+- Removed ability to place blocks inside the player's body
 - Fixed jumping not pertaining to the specified jumpHeight
 
 # 0.0.20_2

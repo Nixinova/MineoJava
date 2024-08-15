@@ -99,23 +99,31 @@ public class ControlsTick {
 
 		// Block actions
 		HoveredBlock lookingAt = this.game.player.getLookingAt();
-		boolean isLookingAtBlock = lookingAt.hoveredBlock != null;
-		if (isLookingAtBlock) {
-			// Block breaking
-			if (kbd.pressedButton(Keys.LCLICK) && this.game.world.isWithinWorld(lookingAt.hoveredBlock)) {
-				this.game.world.setTextureAt(lookingAt.hoveredBlock, Block.AIR.getTexture());
+		if (lookingAt.hoveredBlock != null) {
+			BlockCoord bHovered = lookingAt.hoveredBlock;
+			BlockCoord bAdjacent = lookingAt.adjacentBlock;
 
+			// Block breaking
+			if (kbd.pressedButton(Keys.LCLICK) && this.game.world.isWithinWorld(bHovered)) {
+				this.game.world.setTextureAt(bHovered, Block.AIR.getTexture());
 				// Cooldown
 				kbd.startButtonCooldown(Keys.LCLICK);
 			}
 
 			// Block placing
-			if (kbd.pressedButton(Keys.RCLICK) && this.game.world.isWithinWorld(lookingAt.adjacentBlock)) {
-				Block selectedBlock = Hotbar.getCurrentBlock();
-				this.game.world.setTextureAt(lookingAt.adjacentBlock, selectedBlock.getTexture());
+			if (kbd.pressedButton(Keys.RCLICK) && this.game.world.isWithinWorld(bAdjacent)) {
+				BlockCoord footPos = this.game.controls.getFootPosition().toBlock();
+				BlockCoord headPos = this.game.controls.getCameraPosition().toBlock();
+				boolean placedInFoot = bAdjacent.x == footPos.x && bAdjacent.y == footPos.y && bAdjacent.z == footPos.z;
+				boolean placedInHead = bAdjacent.x == headPos.x && bAdjacent.y == headPos.y && bAdjacent.z == headPos.z;
 
-				// Cooldown
-				kbd.startButtonCooldown(Keys.RCLICK);
+				// only place block if not going to be placed within the player's body
+				if (!placedInFoot && !placedInHead) {
+					Block selectedBlock = Hotbar.getCurrentBlock();
+					this.game.world.setTextureAt(bAdjacent, selectedBlock.getTexture());
+					// Cooldown
+					kbd.startButtonCooldown(Keys.RCLICK);
+				}
 			}
 		}
 
