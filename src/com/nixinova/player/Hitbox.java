@@ -22,6 +22,14 @@ public class Hitbox {
 	public static class CornersList {
 		public List<Corner> list = new ArrayList<>();
 
+		public boolean containsAny(Corner... providedCorners) {
+			for (Corner corner : providedCorners) {
+				if (list.contains(corner))
+					return true;
+			}
+			return false;
+		}
+
 		public boolean containsAll(Corner... providedCorners) {
 			for (Corner corner : providedCorners) {
 				if (!list.contains(corner))
@@ -50,6 +58,7 @@ public class Hitbox {
 		CornersList collisionCorners = new CornersList();
 
 		SubBlockCoord blockPos = position.toSubBlock();
+
 		// check each corner of the player's hitbox for being inside a block at the new position
 		for (var hitboxEntry : playerCornerOffsets.entrySet()) {
 			Corner collisionPoint = hitboxEntry.getKey();

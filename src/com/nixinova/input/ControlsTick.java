@@ -142,21 +142,31 @@ public class ControlsTick {
 		CornersList collisionPoints = Hitbox.getCollisionPoints(this.game.world, nextMove);
 		if (collisionPoints.list.size() > 0) {
 			Vector3<Double> shove = new Vector3<Double>(0d, 0d, 0d);
-			// Along all planes at foot
+
+			// Collision with foot
+			// along all planes at foot
 			if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_xZ, Corner.FOOT_Xz, Corner.FOOT_XZ))
 				shove.y = Options.gravity;
-			// Along negative X plane at foot
+			// along negative X plane at foot
 			else if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_xZ))
 				shove.x = mvChange;
-			// Along positive X plane at foot
+			// along positive X plane at foot
 			else if (collisionPoints.containsAll(Corner.FOOT_Xz, Corner.FOOT_XZ))
 				shove.x = -mvChange;
-			// Along negative Z plane at foot
+			// along negative Z plane at foot
 			else if (collisionPoints.containsAll(Corner.FOOT_xz, Corner.FOOT_Xz))
 				shove.z = mvChange;
-			// Along positive Z plane at foot
+			// along positive Z plane at foot
 			else if (collisionPoints.containsAll(Corner.FOOT_xZ, Corner.FOOT_XZ))
 				shove.z = -mvChange;
+
+			// Collision with head
+			// along any plane at head
+			if (collisionPoints.containsAny(Corner.HEAD_xz, Corner.HEAD_xZ, Corner.HEAD_Xz, Corner.HEAD_XZ)) {
+				this.isJumping = false;
+				shove.y = -Options.gravity;
+			}
+
 			// Shove player in the given direction
 			PxCoord curPos = controls.pos.toPx();
 			controls.pos = Coord3.fromPx(curPos.x + shove.x, curPos.y + shove.y, curPos.z + shove.z);
