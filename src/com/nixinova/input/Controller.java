@@ -9,7 +9,8 @@ import com.nixinova.player.Player;
 
 public class Controller {
 
-	public boolean debugShown = false;
+	public boolean uiShown = true;
+	public boolean gameInfoShown = false;
 	public boolean isWalking = false;
 
 	protected Coord3 pos;

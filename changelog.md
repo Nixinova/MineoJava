@@ -1,5 +1,8 @@
 # Changelog
 
+## Next
+- Added HUD toggling with F2
+
 ## 0.0.21
 *2024-08-15 23:19*
 - Added sky with gradient

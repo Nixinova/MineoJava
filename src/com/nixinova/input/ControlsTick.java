@@ -188,9 +188,13 @@ public class ControlsTick {
 		if (kbd.pressedKey(Keys.ESCAPE)) {
 			System.exit(1);
 		}
-		if (kbd.pressedKey(Keys.F3)) {
-			controls.debugShown = !controls.debugShown;
-			kbd.startKeyCooldown(Keys.F3);
+		if (kbd.pressedKey(Keys.UI_TOGGLE)) {
+			controls.uiShown = !controls.uiShown;
+			kbd.startKeyCooldown(Keys.UI_TOGGLE);
+		}
+		if (kbd.pressedKey(Keys.INFO_TOGGLE)) {
+			controls.gameInfoShown = !controls.gameInfoShown;
+			kbd.startKeyCooldown(Keys.INFO_TOGGLE);
 		}
 
 		// Update and decelerate rotation

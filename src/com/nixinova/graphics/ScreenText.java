@@ -23,7 +23,8 @@ public class ScreenText {
 		this.graphics = graphics;
 	}
 
-	public void drawMainInfo(Game game, boolean fullInfo) {
+	public void drawMainInfo(Game game) {
+		boolean showFullInfo = game.controls.gameInfoShown;
 
 		Font initialFont = graphics.getFont();
 
@@ -34,7 +35,7 @@ public class ScreenText {
 		graphics.setColor(Color.white);
 		drawInfoLine(Mineo.TITLE);
 
-		if (!fullInfo)
+		if (!showFullInfo)
 			return;
 
 		// Draw info contents

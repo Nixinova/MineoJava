@@ -11,7 +11,8 @@ public class Keys {
 
 	// Keyboard
 	public static final int ESCAPE = KeyEvent.VK_ESCAPE;
-	public static final int F3 = KeyEvent.VK_F3;
+	public static final int UI_TOGGLE = KeyEvent.VK_F2;
+	public static final int INFO_TOGGLE = KeyEvent.VK_F3;
 
 	public static final int FORWARD = KeyEvent.VK_W;
 	public static final int BACK = KeyEvent.VK_S;
