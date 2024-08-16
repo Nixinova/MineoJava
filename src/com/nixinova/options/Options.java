@@ -15,20 +15,20 @@ public class Options {
 	 * - +0.10: Minor: Changes to the implementation of a value.
 	 * - +0.01: Micro: Addition of new options, keeps backward compatibility.
 	 */
-	public static final float OPTIONS_VERSION = 1.11F;
+	public static final float OPTIONS_VERSION = 1.20F;
 
 	private static final class DEFAULT_OPTIONS {
 		public static long seed = 100L;
-		public static int worldSize = 40;
-		public static int groundLevel = 10;
-		public static int buildHeight = 18;
-		public static int renderDistance = 20;
-		public static double gamma = 1.0;
-		public static double gravity = 0.2;
-		public static double sensitivity = 0.005;
-		public static double walkSpeed = 0.5;
-		public static double sprintSpeed = 0.8;
-		public static double jumpHeight = 1.5;
+		public static short worldSize = 40;
+		public static byte groundLevel = 10;
+		public static byte buildHeight = 18;
+		public static short renderDistance = 20;
+		public static float gamma = 1.0f;
+		public static float gravity = 0.2f;
+		public static float sensitivity = 0.005f;
+		public static float walkSpeed = 0.5f;
+		public static float sprintSpeed = 0.8f;
+		public static float jumpHeight = 1.5f;
 	}
 
 	private static final class OPTION_STRINGS {
@@ -48,16 +48,16 @@ public class Options {
 
 	public static float fileVersion = OPTIONS_VERSION;
 	public static long seed = DEFAULT_OPTIONS.seed;
-	public static int worldSize = DEFAULT_OPTIONS.worldSize;
-	public static int groundLevel = DEFAULT_OPTIONS.groundLevel;
-	public static int buildHeight = DEFAULT_OPTIONS.buildHeight;
-	public static int renderDistance = DEFAULT_OPTIONS.renderDistance;
-	public static double gamma = DEFAULT_OPTIONS.gamma;
-	public static double gravity = DEFAULT_OPTIONS.gravity;
-	public static double sensitivity = DEFAULT_OPTIONS.sensitivity;
-	public static double sprintSpeed = DEFAULT_OPTIONS.sprintSpeed;
-	public static double walkSpeed = DEFAULT_OPTIONS.walkSpeed;
-	public static double jumpHeight = DEFAULT_OPTIONS.jumpHeight;
+	public static short worldSize = DEFAULT_OPTIONS.worldSize;
+	public static byte groundLevel = DEFAULT_OPTIONS.groundLevel;
+	public static byte buildHeight = DEFAULT_OPTIONS.buildHeight;
+	public static short renderDistance = DEFAULT_OPTIONS.renderDistance;
+	public static float gamma = DEFAULT_OPTIONS.gamma;
+	public static float gravity = DEFAULT_OPTIONS.gravity;
+	public static float sensitivity = DEFAULT_OPTIONS.sensitivity;
+	public static float sprintSpeed = DEFAULT_OPTIONS.sprintSpeed;
+	public static float walkSpeed = DEFAULT_OPTIONS.walkSpeed;
+	public static float jumpHeight = DEFAULT_OPTIONS.jumpHeight;
 
 	public static String writeValue(String id, String value) {
 		String br = System.getProperty("line.separator");
@@ -132,24 +132,24 @@ public class Options {
 		if (name.contains(OPTION_STRINGS.seed))
 			seed = Long.parseLong(val);
 		if (name.contains(OPTION_STRINGS.worldSize))
-			worldSize = Integer.parseInt(val);
+			worldSize = Short.parseShort(val);
 		if (name.contains(OPTION_STRINGS.groundLevel))
-			groundLevel = Integer.parseInt(val);
+			groundLevel = Byte.parseByte(val);
 		if (name.contains(OPTION_STRINGS.buildHeight))
-			buildHeight = Integer.parseInt(val);
+			buildHeight = Byte.parseByte(val);
 		if (name.contains(OPTION_STRINGS.renderDistance))
-			renderDistance = Integer.parseInt(val);
+			renderDistance = Short.parseShort(val);
 		if (name.contains(OPTION_STRINGS.gamma))
-			gamma = Double.parseDouble(val);
+			gamma = Float.parseFloat(val);
 		if (name.contains(OPTION_STRINGS.gravity))
-			gravity = Double.parseDouble(val);
+			gravity = Float.parseFloat(val);
 		if (name.contains(OPTION_STRINGS.sensitivity))
-			sensitivity = Double.parseDouble(val);
+			sensitivity = Float.parseFloat(val);
 		if (name.contains(OPTION_STRINGS.walkSpeed))
-			walkSpeed = Double.parseDouble(val);
+			walkSpeed = Float.parseFloat(val);
 		if (name.contains(OPTION_STRINGS.sprintSpeed))
-			sprintSpeed = Double.parseDouble(val);
+			sprintSpeed = Float.parseFloat(val);
 		if (name.contains(OPTION_STRINGS.jumpHeight))
-			jumpHeight = Double.parseDouble(val);
+			jumpHeight = Float.parseFloat(val);
 	}
 }

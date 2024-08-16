@@ -22,11 +22,12 @@ public class HUD {
 	}
 
 	private void drawHotbar() {
-		int size = 64;
-		int sep = 10;
-		int cell = size + sep;
-		int startX = (Display.WIDTH / 2) - 4 * cell;
-		int startY = Display.HEIGHT - 150;
+		final byte size = 64;
+		final byte sep = 10;
+		final int cell = size + sep;
+
+		int startX = ((Display.WIDTH / 2) - 4 * cell);
+		int startY = (Display.HEIGHT - 150);
 
 		// Draw hotbar border
 		graphics.setColor(Color.gray);
@@ -42,7 +43,7 @@ public class HUD {
 		// Draw hotbar slots
 		int curX = startX;
 		int curY = startY;
-		for (int i = 0; i < 10; i++) {
+		for (byte i = 0; i < 10; i++) {
 			Block block = Hotbar.SLOTS[i];
 			if (block != null) {
 				drawTextureOnScreen(block.getTexture(), size, curX, curY);
@@ -52,26 +53,30 @@ public class HUD {
 	}
 
 	private void drawCursor() {
-		int size = 5;
+		final byte size = 5;
+
 		int startX = (Display.WIDTH - size) / 2;
 		int startY = (Display.HEIGHT - size) / 2;
+
 		graphics.setColor(Color.yellow);
 		graphics.fillRect(startX, startY, size, size);
 	}
 
 	private void drawSelectedBlock() {
-		final int size = 100;
-		final int padding = 30;
+		final byte size = 100;
+		final byte padding = 30;
+
 		int startX = Display.WIDTH - size - padding;
 		int startY = padding;
+
 		Render texture = Hotbar.getCurrentBlock().getTexture();
 		drawTextureOnScreen(texture, size, startX, startY);
 	}
 
 	private void drawTextureOnScreen(Render texture, int maxSize, int startX, int startY) {
 		int size = maxSize / Texture.SIZE;
-		for (int x = 0; x < Texture.SIZE; x++)
-			for (int y = 0; y < Texture.SIZE; y++) {
+		for (byte x = 0; x < Texture.SIZE; x++)
+			for (byte y = 0; y < Texture.SIZE; y++) {
 				int pixel = Texture.getTexel(texture, x, y);
 				graphics.setColor(PixelColor.fromPixel(pixel));
 				graphics.fillRect(startX + x * size, startY + y * size, size, size);

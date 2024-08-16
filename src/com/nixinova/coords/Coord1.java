@@ -4,14 +4,14 @@ import com.nixinova.graphics.Texture;
 
 public class Coord1 {
 
-	private double px;
+	private float px;
 
 	public Coord1() {
 		this.px = 0;
 	}
 
 	private Coord1(double val) {
-		this.px = val;
+		this.px = (float) val;
 	}
 
 	// World pixel
@@ -20,7 +20,7 @@ public class Coord1 {
 		return new Coord1(val);
 	}
 
-	public double toPx() {
+	public float toPx() {
 		return this.px;
 	}
 
@@ -30,8 +30,8 @@ public class Coord1 {
 		return new Coord1(val);
 	}
 
-	public int toTx() {
-		return (int) this.px;
+	public short toTx() {
+		return (short) Math.round(this.px);
 	}
 
 	// Block
@@ -40,8 +40,8 @@ public class Coord1 {
 		return new Coord1((int) blockToPx(val));
 	}
 
-	public int toBlock() {
-		return (int) pxToBlock(this.px);
+	public short toBlock() {
+		return (short) pxToBlock(this.px);
 	}
 
 	// Sub block
@@ -50,18 +50,18 @@ public class Coord1 {
 		return new Coord1(blockToPx(val));
 	}
 
-	public double toSubBlock() {
+	public float toSubBlock() {
 		return pxToBlock(this.px);
 	}
 
 	// Basic quick conversions
 
-	public static double pxToBlock(double px) {
-		return px / Texture.SIZE;
+	public static float pxToBlock(double px) {
+		return (float) px / Texture.SIZE;
 	}
 
-	public static double blockToPx(double block) {
-		return block * Texture.SIZE;
+	public static float blockToPx(double block) {
+		return (float) block * Texture.SIZE;
 	}
 
 }

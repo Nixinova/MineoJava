@@ -16,7 +16,7 @@ public class Hotbar {
 	}
 
 	public static void updateFromKbd(Keys kbd) {
-		for (int i = 0; i < 10; i++) {
+		for (byte i = 0; i < 10; i++) {
 			if (kbd.pressedKey(Keys.NUM_0 + i) && SLOTS[i] != null) {
 				currentBlockID = i;
 				break;

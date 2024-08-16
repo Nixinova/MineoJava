@@ -23,7 +23,7 @@ public class World {
 		this.mapBlockTextures();
 	}
 
-	public boolean isWithinWorld(int blockX, int blockY, int blockZ) {
+	public boolean isWithinWorld(short blockX, short blockY, short blockZ) {
 		final BlockCoord min = minCorner, max = maxCorner;
 		boolean xValid = blockX >= min.x && blockX < max.x;
 		boolean yValid = blockY >= min.y && blockY < max.y;
@@ -36,8 +36,8 @@ public class World {
 	}
 
 	/** returns -1 if all is air */
-	public int getMinGroundY(int blockX, int blockZ) {
-		for (int i = 0; i < Options.buildHeight; i++) {
+	public int getMinGroundY(short blockX, short blockZ) {
+		for (byte i = 0; i < Options.buildHeight; i++) {
 			if (this.getTextureAt(blockX, i, blockZ) == null) {
 				return i - 1;
 			}
@@ -45,22 +45,25 @@ public class World {
 		return -1;
 	}
 
-	public boolean isExposed(int blockX, int blockY, int blockZ) {
-		int x = blockX, y = blockY, z = blockZ;
-		boolean touchingAir = isAir(x, y + 1, z) || isAir(x, y - 1, z)
-			|| isAir(x + 1, y, z) || isAir(x - 1, y, z) || isAir(x, y, z + 1) || isAir(x, y, z - 1);
-		return touchingAir;
+	public boolean isExposed(short blockX, short blockY, short blockZ) {
+		for (byte x = -1; x <= 1; x += 2) {
+			for (byte y = -1; y <= 1; y += 2) {
+				for (byte z = -1; z <= 1; z += 2) {
+					if (isAir((short) (blockX + x), (short) (blockY + y), (short) (blockZ + z)))
+						return true;
+				}
+			}
+		}
+		return false;
 	}
 
-	public boolean isFaceExposed(BlockFace face, int blockX, int blockY, int blockZ) {
+	public boolean isFaceExposed(BlockFace face, short blockX, short blockY, short blockZ) {
 		var offset = face.getOffset();
-		int x = blockX + offset.x;
-		int y = blockY + offset.y;
-		int z = blockZ + offset.z;
-		return isAir(x, y, z);
+		BlockCoord adjacent = new BlockCoord(blockX, blockY, blockZ).applyVector(offset);
+		return isAir(adjacent.x, adjacent.y, adjacent.z);
 	}
 
-	public boolean isAir(int blockX, int blockY, int blockZ) {
+	public boolean isAir(short blockX, short blockY, short blockZ) {
 		boolean isOutsideWorld = !isWithinWorld(blockX, blockY, blockZ);
 		boolean isAir = getTextureAt(blockX, blockY, blockZ) == Block.AIR.getTexture();
 		return isOutsideWorld || isAir;
@@ -70,7 +73,7 @@ public class World {
 		return isAir(block.x, block.y, block.z);
 	}
 
-	public Render getTextureAt(int blockX, int blockY, int blockZ) {
+	public Render getTextureAt(short blockX, short blockY, short blockZ) {
 		if (isWithinWorld(blockX, blockY, blockZ)) {
 			// If within the world, return texture
 			return this.blockTextures[blockX][blockY][blockZ];
@@ -92,18 +95,15 @@ public class World {
 
 	// NOTE: does not abide by this.minCorner
 	private void mapBlockTextures() {
-		int maxX = this.maxCorner.x + 1;
-		int maxY = this.maxCorner.y + 1;
-		int maxZ = this.maxCorner.z + 1;
-		this.blockTextures = new Render[maxX][maxY][maxZ];
+		this.blockTextures = new Render[this.maxCorner.x + 1][this.maxCorner.y + 1][this.maxCorner.z + 1];
 
 		Random random = new Random(Options.seed);
 
-		for (int x = 0; x < this.maxCorner.x; x++) {
-			for (int z = 0; z < this.maxCorner.z; z++) {
+		for (short x = 0; x < this.maxCorner.x; x++) {
+			for (short z = 0; z < this.maxCorner.z; z++) {
 				int localGroundY = Options.groundLevel;
 
-				for (int y = 0; y < this.maxCorner.y; y++) {
+				for (short y = 0; y < this.maxCorner.y; y++) {
 					Block block;
 
 					if (y == 0)

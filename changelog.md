@@ -2,6 +2,7 @@
 
 ## Next
 - Added HUD toggling with F2
+- Updated options version to 1.2
 
 ## 0.0.21
 *2024-08-15 23:19*
@@ -21,6 +22,7 @@
 - Changed distance fog effect to applied nonlinearly
 - Changed default renderDistance to 20 blocks
 - Fixed raycast culling
+- Updated options version to 1.11
 
 ## 0.0.20_1
 *2024-08-08 21:59*

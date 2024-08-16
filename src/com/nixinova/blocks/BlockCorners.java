@@ -4,7 +4,6 @@ import com.nixinova.coords.SubBlockCoord;
 
 /*
  * Corners of a block:
- * 
  * A--B
  * |  |
  * C--D
@@ -12,10 +11,10 @@ import com.nixinova.coords.SubBlockCoord;
 
 public class BlockCorners {
 
-	public int blockX, blockY, blockZ;
+	public short blockX, blockY, blockZ;
 	public SubBlockCoord cornerA, cornerB, cornerC, cornerD;
 
-	public BlockCorners(int blockX, int blockY, int blockZ, BlockFace face) {
+	public BlockCorners(short blockX, short blockY, short blockZ, BlockFace face) {
 		this.blockX = blockX;
 		this.blockY = blockY;
 		this.blockZ = blockZ;

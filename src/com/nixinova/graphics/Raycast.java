@@ -1,6 +1,5 @@
 package com.nixinova.graphics;
 
-import com.nixinova.Vector3;
 import com.nixinova.blocks.HoveredBlock;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord1;
@@ -9,16 +8,17 @@ import com.nixinova.main.Game;
 
 public class Raycast {
 	private static final double VIEWPORT = 0.75;
+	private static final float STEP_SIZE = 0.5f;
 
-	public static boolean isBlockVisibleToPlayer(Game game, int blockX, int blockY, int blockZ) {
-		final double stepSize = Coord1.blockToPx(0.5);
+	public static boolean isBlockVisibleToPlayer(Game game, short blockX, short blockY, short blockZ) {
+		final float stepSize = Coord1.blockToPx(STEP_SIZE);
 
 		// Get camera position of player
 		var camPos = game.controls.getCameraPosition().toPx();
 		var camRot = game.controls.getViewDirection();
 
 		// Define the corners of the block
-		int[][] cornerOffsets = {
+		byte[][] cornerOffsets = {
 			// X, Y, Z
 			{ 0, 0, 0 },
 			{ 1, 0, 0 },
@@ -31,44 +31,44 @@ public class Raycast {
 		};
 
 		// Check visibility for each corner
-		for (int[] offsets : cornerOffsets) {
-			int blockCornerX = blockX + offsets[0];
-			int blockCornerY = blockY + offsets[1];
-			int blockCornerZ = blockZ + offsets[2];
+		for (byte[] offsets : cornerOffsets) {
+			short blockCornerX = (short) (blockX + offsets[0]);
+			short blockCornerY = (short) (blockY + offsets[1]);
+			short blockCornerZ = (short) (blockZ + offsets[2]);
 
 			// Calculate direction vector from player to corner
-			double distX = Coord1.blockToPx(blockCornerX) - camPos.x;
-			double distY = Coord1.blockToPx(blockCornerY) - camPos.y;
-			double distZ = Coord1.blockToPx(blockCornerZ) - camPos.z;
+			float distX = Coord1.blockToPx(blockCornerX) - camPos.x;
+			float distY = Coord1.blockToPx(blockCornerY) - camPos.y;
+			float distZ = Coord1.blockToPx(blockCornerZ) - camPos.z;
 
 			// Early return if block is directly adjacent to camera
-			double oneBlock = Coord1.blockToPx(1);
+			float oneBlock = Coord1.blockToPx(1);
 			if (Math.abs(distX) < oneBlock && Math.abs(distY) < oneBlock && Math.abs(distZ) < oneBlock)
 				return true;
 
 			// Normalize the direction vector
-			double length = Math.sqrt(distX * distX + distY * distY + distZ * distZ);
-			double vecX = distX / length;
-			double vecY = distY / length;
-			double vecZ = distZ / length;
+			float length = (float) Math.sqrt(distX * distX + distY * distY + distZ * distZ);
+			float vecX = distX / length;
+			float vecY = distY / length;
+			float vecZ = distZ / length;
 
 			// Early return if block is not within the player's view
-			double dxRot = Math.abs(vecX - camRot.x);
-			double dyRot = Math.abs(vecY - camRot.y);
-			double dzRot = Math.abs(vecZ - camRot.z);
+			float dxRot = (float) Math.abs(vecX - camRot.x);
+			float dyRot = (float) Math.abs(vecY - camRot.y);
+			float dzRot = (float) Math.abs(vecZ - camRot.z);
 			if (dxRot > VIEWPORT || dyRot > VIEWPORT || dzRot > VIEWPORT)
 				continue;
 
 			// Number of steps to reach the block
-			int stepCount = (int) (length / stepSize);
+			short stepCount = (short) (length / stepSize);
 
 			// Raycasting loop
-			double curX = camPos.x;
-			double curY = camPos.y;
-			double curZ = camPos.z;
+			float curX = camPos.x;
+			float curY = camPos.y;
+			float curZ = camPos.z;
 
 			BlockCoord lastCur = new BlockCoord(-1, -1, -1);
-			for (int i = 0; i < stepCount; i++) {
+			for (byte i = 0; i < stepCount; i++) {
 				curX += vecX * stepSize;
 				curY += vecY * stepSize;
 				curZ += vecZ * stepSize;
@@ -101,25 +101,24 @@ public class Raycast {
 	}
 
 	public static HoveredBlock getLookingAt(Game game) {
-		final double stepSize = 0.5;
 
 		HoveredBlock result = new HoveredBlock(null, null);
 
 		var camPos = game.controls.getCameraPosition().toSubBlock();
-		Vector3<Double> vect = game.controls.getViewDirection();
+		var vect = game.controls.getViewDirection();
 
 		// Raycasting loop
-		double x = camPos.x;
-		double y = camPos.y;
-		double z = camPos.z;
-		double lastX = 0, lastY = 0, lastZ = 0;
+		float x = camPos.x;
+		float y = camPos.y;
+		float z = camPos.z;
+		float lastX = 0, lastY = 0, lastZ = 0;
 		while (true) {
 			// Step forward
-			x += vect.x * stepSize;
-			y += vect.y * stepSize;
-			z += vect.z * stepSize;
+			x += vect.x * STEP_SIZE;
+			y += vect.y * STEP_SIZE;
+			z += vect.z * STEP_SIZE;
 
-			BlockCoord curBlock = applyAsBlock(val -> Math.floor(val), x, y, z);
+			BlockCoord curBlock = applyAsBlock(val -> (float) Math.floor(val), x, y, z);
 
 			// Looking outside the world so no block selected
 			if (!game.world.isWithinWorld(curBlock.x, curBlock.y, curBlock.z))
@@ -127,7 +126,7 @@ public class Raycast {
 
 			// If block is solid, return the hit block and step backward and return the adjacent block
 			if (!game.world.isAir(curBlock.x, curBlock.y, curBlock.z)) {
-				BlockCoord lastBlock = applyAsBlock(val -> Math.floor(val), lastX, lastY, lastZ);
+				BlockCoord lastBlock = applyAsBlock(val -> (float) Math.floor(val), lastX, lastY, lastZ);
 				result.hoveredBlock = curBlock;
 				result.adjacentBlock = lastBlock;
 				return result;
@@ -140,12 +139,12 @@ public class Raycast {
 		}
 	}
 
-	private interface LambdaDouble {
-		double call(double val);
+	private interface LambdaFloat {
+		float call(float val);
 	}
 
-	private static BlockCoord applyAsBlock(LambdaDouble operation, double x, double y, double z) {
-		return new BlockCoord((int) operation.call(x), (int) operation.call(y), (int) operation.call(z));
+	private static BlockCoord applyAsBlock(LambdaFloat operation, float x, float y, float z) {
+		return Coord3.fromSubBlock(operation.call(x), operation.call(y), operation.call(z)).toBlock();
 	}
 
 }

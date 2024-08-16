@@ -36,7 +36,7 @@ public class Controller {
 
 	public Coord3 getCameraPosition() {
 		PxCoord posPx = this.pos.toPx();
-		double heightPx = Coord1.fromSubBlock(Player.PLAYER_HEIGHT).toPx();
+		float heightPx = Coord1.fromSubBlock(Player.PLAYER_HEIGHT).toPx();
 		return Coord3.fromPx(posPx.x, posPx.y + heightPx, posPx.z);
 	}
 
@@ -56,18 +56,18 @@ public class Controller {
 		return Math.toDegrees(game.controls.getMouseVertRads());
 	}
 
-	public Vector3<Double> getViewDirection() {
-		double x = Math.cos(this.tilt) * Math.sin(this.rot);
-		double y = Math.sin(this.tilt);
-		double z = Math.cos(this.rot) * Math.cos(this.tilt);
+	public Vector3<Float> getViewDirection() {
+		float x = (float) (Math.cos(this.tilt) * Math.sin(this.rot));
+		float y = (float) Math.sin(this.tilt);
+		float z = (float) (Math.cos(this.rot) * Math.cos(this.tilt));
 
 		// Normalize
-		double length = Math.sqrt(x * x + y * y + z * z);
+		float length = (float) Math.sqrt(x * x + y * y + z * z);
 		x /= length;
 		y /= length;
 		z /= length;
 
 		// Return unit vector
-		return new Vector3<Double>(x, y, z);
+		return new Vector3<Float>(x, y, z);
 	}
 }

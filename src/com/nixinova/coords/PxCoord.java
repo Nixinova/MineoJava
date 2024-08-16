@@ -2,34 +2,28 @@ package com.nixinova.coords;
 
 import com.nixinova.Vector3;
 
-public class PxCoord extends BaseCoord<Double> {
+public class PxCoord extends BaseCoord<Float> {
 
-	public double x;
-	public double y;
-	public double z;
+	public static class Vector extends Vector3<Float> {
+		public Vector(float x, float y, float z) {
+			super(x, y, z);
+		}
+	}
+
+	public float x, y, z;
 
 	public PxCoord() {
-		this.x = this.y = this.z = 0.0;
+		this.x = this.y = this.z = 0.0f;
 	}
 
 	public PxCoord(double x, double y, double z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.x = (float) x;
+		this.y = (float) y;
+		this.z = (float) z;
 	}
-	
+
 	public Coord3 toCoord() {
 		return Coord3.fromPx(this);
-	}
-
-	public void add(Vector3<Double> vec) {
-		this.x += vec.x;
-		this.y += vec.y;
-		this.z += vec.z;
-	}
-
-	public PxCoord applyVector(Vector3<Double> vec) {
-		return new PxCoord(this.x + vec.x, this.y + vec.y, this.z + vec.z);
 	}
 
 }

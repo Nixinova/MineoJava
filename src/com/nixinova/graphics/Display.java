@@ -18,8 +18,8 @@ public class Display extends Canvas implements Runnable {
 
 	private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-	public static int WIDTH = (int) screenSize.getWidth();
-	public static int HEIGHT = (int) screenSize.getHeight();
+	public static short WIDTH = (short) screenSize.getWidth();
+	public static short HEIGHT = (short) screenSize.getHeight();
 
 	private Thread thread;
 	private Render3D renderer;

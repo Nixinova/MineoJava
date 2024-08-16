@@ -57,7 +57,7 @@ public class Keys {
 	}
 
 	public boolean pressedAnyKey(int... keys) {
-		for (int i = 0; i < keys.length; i++) {
+		for (byte i = 0; i < keys.length; i++) {
 			if (this.pressedKey(keys[i]))
 				return true;
 		}

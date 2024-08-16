@@ -19,6 +19,7 @@ import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.main.Game;
 import com.nixinova.options.Options;
 
+
 public class BlocksRenderer extends Render {
 	private static final double SKY_SIZE = 1.5;
 
@@ -106,9 +107,9 @@ public class BlocksRenderer extends Render {
 		// Loop from bottom to top of world
 		BlockCoord min = this.game.world.minCorner;
 		BlockCoord max = this.game.world.maxCorner;
-		for (int x = min.x; x <= max.x; x++) {
-			for (int y = min.y; y <= max.y; y++) {
-				for (int z = min.z; z <= max.z; z++) {
+		for (short x = min.x; x <= max.x; x++) {
+			for (short y = min.y; y <= max.y; y++) {
+				for (short z = min.z; z <= max.z; z++) {
 					// Ensure block is not air
 					boolean isAir = this.game.world.isAir(x, y, z);
 					if (isAir)
@@ -135,7 +136,7 @@ public class BlocksRenderer extends Render {
 		}
 	}
 
-	private void drawOneBlock(int blockX, int blockY, int blockZ) {
+	private void drawOneBlock(short blockX, short blockY, short blockZ) {
 		final BlockFace[] faces = {
 			BlockFace.XMIN, BlockFace.XMAX,
 			BlockFace.YMIN, BlockFace.YMAX,
@@ -146,7 +147,7 @@ public class BlocksRenderer extends Render {
 		}
 	}
 
-	private void drawBlockFace(BlockFace face, int blockX, int blockY, int blockZ) {
+	private void drawBlockFace(BlockFace face, short blockX, short blockY, short blockZ) {
 		// Exit if face is not exposed
 		if (!this.game.world.isFaceExposed(face, blockX, blockY, blockZ)) {
 			return;
@@ -159,13 +160,13 @@ public class BlocksRenderer extends Render {
 		TexelCorners texCornersList = new TexelCorners(blockCorners);
 
 		// Get corners of each texel and render
-		for (int texX = 0; texX < Texture.SIZE; texX++) {
-			yloop: for (int texY = 0; texY < Texture.SIZE; texY++) {
+		for (byte texX = 0; texX < Texture.SIZE; texX++) {
+			yloop: for (byte texY = 0; texY < Texture.SIZE; texY++) {
 				SubBlockCoord[] curTexCorners = texCornersList.getTexelCorners(texX, texY);
 
 				// Get screen coords for each corner
 				PxCoord[] polygonCorners = new PxCoord[curTexCorners.length];
-				for (int i = 0; i < polygonCorners.length; i++) {
+				for (byte i = 0; i < polygonCorners.length; i++) {
 					PxCoord screenPos = coordToScreenPx(curTexCorners[i], false);
 
 					// Kill polygon if one corner position is not valid
@@ -184,12 +185,12 @@ public class BlocksRenderer extends Render {
 
 	}
 
-	private boolean isWithinRenderDistance(int blockX, int blockY, int blockZ) {
+	private boolean isWithinRenderDistance(short blockX, short blockY, short blockZ) {
 		BlockCoord playerPos = this.game.controls.getFootPosition().toBlock();
 		int dx = playerPos.x - blockX;
 		int dy = playerPos.y - blockY;
 		int dz = playerPos.z - blockZ;
-		int distance = (int) Math.sqrt(dx * dx + dy * dy + dz * dz);
+		short distance = (short) Math.sqrt(dx * dx + dy * dy + dz * dz);
 		return distance < Options.renderDistance;
 	}
 

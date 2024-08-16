@@ -1,12 +1,12 @@
 package com.nixinova.input;
 
-import com.nixinova.Vector3;
 import com.nixinova.blocks.Block;
 import com.nixinova.blocks.HoveredBlock;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord1;
 import com.nixinova.coords.Coord3;
 import com.nixinova.coords.PxCoord;
+import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.coords.TxCoord;
 import com.nixinova.main.Game;
 import com.nixinova.options.Options;
@@ -130,7 +130,7 @@ public class ControlsTick {
 
 		// Movement
 		controls.isWalking = kbd.pressedAnyKey(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
-		double mvChange = kbd.pressedKey(Keys.SPRINT) ? Options.sprintSpeed : Options.walkSpeed;
+		float mvChange = kbd.pressedKey(Keys.SPRINT) ? Options.sprintSpeed : Options.walkSpeed;
 		if (kbd.pressedKey(Keys.FORWARD))
 			zMove += mvChange;
 		if (kbd.pressedKey(Keys.BACK))
@@ -144,10 +144,9 @@ public class ControlsTick {
 		Coord3 nextMove = resultFromMove(xMove, yMove, zMove).pos;
 		CornersList collisionPoints = Hitbox.getCollisionPoints(this.game.world, nextMove);
 		if (collisionPoints.list.size() > 0) {
-			Vector3<Double> shove = calculateShoveFactor(collisionPoints, mvChange, Options.gravity);
-
 			// Shove player in the given direction
 			PxCoord curPos = controls.pos.toPx();
+			var shove = calculateShoveFactor(collisionPoints, mvChange, Options.gravity);
 			controls.pos = Coord3.fromPx(curPos.x + shove.x, curPos.y + shove.y, curPos.z + shove.z);
 		}
 
@@ -262,8 +261,8 @@ public class ControlsTick {
 	 * Calculates an opposing vector to the direction the player is moving in,
 	 * as apparent by which (combination of) vertices of their hitbox are in collision with a solid block.
 	 */
-	private Vector3<Double> calculateShoveFactor(CornersList collisionPoints, double horizMove, double vertMove) {
-		Vector3<Double> shove = new Vector3<Double>(0d, 0d, 0d);
+	private SubBlockCoord.Vector calculateShoveFactor(CornersList collisionPoints, float horizMove, float vertMove) {
+		var shove = new SubBlockCoord.Vector(0, 0, 0);
 
 		// Collision with foot
 		// along all planes at foot

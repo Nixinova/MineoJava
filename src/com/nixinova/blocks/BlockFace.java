@@ -35,10 +35,10 @@ public enum BlockFace {
 		return faces;
 	}
 
-	public Vector3<Integer> getOffset() {
-		int x = 0;
-		int y = 0;
-		int z = 0;
+	public Vector3.SmallInt getOffset() {
+		byte x = 0;
+		byte y = 0;
+		byte z = 0;
 
 		switch (this) {
 			case XMAX -> x++;
@@ -49,7 +49,7 @@ public enum BlockFace {
 			case ZMIN -> z--;
 		}
 
-		return new Vector3<Integer>(x, y, z);
+		return new Vector3.SmallInt(x, y, z);
 	}
 
 }

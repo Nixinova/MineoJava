@@ -2,33 +2,31 @@ package com.nixinova.coords;
 
 import com.nixinova.Vector3;
 
-public class SubBlockCoord extends BaseCoord<Double> {
+public class SubBlockCoord extends BaseCoord<Float> {
 
-	public double x;
-	public double y;
-	public double z;
+	public static class Vector extends Vector3<Float> {
+		public Vector(float x, float y, float z) {
+			super(x, y, z);
+		}
+	}
+
+	public float x, y, z;
 
 	public SubBlockCoord() {
-		this.x = this.y = this.z = 0.0;
+		this.x = this.y = this.z = 0.0f;
 	}
 
 	public SubBlockCoord(double x, double y, double z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.x = (float) x;
+		this.y = (float) y;
+		this.z = (float) z;
 	}
 
 	public Coord3 toCoord() {
 		return Coord3.fromSubBlock(this);
 	}
 
-	public void add(Vector3<Double> vec) {
-		this.x += vec.x;
-		this.y += vec.y;
-		this.z += vec.z;
-	}
-
-	public SubBlockCoord applyVector(Vector3<Double> vec) {
+	public SubBlockCoord applyVector(SubBlockCoord.Vector vec) {
 		return new SubBlockCoord(this.x + vec.x, this.y + vec.y, this.z + vec.z);
 	}
 

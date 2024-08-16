@@ -4,20 +4,17 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 
-import com.nixinova.coords.BlockCoord;
-import com.nixinova.coords.Coord3;
-import com.nixinova.coords.SubBlockCoord;
 import com.nixinova.main.Game;
 import com.nixinova.main.Mineo;
 import com.nixinova.options.Options;
 
 public class ScreenText {
 
-	private static final int INDENT = 5;
-	private static final int SEP = 15;
+	private static final byte INDENT = 5;
+	private static final byte SEP = 15;
 
 	private Graphics graphics;
-	private int curLineIndex = 1;
+	private byte curLineIndex = 1;
 
 	public ScreenText(Graphics graphics) {
 		this.graphics = graphics;
@@ -83,14 +80,6 @@ public class ScreenText {
 	private void drawInfoLine(String fStr, Object... args) {
 		String fmtdString = String.format(fStr, args);
 		graphics.drawString(fmtdString, INDENT, SEP * curLineIndex++);
-	}
-
-	private String formatCoord(Coord3 coord) {
-		SubBlockCoord pos = coord.toSubBlock();
-		String playerX = String.format("%.1f", pos.x);
-		String playerY = String.format("%.1f", pos.y);
-		String playerZ = String.format("%.1f", pos.z);
-		return playerX + " / " + playerY + " / " + playerZ;
 	}
 
 }
