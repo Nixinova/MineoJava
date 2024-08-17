@@ -79,16 +79,16 @@ public class BlocksRenderer extends Render {
 		final int bandHeight = 10;
 		final double gradientMult = 0.97;
 
-		double camPos = this.game.controls.getMouseVertRads();
-		double skySize = Display.HEIGHT * (SKY_SIZE + camPos) + this.game.player.getPosition().toBlock().y;
+		double tilt = this.game.controls.getMouseVertRads();
+		double skySize = Display.HEIGHT * (SKY_SIZE + tilt) + this.game.player.getPosition().toBlock().y;
 
 		// Generate starting blue colour from mouse angle
 		int currentBlue = baseBlue;
-		for (double i = camPos; i > 0; i -= 0.01) {
+		for (double i = tilt; i > 0; i -= 0.01) {
 			// brighten blue as player is looking upwards
 			currentBlue /= gradientMult;
 		}
-		for (double i = camPos; i < 0; i += 0.01) {
+		for (double i = tilt; i < 0; i += 0.01) {
 			// darken blue as player is looking downwards
 			currentBlue *= gradientMult;
 		}
@@ -140,23 +140,23 @@ public class BlocksRenderer extends Render {
 	}
 
 	private void drawOneBlock(int blockX, int blockY, int blockZ) {
+		Render texture = this.game.world.getTextureAt(blockX, blockY, blockZ);
+
 		final BlockFace[] faces = {
 			BlockFace.XMIN, BlockFace.XMAX,
 			BlockFace.YMIN, BlockFace.YMAX,
 			BlockFace.ZMIN, BlockFace.ZMAX,
 		};
 		for (BlockFace face : faces) {
-			drawBlockFace(face, blockX, blockY, blockZ);
+			drawBlockFace(face, blockX, blockY, blockZ, texture);
 		}
 	}
 
-	private void drawBlockFace(BlockFace face, int blockX, int blockY, int blockZ) {
+	private void drawBlockFace(BlockFace face, int blockX, int blockY, int blockZ, Render texture) {
 		// Exit if face is not exposed
 		if (!this.game.world.isFaceExposed(face, blockX, blockY, blockZ)) {
 			return;
 		}
-
-		Render texture = this.game.world.getTextureAt(blockX, blockY, blockZ);
 
 		// Get corners of block
 		BlockCorners blockCorners = new BlockCorners(blockX, blockY, blockZ, face);

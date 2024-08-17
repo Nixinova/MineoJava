@@ -22,6 +22,12 @@ public class SubBlockCoord extends BaseCoord<Double> {
 		return Coord3.fromSubBlock(this);
 	}
 
+	public void add(double x, double y, double z) {
+		this.x += x;
+		this.y += y;
+		this.z += z;
+	}
+
 	public void add(Vector3<Double> vec) {
 		this.x += vec.x;
 		this.y += vec.y;

@@ -16,6 +16,8 @@ import com.nixinova.main.Game;
 public class Display extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
 
+	private static final int TPS = 60;
+
 	private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
 	public static int WIDTH = (int) screenSize.getWidth();
@@ -68,7 +70,7 @@ public class Display extends Canvas implements Runnable {
 	public void run() {
 		int frames = 0;
 		long prevTime = System.nanoTime();
-		double secsPerTick = 1.0D / 60;
+		double secsPerTick = 1.0 / TPS;
 		double unprocessedSecs = 0;
 		long nanosecs = 0;
 
@@ -77,7 +79,7 @@ public class Display extends Canvas implements Runnable {
 			long passedTime = curTime - prevTime;
 			prevTime = curTime;
 			nanosecs += passedTime;
-			unprocessedSecs += passedTime / 1.0E9D;
+			unprocessedSecs += passedTime / 1e9;
 
 			while (unprocessedSecs > secsPerTick) {
 				this.game.tick();
@@ -98,7 +100,7 @@ public class Display extends Canvas implements Runnable {
 	private void render() {
 		BufferStrategy buffer = getBufferStrategy();
 		if (buffer == null) {
-			createBufferStrategy(3);
+			createBufferStrategy(2);
 			return;
 		}
 

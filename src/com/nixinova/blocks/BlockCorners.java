@@ -23,54 +23,61 @@ public class BlockCorners {
 	}
 
 	public SubBlockCoord[] toArray() {
-		return abcdToArray(cornerA, cornerB, cornerC, cornerD);
+		return abcdToArray(this.cornerA, this.cornerB, this.cornerC, this.cornerD);
 	}
 
 	private void loadCornersForFace(BlockFace face) {
 		final int offset = 1;
+
+		this.cornerA = new SubBlockCoord(blockX, blockY, blockZ);
+		this.cornerB = new SubBlockCoord(blockX, blockY, blockZ);
+		this.cornerC = new SubBlockCoord(blockX, blockY, blockZ);
+		this.cornerD = new SubBlockCoord(blockX, blockY, blockZ);
+
 		switch (face) {
 			// Note: ()-parts are the unchanging axis
 			case XMIN -> {
 				// X=+0; four corners of Y/Z
-				cornerA = new SubBlockCoord((blockX), blockY, blockZ);
-				cornerB = new SubBlockCoord((blockX), blockY, blockZ + offset);
-				cornerC = new SubBlockCoord((blockX), blockY + offset, blockZ);
-				cornerD = new SubBlockCoord((blockX), blockY + offset, blockZ + offset);
+				this.cornerA.add(+0, 0, 0);
+				this.cornerB.add(+0, 0, offset);
+				this.cornerC.add(+0, offset, 0);
+				this.cornerD.add(+0, offset, offset);
 			}
 			case XMAX -> {
 				// X=+1; four corners of Y/Z
-				cornerA = new SubBlockCoord((blockX + 1), blockY, blockZ);
-				cornerB = new SubBlockCoord((blockX + 1), blockY, blockZ + offset);
-				cornerC = new SubBlockCoord((blockX + 1), blockY + offset, blockZ);
-				cornerD = new SubBlockCoord((blockX + 1), blockY + offset, blockZ + offset);
+				this.cornerA.add(+1, 0, 0);
+				this.cornerB.add(+1, 0, offset);
+				this.cornerC.add(+1, offset, 0);
+				this.cornerD.add(+1, offset, offset);
 			}
 			case YMIN -> {
 				// Y=+0; four corners of X/Z
-				cornerA = new SubBlockCoord(blockX, (blockY), blockZ);
-				cornerB = new SubBlockCoord(blockX, (blockY), blockZ + offset);
-				cornerC = new SubBlockCoord(blockX + offset, (blockY), blockZ);
-				cornerD = new SubBlockCoord(blockX + offset, (blockY), blockZ + offset);
+				this.cornerA.add(0, +0, 0);
+				this.cornerB.add(0, +0, offset);
+				this.cornerC.add(offset, +0, 0);
+				this.cornerD.add(offset, +0, offset);
 			}
 			case YMAX -> {
 				// Y=+1; four corners of X/Z
-				cornerA = new SubBlockCoord(blockX, (blockY + 1), blockZ);
-				cornerB = new SubBlockCoord(blockX, (blockY + 1), blockZ + offset);
-				cornerC = new SubBlockCoord(blockX + offset, (blockY + 1), blockZ);
-				cornerD = new SubBlockCoord(blockX + offset, (blockY + 1), blockZ + offset);
+				// Y=+0; four corners of X/Z
+				this.cornerA.add(0, +1, 0);
+				this.cornerB.add(0, +1, offset);
+				this.cornerC.add(offset, +1, 0);
+				this.cornerD.add(offset, +1, offset);
 			}
 			case ZMIN -> {
 				// Z=+0; four corners of X/Y
-				cornerA = new SubBlockCoord(blockX, blockY, (blockZ));
-				cornerB = new SubBlockCoord(blockX, blockY + offset, (blockZ));
-				cornerD = new SubBlockCoord(blockX + offset, blockY + offset, (blockZ));
-				cornerC = new SubBlockCoord(blockX + offset, blockY, (blockZ));
+				this.cornerA.add(0, 0, +0);
+				this.cornerB.add(0, offset, +0);
+				this.cornerC.add(offset, 0, +0);
+				this.cornerD.add(offset, offset, +0);
 			}
 			case ZMAX -> {
 				// Z=+1; four corners of X/Y
-				cornerA = new SubBlockCoord(blockX, blockY, (blockZ + 1));
-				cornerB = new SubBlockCoord(blockX, blockY + offset, (blockZ + 1));
-				cornerD = new SubBlockCoord(blockX + offset, blockY + offset, (blockZ + 1));
-				cornerC = new SubBlockCoord(blockX + offset, blockY, (blockZ + 1));
+				this.cornerA.add(0, 0, +1);
+				this.cornerB.add(0, offset, +1);
+				this.cornerC.add(offset, 0, +1);
+				this.cornerD.add(offset, offset, +1);
 			}
 		}
 	}

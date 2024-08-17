@@ -1,6 +1,7 @@
 # Changelog
 
-## Next
+## 0.0.21_1
+*2024-08-17 22:13*
 - Added HUD toggling with F2
 - Added reach option (defaults to 5 blocks)
 - Added block selection outline
