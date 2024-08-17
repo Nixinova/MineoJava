@@ -78,7 +78,7 @@ public class MenuDisplay extends Canvas implements Runnable {
 		Graphics graphics = buffer.getDrawGraphics();
 
 		// Draw menu
-		this.menu.render(graphics);
+		this.menu.run(graphics);
 
 		// Done
 		graphics.dispose();

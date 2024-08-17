@@ -17,14 +17,17 @@ public class Mineo {
 	public static final String VERSION = "0.0.21_1";
 	public static final String TITLE = "Mineo " + VERSION;
 
+	private static JFrame frame;
+
 	public static void main(String[] args) {
 		Options.createOptions();
 		BufferedImage cursor = new BufferedImage(16, 16, 2);
 		Cursor blank = Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "blank");
 
-		JFrame frame = new JFrame();
+		frame = new JFrame();
 
-		loadMainMenu(frame);
+		// Start at main menu
+		loadMainMenu();
 
 		frame.pack();
 		frame.getContentPane().setCursor(blank);
@@ -37,7 +40,8 @@ public class Mineo {
 		frame.requestFocus();
 	}
 
-	public static void loadGame(JFrame frame) {
+	public static void loadGame() {
+		frame = new JFrame();
 		InputHandler input = new InputHandler(frame);
 		Game game = new Game(input);
 		Display display = new Display(game, input);
@@ -48,7 +52,8 @@ public class Mineo {
 		display.requestFocusInWindow();
 	}
 
-	public static void loadMainMenu(JFrame frame) {
+	public static void loadMainMenu() {
+		frame = new JFrame();
 		InputHandler input = new InputHandler(frame);
 		MenuDisplay menuDisplay = new MenuDisplay(new MainMenu(input));
 
