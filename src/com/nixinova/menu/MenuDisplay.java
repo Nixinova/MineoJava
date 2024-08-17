@@ -1,9 +1,7 @@
 package com.nixinova.menu;
 
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.FocusListener;
@@ -12,8 +10,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 
-import com.nixinova.graphics.Render;
-import com.nixinova.graphics.Texture;
 import com.nixinova.input.InputHandler;
 
 public class MenuDisplay extends Canvas implements Runnable {
@@ -25,9 +21,13 @@ public class MenuDisplay extends Canvas implements Runnable {
 	public static int HEIGHT = (int) screenSize.getHeight();
 
 	private Thread thread;
+	private BaseMenu menu;
 	private boolean running = false;
 
-	public MenuDisplay(InputHandler input) {
+	public MenuDisplay(BaseMenu menu) {
+		this.menu = menu;
+		InputHandler input = this.menu.getInput();
+
 		Dimension size = new Dimension(WIDTH, HEIGHT);
 		setPreferredSize(size);
 		setMinimumSize(size);
@@ -76,20 +76,9 @@ public class MenuDisplay extends Canvas implements Runnable {
 		}
 
 		Graphics graphics = buffer.getDrawGraphics();
-		Font initialFont = graphics.getFont();
 
 		// Draw menu
-		Font headingFont = initialFont.deriveFont(initialFont.getSize() * 10);
-		graphics.setFont(headingFont);
-		graphics.setColor(Color.black);
-		graphics.drawString("MINEO", 100, 100);
-		
-		graphics.setFont(initialFont);
-		graphics.setColor(Color.black);
-		graphics.drawString("JAVA", 200, 100);
-
-		Render grassBlock = Texture.loadTexture("blocks/grass");
-		graphics.drawImage(grassBlock.getBufferedImage(), 200, 200, null);
+		this.menu.render(graphics);
 
 		// Done
 		graphics.dispose();

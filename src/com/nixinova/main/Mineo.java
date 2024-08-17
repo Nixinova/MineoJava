@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 
 import com.nixinova.graphics.Display;
 import com.nixinova.input.InputHandler;
+import com.nixinova.menu.MainMenu;
 import com.nixinova.menu.MenuDisplay;
 import com.nixinova.options.Options;
 
@@ -49,7 +50,7 @@ public class Mineo {
 
 	public static void loadMainMenu(JFrame frame) {
 		InputHandler input = new InputHandler(frame);
-		MenuDisplay menuDisplay = new MenuDisplay(input);
+		MenuDisplay menuDisplay = new MenuDisplay(new MainMenu(input));
 
 		frame.add(menuDisplay);
 		frame.pack();
