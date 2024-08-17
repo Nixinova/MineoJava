@@ -36,7 +36,7 @@ public class HUD {
 		graphics.fillRect(startX - sep / 2, startY - sep / 2, (9 * cell) + sep, cell);
 
 		// Draw selected slot
-		graphics.setColor(Color.yellow);
+		graphics.setColor(PixelColor.fromPixel(PixelColor.SELECTION_OUTLINE));
 		graphics.fillRect(startX - sep / 2 + (Hotbar.currentBlockID - 1) * cell, startY - sep / 2, cell, cell);
 
 		// Draw hotbar slots
@@ -55,7 +55,7 @@ public class HUD {
 		int size = 5;
 		int startX = (Display.WIDTH - size) / 2;
 		int startY = (Display.HEIGHT - size) / 2;
-		graphics.setColor(Color.yellow);
+		graphics.setColor(PixelColor.fromPixel(PixelColor.SELECTION_OUTLINE));
 		graphics.fillRect(startX, startY, size, size);
 	}
 

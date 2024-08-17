@@ -3,7 +3,9 @@
 ## Next
 - Added HUD toggling with F2
 - Added reach option (defaults to 5 blocks)
+- Added block selection outline
 - Limited block interactions to only what is within the player's reach
+- Changed color of cursor and hotbar selection outline
 - Changed fidelity of selected block raycaster
 
 ## 0.0.21

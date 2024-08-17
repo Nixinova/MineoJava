@@ -28,6 +28,7 @@ public class BlocksRenderer extends Render {
 	private double xRot, yRot;
 	private double xRotSin, yRotSin;
 	private double xRotCos, yRotCos;
+	private BlockCoord lookingAt;
 
 	public BlocksRenderer(int width, int height) {
 		super(width, height);
@@ -51,6 +52,9 @@ public class BlocksRenderer extends Render {
 		this.xRotCos = Math.cos(this.xRot);
 		this.yRotSin = Math.sin(this.yRot);
 		this.yRotCos = Math.cos(this.yRot);
+
+		// Save looking at block
+		this.lookingAt = Raycast.getLookingAt(game).hoveredBlock;
 	}
 
 	public void renderWorld() {
@@ -176,8 +180,18 @@ public class BlocksRenderer extends Render {
 					polygonCorners[i] = screenPos;
 				}
 
-				// Save texel
+				// Get texel
 				int txPixel = Texture.getTexel(texture, texX, texY);
+
+				// White border for hovered block
+				boolean isLookingAt = this.lookingAt != null
+					&& this.lookingAt.x == blockX && this.lookingAt.y == blockY && this.lookingAt.z == blockZ;
+				boolean onBorder = texX == 0 || texX == Texture.SIZE - 1 || texY == 0 || texY == Texture.SIZE - 1;
+				if (isLookingAt && onBorder) {
+					txPixel = PixelColor.SELECTION_OUTLINE;
+				}
+
+				// Save texel
 				saveRect(polygonCorners, txPixel);
 			}
 		}
