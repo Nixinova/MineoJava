@@ -2,6 +2,9 @@
 
 ## Next
 - Added HUD toggling with F2
+- Added reach option (defaults to 5 blocks)
+- Limited block interactions to only what is within the player's reach
+- Changed fidelity of selected block raycaster
 
 ## 0.0.21
 *2024-08-15 23:19*

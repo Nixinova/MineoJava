@@ -15,7 +15,7 @@ public class Options {
 	 * - +0.10: Minor: Changes to the implementation of a value.
 	 * - +0.01: Micro: Addition of new options, keeps backward compatibility.
 	 */
-	public static final float OPTIONS_VERSION = 1.11F;
+	public static final float OPTIONS_VERSION = 1.12F;
 
 	private static final class DEFAULT_OPTIONS {
 		public static long seed = 100L;
@@ -29,6 +29,7 @@ public class Options {
 		public static double walkSpeed = 0.5;
 		public static double sprintSpeed = 0.8;
 		public static double jumpHeight = 1.5;
+		public static double reach = 5.0;
 	}
 
 	private static final class OPTION_STRINGS {
@@ -44,6 +45,7 @@ public class Options {
 		public static String walkSpeed = "walkSpeed";
 		public static String sprintSpeed = "sprintSpeed";
 		public static String jumpHeight = "jumpHeight";
+		public static String reach = "reach";
 	}
 
 	public static float fileVersion = OPTIONS_VERSION;
@@ -58,6 +60,7 @@ public class Options {
 	public static double sprintSpeed = DEFAULT_OPTIONS.sprintSpeed;
 	public static double walkSpeed = DEFAULT_OPTIONS.walkSpeed;
 	public static double jumpHeight = DEFAULT_OPTIONS.jumpHeight;
+	public static double reach = DEFAULT_OPTIONS.reach;
 
 	public static String writeValue(String id, String value) {
 		String br = System.getProperty("line.separator");
@@ -93,6 +96,7 @@ public class Options {
 				writer.write(writeValue(OPTION_STRINGS.walkSpeed, DEFAULT_OPTIONS.walkSpeed));
 				writer.write(writeValue(OPTION_STRINGS.sprintSpeed, DEFAULT_OPTIONS.sprintSpeed));
 				writer.write(writeValue(OPTION_STRINGS.jumpHeight, DEFAULT_OPTIONS.jumpHeight));
+				writer.write(writeValue(OPTION_STRINGS.reach, DEFAULT_OPTIONS.reach));
 
 				writer.close();
 			} catch (IOException err) {
@@ -151,5 +155,7 @@ public class Options {
 			sprintSpeed = Double.parseDouble(val);
 		if (name.contains(OPTION_STRINGS.jumpHeight))
 			jumpHeight = Double.parseDouble(val);
+		if (name.contains(OPTION_STRINGS.reach))
+			reach = Double.parseDouble(val);
 	}
 }
