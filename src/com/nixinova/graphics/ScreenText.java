@@ -51,7 +51,7 @@ public class ScreenText {
 		// Block being looked at
 		var lookingAt = game.player.getLookingAt().hoveredBlock;
 		if (lookingAt != null)
-			drawInfoLine("Hovered: %d / %d / %d", lookingAt.x, lookingAt.y, lookingAt.z);
+			drawInfoLine("Selected: %d / %d / %d", lookingAt.x, lookingAt.y, lookingAt.z);
 	}
 
 	public void drawOptionsWarning() {

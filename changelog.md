@@ -7,6 +7,7 @@
 - Limited block interactions to only what is within the player's reach
 - Changed color of cursor and hotbar selection outline
 - Changed fidelity of selected block raycaster
+- Changed information line label "Hovered" to "Selected"
 
 ## 0.0.21
 *2024-08-15 23:19*
