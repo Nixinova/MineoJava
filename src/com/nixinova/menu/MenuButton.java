@@ -44,8 +44,23 @@ public class MenuButton {
 	}
 
 	public void drawPlain() {
-		this.graphics.setColor(Color.black);
 		this.graphics.drawString(this.text, getStringStartX(this.text, this.graphics), this.minY + btnTextStart);
+	}
+
+	public void drawPlainOutline(int scale) {
+		for (int x = -scale; x <= scale; x += scale) {
+			for (int y = -scale; y <= scale; y += scale) {
+				this.graphics.drawString(this.text, getStringStartX(this.text, this.graphics) + x,
+					this.minY + btnTextStart + y);
+			}
+		}
+	}
+
+	public void drawPlainWithOutline(Color inner, Color border, int scale) {
+		this.graphics.setColor(border);
+		drawPlainOutline(scale);
+		this.graphics.setColor(inner);
+		drawPlain();
 	}
 
 	public boolean isMouseInside(InputHandler input) {

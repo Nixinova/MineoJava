@@ -1,5 +1,6 @@
 package com.nixinova.menu;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -16,6 +17,7 @@ import com.nixinova.main.Mineo;
 
 public class MainMenu extends BaseMenu {
 	private static final String BG_TEXTURE = "blocks/dirt";
+	private static final double BG_SCALE = 10;
 
 	private Keys kbd;
 
@@ -24,9 +26,11 @@ public class MainMenu extends BaseMenu {
 		this.kbd = input.keys;
 	}
 
-	public void run(Graphics graphics) {
+	public void run(Graphics g) {
+		Graphics2D graphics = (Graphics2D) g;
+
 		// Set up buttons
-		final MenuButton menuTitle = new MenuButton(graphics, "MINEO JAVA", 150);
+		final MenuButton menuTitle = new MenuButton(graphics, "MINEO JAVA", 200);
 		final MenuButton playButton = new MenuButton(graphics, "PLAY", 400);
 		final MenuButton exitButton = new MenuButton(graphics, "EXIT", 600);
 
@@ -34,26 +38,28 @@ public class MainMenu extends BaseMenu {
 		graphics.clearRect(0, 0, Display.WIDTH, Display.HEIGHT);
 
 		// Textured background
-		BufferedImage grassBlockImg = Texture.loadTexture(BG_TEXTURE).getBufferedImage();
-		Rectangle2D anchorRect = new Rectangle2D.Double(0, 0, grassBlockImg.getWidth(), grassBlockImg.getHeight());
-		Graphics2D g2d = (Graphics2D) graphics;
-		g2d.setPaint(new TexturePaint(grassBlockImg, anchorRect));
-		g2d.fillRect(0, 0, Display.WIDTH, Display.HEIGHT);
+		BufferedImage bgImg = Texture.loadTexture(BG_TEXTURE, BG_SCALE).getBufferedImage();
+		Rectangle2D anchorRect = new Rectangle2D.Double(0, 0, bgImg.getWidth(), bgImg.getHeight());
+		graphics.setPaint(new TexturePaint(bgImg, anchorRect));
+		graphics.fillRect(0, 0, Display.WIDTH, Display.HEIGHT);
 
 		// Draw heading
-		setFont(graphics, 60, Font.BOLD);
-		graphics.setColor(Color.black);
-		menuTitle.drawPlain();
+		setFont(graphics, 100, Font.PLAIN);
+		menuTitle.drawPlainWithOutline(Color.black, Color.lightGray, 3);
 
-		// Draw version
+		// Draw footer
+		graphics.setColor(Color.black);
 		setFont(graphics, 20, Font.PLAIN);
 		graphics.drawString(Mineo.VERSION, 10, Display.HEIGHT - 80);
+		setFont(graphics, 20, Font.PLAIN);
+		graphics.drawString("\u00a9 Nixinova", Display.WIDTH - 100, Display.HEIGHT - 80);
 
 		// Draw buttons
 		playButton.draw();
 		exitButton.draw();
 
 		// Draw cursor
+		graphics.setColor(Color.white);
 		setFont(graphics, 20, Font.PLAIN);
 		graphics.drawString("+", super.input.mouseX, super.input.mouseY);
 
