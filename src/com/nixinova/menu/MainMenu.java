@@ -28,12 +28,11 @@ public class MainMenu extends BaseMenu {
 
 	public void run(Graphics g) {
 		Graphics2D graphics = (Graphics2D) g;
-		FontGraphics fg = new FontGraphics();
+		FontGraphics fg = new FontGraphics(graphics);
 
 		// Set up buttons
-		final MenuButton menuTitle = new MenuButton(graphics, "MINEO JAVA", 200);
-		final MenuButton playButton = new MenuButton(graphics, "PLAY", 400);
-		final MenuButton exitButton = new MenuButton(graphics, "EXIT", 600);
+		final MenuButton playButton = new MenuButton(graphics, fg, "    PLAY    ", 400);
+		final MenuButton exitButton = new MenuButton(graphics, fg, "    EXIT    ", 600);
 
 		// Clear
 		graphics.clearRect(0, 0, Display.WIDTH, Display.HEIGHT);
@@ -46,17 +45,17 @@ public class MainMenu extends BaseMenu {
 
 		// Draw heading
 		setFont(graphics, 100, Font.PLAIN);
-		menuTitle.drawPlainWithOutline(Color.black, Color.lightGray, 3);
-
-		// Draw footer
-		graphics.setColor(Color.black);
-		fg.load(2);
-		fg.drawString(graphics, Mineo.VERSION, 10, Display.HEIGHT - 100);
-		fg.drawString(graphics, "(c) Nixinova", Display.WIDTH - 150, Display.HEIGHT - 100);
+		fg.load(8);
+		fg.drawStringOutlined("MINEO JAVA", Color.lightGray, Color.black, Display.WIDTH / 2 - 235, 200, 8);
 
 		// Draw buttons
 		playButton.draw();
 		exitButton.draw();
+
+		// Draw footer
+		fg.load(2);
+		fg.drawString(Mineo.VERSION, Color.black, 10, Display.HEIGHT - 100);
+		fg.drawString("(c) Nixinova", Color.black, Display.WIDTH - 150, Display.HEIGHT - 100);
 
 		// Draw cursor
 		graphics.setColor(Color.white);

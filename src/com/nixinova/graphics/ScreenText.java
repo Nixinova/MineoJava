@@ -18,7 +18,7 @@ public class ScreenText {
 
 	public ScreenText(Graphics graphics) {
 		this.graphics = graphics;
-		this.fg = new FontGraphics();
+		this.fg = new FontGraphics(graphics);
 	}
 
 	public void drawMainInfo(Game game) {
@@ -68,16 +68,16 @@ public class ScreenText {
 			msg3 = "Delete options.txt in %appdata%\\.mineo and restart the game to refresh the options file.";
 		}
 
+		Color col = diffMajor ? Color.red : diffMinor ? Color.yellow : Color.white;
 		fg.load(1);
-		graphics.setColor(diffMajor ? Color.red : diffMinor ? Color.yellow : Color.white);
-		fg.drawString(graphics, msg1, INDENT, Display.HEIGHT - SEP * 8);
-		fg.drawString(graphics, msg2, INDENT, Display.HEIGHT - SEP * 7);
-		fg.drawString(graphics, msg3, INDENT, Display.HEIGHT - SEP * 6);
+		fg.drawString(msg1, col, INDENT, Display.HEIGHT - SEP * 8);
+		fg.drawString(msg2, col, INDENT, Display.HEIGHT - SEP * 7);
+		fg.drawString(msg3, col, INDENT, Display.HEIGHT - SEP * 6);
 	}
 
 	private void drawInfoLine(String fStr, Object... args) {
 		String fmtdString = String.format(fStr, args);
-		fg.drawString(graphics, fmtdString, INDENT, SEP * curLineIndex++);
+		fg.drawString(fmtdString, Color.black, INDENT, SEP * curLineIndex++);
 	}
 
 }

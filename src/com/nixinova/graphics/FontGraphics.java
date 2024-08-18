@@ -1,5 +1,6 @@
 package com.nixinova.graphics;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -12,10 +13,13 @@ public class FontGraphics {
 	private static int CHAR_WIDTH = 6;
 	private static int CHAR_HEIGHT = 8;
 
+	private Graphics graphics;
 	private Map<Character, BufferedImage> charImages;
 
-	public FontGraphics() {
+	public FontGraphics(Graphics graphics) {
+		this.graphics = graphics;
 		this.charImages = new HashMap<>();
+		load(1);
 	}
 
 	public void load(double size) {
@@ -36,15 +40,25 @@ public class FontGraphics {
 		}
 	}
 
-	public void drawString(Graphics graphics, String text, int x, int y) {
+	public void drawString(String text, Color colour, int x, int y) {
 		int xOffset = 0;
 		for (char c : text.toCharArray()) {
 			BufferedImage chImg = this.charImages.get(c);
+			chImg = applyCol(chImg, colour);
 			if (chImg != null) {
 				graphics.drawImage(chImg, x + xOffset, y, null);
 				xOffset += chImg.getWidth();
 			}
 		}
+	}
+
+	public void drawStringOutlined(String text, Color inner, Color outer, int startX, int startY, int scale) {
+		for (int x = -scale; x <= scale; x += scale) {
+			for (int y = -scale; y <= scale; y += scale) {
+				drawString(text, outer, startX + x, startY + y);
+			}
+		}
+		drawString(text, inner, startX, startY);
 	}
 
 	private BufferedImage trimTransparent(BufferedImage image, double size) {
@@ -75,6 +89,25 @@ public class FontGraphics {
 
 		// return cropped image
 		return image.getSubimage(0, 0, trimX, height);
+	}
+
+	private BufferedImage applyCol(BufferedImage image, Color col) {
+		int colour = col.getRGB();
+		int width = image.getWidth();
+		int height = image.getHeight();
+
+		BufferedImage newImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				int pixel = image.getRGB(x, y);
+				if (pixel == -1)
+					newImg.setRGB(x, y, colour);
+			}
+
+		}
+
+		return newImg;
 	}
 
 }
