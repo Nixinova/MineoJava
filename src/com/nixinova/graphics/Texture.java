@@ -3,7 +3,6 @@ package com.nixinova.graphics;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
@@ -50,7 +49,7 @@ public class Texture {
 			Render result = new Render(width, height);
 			scaledImg.getRGB(0, 0, width, height, result.getImage(), 0, width);
 			return result;
-		} catch (IOException err) {
+		} catch (Exception err) {
 			throw new RuntimeException("Error: Missing file \"" + filename + "\"");
 		}
 	}

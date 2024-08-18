@@ -1,7 +1,6 @@
 package com.nixinova.graphics;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 
 import com.nixinova.main.Game;
@@ -14,21 +13,19 @@ public class ScreenText {
 	private static final int SEP = 15;
 
 	private Graphics graphics;
+	private FontGraphics fg;
 	private int curLineIndex = 1;
 
 	public ScreenText(Graphics graphics) {
 		this.graphics = graphics;
+		this.fg = new FontGraphics();
 	}
 
 	public void drawMainInfo(Game game) {
 		boolean showFullInfo = game.controls.gameInfoShown;
 
-		Font initialFont = graphics.getFont();
-
 		// Draw heading
-		float headingFontSize = 1.25f;
-		Font headingFont = initialFont.deriveFont(initialFont.getSize() * headingFontSize);
-		graphics.setFont(headingFont);
+		fg.load(1.5);
 		graphics.setColor(Color.white);
 		drawInfoLine(Mineo.TITLE);
 
@@ -36,7 +33,7 @@ public class ScreenText {
 			return;
 
 		// Draw info contents
-		graphics.setFont(initialFont);
+		fg.load(1);
 		// FPS
 		drawInfoLine("FPS: %d", game.fps);
 		// Player block at foot
@@ -71,15 +68,16 @@ public class ScreenText {
 			msg3 = "Delete options.txt in %appdata%\\.mineo and restart the game to refresh the options file.";
 		}
 
+		fg.load(1);
 		graphics.setColor(diffMajor ? Color.red : diffMinor ? Color.yellow : Color.white);
-		graphics.drawString(msg1, INDENT, Display.HEIGHT - SEP * 8);
-		graphics.drawString(msg2, INDENT, Display.HEIGHT - SEP * 7);
-		graphics.drawString(msg3, INDENT, Display.HEIGHT - SEP * 6);
+		fg.drawString(graphics, msg1, INDENT, Display.HEIGHT - SEP * 8);
+		fg.drawString(graphics, msg2, INDENT, Display.HEIGHT - SEP * 7);
+		fg.drawString(graphics, msg3, INDENT, Display.HEIGHT - SEP * 6);
 	}
 
 	private void drawInfoLine(String fStr, Object... args) {
 		String fmtdString = String.format(fStr, args);
-		graphics.drawString(fmtdString, INDENT, SEP * curLineIndex++);
+		fg.drawString(graphics, fmtdString, INDENT, SEP * curLineIndex++);
 	}
 
 }

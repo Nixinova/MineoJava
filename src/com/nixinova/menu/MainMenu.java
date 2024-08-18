@@ -1,6 +1,5 @@
 package com.nixinova.menu;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -10,6 +9,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import com.nixinova.graphics.Display;
+import com.nixinova.graphics.FontGraphics;
 import com.nixinova.graphics.Texture;
 import com.nixinova.input.InputHandler;
 import com.nixinova.input.Keys;
@@ -28,6 +28,7 @@ public class MainMenu extends BaseMenu {
 
 	public void run(Graphics g) {
 		Graphics2D graphics = (Graphics2D) g;
+		FontGraphics fg = new FontGraphics();
 
 		// Set up buttons
 		final MenuButton menuTitle = new MenuButton(graphics, "MINEO JAVA", 200);
@@ -49,10 +50,9 @@ public class MainMenu extends BaseMenu {
 
 		// Draw footer
 		graphics.setColor(Color.black);
-		setFont(graphics, 20, Font.PLAIN);
-		graphics.drawString(Mineo.VERSION, 10, Display.HEIGHT - 80);
-		setFont(graphics, 20, Font.PLAIN);
-		graphics.drawString("\u00a9 Nixinova", Display.WIDTH - 100, Display.HEIGHT - 80);
+		fg.load(2);
+		fg.drawString(graphics, Mineo.VERSION, 10, Display.HEIGHT - 100);
+		fg.drawString(graphics, "(c) Nixinova", Display.WIDTH - 150, Display.HEIGHT - 100);
 
 		// Draw buttons
 		playButton.draw();

@@ -28,6 +28,7 @@ public class Mineo {
 
 		// Start at main menu
 		loadMainMenu();
+		// loadGame();
 
 		frame.pack();
 		frame.getContentPane().setCursor(blank);
