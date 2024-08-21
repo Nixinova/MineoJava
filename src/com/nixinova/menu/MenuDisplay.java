@@ -63,15 +63,31 @@ public class MenuDisplay extends Canvas implements Runnable {
 
 	@Override
 	public void run() {
+		int frames = 0;
+		long prevTime = System.nanoTime();
+		long nanosecs = 0;
+		
 		while (this.running) {
+			long curTime = System.nanoTime();
+			long passedTime = curTime - prevTime;
+			prevTime = curTime;
+			nanosecs += passedTime;
+			
+			if (nanosecs > 1e9) {
+				nanosecs = 0;
+				this.menu.fps = frames;
+				frames = 0;
+			}
+			
 			render();
+			frames++;
 		}
 	}
 
 	public void render() {
 		BufferStrategy buffer = getBufferStrategy();
 		if (buffer == null) {
-			createBufferStrategy(3);
+			createBufferStrategy(2);
 			return;
 		}
 

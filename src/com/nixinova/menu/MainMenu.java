@@ -58,6 +58,7 @@ public class MainMenu extends BaseMenu {
 		// Draw footer
 		fg.load(2);
 		fg.drawStringOutlined(Mineo.VERSION, 10, Display.HEIGHT - 100, textScheme, 2);
+		fg.drawStringOutlined(String.valueOf(super.fps), 10, 10, textScheme, 2);
 		fg.drawStringOutlined("(c) Nixinova", Display.WIDTH - 150, Display.HEIGHT - 100, textScheme, 2);
 
 		// Draw cursor
