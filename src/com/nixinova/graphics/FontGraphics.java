@@ -52,13 +52,13 @@ public class FontGraphics {
 		}
 	}
 
-	public void drawStringOutlined(String text, Color inner, Color outer, int startX, int startY, int scale) {
+	public void drawStringOutlined(String text, int startX, int startY, TextColorScheme scheme, int scale) {
 		for (int x = -scale; x <= scale; x += scale) {
 			for (int y = -scale; y <= scale; y += scale) {
-				drawString(text, outer, startX + x, startY + y);
+				drawString(text, scheme.border, startX + x, startY + y);
 			}
 		}
-		drawString(text, inner, startX, startY);
+		drawString(text, scheme.text, startX, startY);
 	}
 
 	private BufferedImage trimTransparent(BufferedImage image, double size) {

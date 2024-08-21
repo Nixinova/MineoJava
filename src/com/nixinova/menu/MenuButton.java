@@ -1,10 +1,10 @@
 package com.nixinova.menu;
 
-import java.awt.Color;
 import java.awt.Graphics;
 
 import com.nixinova.graphics.Display;
 import com.nixinova.graphics.FontGraphics;
+import com.nixinova.graphics.TextColorScheme;
 import com.nixinova.input.InputHandler;
 
 public class MenuButton {
@@ -34,15 +34,14 @@ public class MenuButton {
 		this.maxY = startY + btnHeight;
 	}
 
-	public void draw() {
-		graphics.setColor(Color.black);
+	public void draw(TextColorScheme colour) {
+		graphics.setColor(colour.border);
 		graphics.fillRect(btnIndent, minY, btnWidth, btnHeight);
-		graphics.setColor(Color.gray);
+		graphics.setColor(colour.fill);
 		graphics.fillRect(btnIndent + btnBorder, minY + btnBorder, btnWidth - 2 * btnBorder, btnHeight - 2 * btnBorder);
-		graphics.setColor(Color.black);
 
 		fg.load(btnFontSize);
-		fg.drawString(text, Color.black, minX + btnPadX, minY + btnPadY);
+		fg.drawString(text, colour.text, minX + btnPadX, minY + btnPadY);
 	}
 
 	public boolean isMouseInside(InputHandler input) {

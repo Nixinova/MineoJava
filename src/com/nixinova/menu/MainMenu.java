@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 
 import com.nixinova.graphics.Display;
 import com.nixinova.graphics.FontGraphics;
+import com.nixinova.graphics.TextColorScheme;
 import com.nixinova.graphics.Texture;
 import com.nixinova.input.InputHandler;
 import com.nixinova.input.Keys;
@@ -29,6 +30,8 @@ public class MainMenu extends BaseMenu {
 	public void run(Graphics g) {
 		Graphics2D graphics = (Graphics2D) g;
 		FontGraphics fg = new FontGraphics(graphics);
+		var buttonScheme = new TextColorScheme(Color.black, Color.lightGray, Color.black);
+		var textScheme = new TextColorScheme(Color.lightGray, Color.black);
 
 		// Set up buttons
 		final MenuButton playButton = new MenuButton(graphics, fg, "    PLAY    ", 400);
@@ -46,16 +49,16 @@ public class MainMenu extends BaseMenu {
 		// Draw heading
 		setFont(graphics, 100, Font.PLAIN);
 		fg.load(8);
-		fg.drawStringOutlined("MINEO JAVA", Color.lightGray, Color.black, Display.WIDTH / 2 - 235, 200, 8);
+		fg.drawStringOutlined("MINEO JAVA", Display.WIDTH / 2 - 235, 200, textScheme, 8);
 
 		// Draw buttons
-		playButton.draw();
-		exitButton.draw();
+		playButton.draw(buttonScheme);
+		exitButton.draw(buttonScheme);
 
 		// Draw footer
 		fg.load(2);
-		fg.drawString(Mineo.VERSION, Color.black, 10, Display.HEIGHT - 100);
-		fg.drawString("(c) Nixinova", Color.black, Display.WIDTH - 150, Display.HEIGHT - 100);
+		fg.drawStringOutlined(Mineo.VERSION, 10, Display.HEIGHT - 100, textScheme, 2);
+		fg.drawStringOutlined("(c) Nixinova", Display.WIDTH - 150, Display.HEIGHT - 100, textScheme, 2);
 
 		// Draw cursor
 		graphics.setColor(Color.white);
