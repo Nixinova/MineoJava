@@ -3,15 +3,17 @@ package com.nixinova.graphics;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.awt.image.RasterFormatException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class FontGraphics {
+	private static boolean warnPrinted = false;
 
 	private static String FONT_FILE = "font";
-	private static String FONT_SET = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+	private static String FONT_SET = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~©";
 	private static int CHAR_WIDTH = 6;
-	private static int CHAR_HEIGHT = 8;
+	private static int CHAR_HEIGHT = 9;
 
 	private Graphics graphics;
 	private Map<Character, BufferedImage> charImages;
@@ -23,6 +25,20 @@ public class FontGraphics {
 	}
 
 	public void load(double size) {
+		try {
+			tryLoad(size);
+		} catch (RasterFormatException e) {
+			if (warnPrinted)
+				return;
+			warnPrinted = true;
+
+			System.err.println(String.format("Warning: Font file %s.png is malformed.", FONT_FILE));
+			System.out.println("Font file must contain exactly these characters in this order:" + FONT_SET);
+			System.out.println(String.format("Font characters must be exactly %dx%dpx.", CHAR_WIDTH, CHAR_HEIGHT));
+		}
+	}
+
+	private void tryLoad(double size) {
 		Render fontTex = Texture.loadTexture(FONT_FILE, size);
 		BufferedImage fontImage = fontTex.getBufferedImage();
 
