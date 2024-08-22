@@ -1,6 +1,5 @@
 package com.nixinova.graphics;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Polygon;
 import java.util.ArrayList;
@@ -20,7 +19,6 @@ import com.nixinova.main.Game;
 import com.nixinova.options.Options;
 
 public class BlocksRenderer extends Render {
-	private static final double SKY_SIZE = 1.5;
 
 	private Game game;
 	private Graphics graphics;
@@ -37,10 +35,6 @@ public class BlocksRenderer extends Render {
 	public void prepare(Game game, Graphics graphics) {
 		this.game = game;
 		this.graphics = graphics;
-
-		// Clear graphics
-		this.graphics.setColor(Color.black);
-		this.graphics.fillRect(0, 0, Display.WIDTH, Display.HEIGHT);
 
 		// Clear image
 		savedPolygons = new HashMap<>();
@@ -59,7 +53,6 @@ public class BlocksRenderer extends Render {
 
 	public void renderWorld() {
 		// Generate world drawing
-		drawSky();
 		drawWorld();
 
 		// Render world from far to near, so closer blocks render over farther blocks
@@ -71,38 +64,6 @@ public class BlocksRenderer extends Render {
 			for (SavedPolygon savedPolygon : this.savedPolygons.get(zIndex)) {
 				drawPolygon(savedPolygon);
 			}
-		}
-	}
-
-	private void drawSky() {
-		final int baseBlue = 0x0000AA;
-		final int bandHeight = 10;
-		final double gradientMult = 0.97;
-
-		double tilt = this.game.controls.getMouseVertRads();
-		double skySize = Display.HEIGHT * (SKY_SIZE + tilt) + this.game.player.getPosition().toBlock().y;
-
-		// Generate starting blue colour from mouse angle
-		int currentBlue = baseBlue;
-		for (double i = tilt; i > 0; i -= 0.01) {
-			// brighten blue as player is looking upwards
-			currentBlue /= gradientMult;
-		}
-		for (double i = tilt; i < 0; i += 0.01) {
-			// darken blue as player is looking downwards
-			currentBlue *= gradientMult;
-		}
-		// create bands of sky colour
-		for (int vert = 0; vert < skySize; vert += bandHeight) {
-			currentBlue *= gradientMult;
-			int gradientedBlue = currentBlue;
-			if (gradientedBlue > 0xFF)
-				gradientedBlue = 0xFF;
-			if (gradientedBlue < 0)
-				gradientedBlue = 0;
-
-			this.graphics.setColor(PixelColor.fromPixel(gradientedBlue));
-			this.graphics.fillRect(0, vert, Display.WIDTH, vert + bandHeight);
 		}
 	}
 
