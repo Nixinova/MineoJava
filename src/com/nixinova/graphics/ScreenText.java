@@ -12,12 +12,10 @@ public class ScreenText {
 	private static final int INDENT = 5;
 	private static final int SEP = 15;
 
-	private Graphics graphics;
 	private FontGraphics fg;
 	private int curLineIndex = 1;
 
 	public ScreenText(Graphics graphics) {
-		this.graphics = graphics;
 		this.fg = new FontGraphics();
 		this.fg.setGraphics(graphics);
 	}
@@ -27,7 +25,6 @@ public class ScreenText {
 
 		// Draw heading
 		fg.load(1.5);
-		graphics.setColor(Color.white);
 		drawInfoLine(Mineo.TITLE);
 
 		if (!showFullInfo)
@@ -78,7 +75,7 @@ public class ScreenText {
 
 	private void drawInfoLine(String fStr, Object... args) {
 		String fmtdString = String.format(fStr, args);
-		fg.drawString(fmtdString, Color.black, INDENT, SEP * curLineIndex++);
+		fg.drawString(fmtdString, Color.white, INDENT, SEP * curLineIndex++);
 	}
 
 }
