@@ -24,8 +24,10 @@ public class Render3D extends Render {
 		// Prepare renderer
 		blockRender.prepare(game, graphics);
 
-		// Render sky
-		drawSky(game, graphics);
+		// Render sky unless underground
+		if (!game.player.isUnderground(game.world)) {
+			drawSky(game, graphics);
+		}
 
 		// Render blocks
 		blockRender.renderWorld();

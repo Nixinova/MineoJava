@@ -4,6 +4,7 @@ import com.nixinova.blocks.HoveredBlock;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord3;
 import com.nixinova.coords.SubBlockCoord;
+import com.nixinova.options.Options;
 import com.nixinova.world.World;
 
 public class Player {
@@ -39,6 +40,19 @@ public class Player {
 		BlockCoord min = world.minCorner;
 		BlockCoord max = world.maxCorner;
 		return pos.x >= min.x && pos.x <= max.x && pos.y >= min.y && pos.y <= max.y && pos.z >= min.z && pos.z <= max.z;
+	}
+
+	public boolean isUnderground(World world) {
+		if (!isWithinWorld(world))
+			return false;
+
+		BlockCoord pos = this.position.toBlock();
+		int playerHeadPosY = (int) (pos.y + PLAYER_HEIGHT);
+		for (int y = playerHeadPosY; y < Options.buildHeight; y++) {
+			if (world.isAir(pos.x, (int) (pos.y + PLAYER_HEIGHT + 1), pos.z))
+				return false;
+		}
+		return true;
 	}
 
 }
