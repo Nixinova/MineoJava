@@ -1,5 +1,7 @@
 package com.nixinova.world;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import com.nixinova.blocks.Block;
@@ -15,12 +17,18 @@ public class World {
 	public final BlockCoord maxCorner;
 
 	private Render[][][] blockTextures;
+	private Map<BlockCoord, Block> blockChanges;
 
 	public World() {
 		this.minCorner = new BlockCoord(0, 0, 0);
 		this.maxCorner = new BlockCoord(Options.worldSize, Options.buildHeight, Options.worldSize);
+		this.blockChanges = new HashMap<>();
 
 		this.mapBlockTextures();
+	}
+	
+	public Map<BlockCoord, Block> getBlockChanges() {
+		return blockChanges;
 	}
 
 	public boolean isWithinWorld(int blockX, int blockY, int blockZ) {
@@ -84,10 +92,19 @@ public class World {
 		return getTextureAt(block.x, block.y, block.z);
 	}
 
-	public void setTextureAt(BlockCoord block, Render texture) {
+	private void setTextureAt(BlockCoord block, Render texture) {
 		if (isWithinWorld(block.x, block.y, block.z)) {
 			this.blockTextures[block.x][block.y][block.z] = texture;
 		}
+	}
+
+	public void mineBlock(BlockCoord pos) {
+		placeBlock(pos, Block.AIR);
+	}
+
+	public void placeBlock(BlockCoord pos, Block block) {
+		setTextureAt(pos, block.getTexture());
+		blockChanges.put(pos, block);
 	}
 
 	// NOTE: does not abide by this.minCorner

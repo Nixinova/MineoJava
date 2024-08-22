@@ -17,7 +17,14 @@ public class Game {
 	public InputHandler input;
 	public boolean[] kbdInput;
 
-	public Game(InputHandler input) {
+	public Game() {
+	}
+
+	public void setInput(InputHandler input) {
+		this.input = input;
+	}
+
+	public void initNew() {
 		this.world = new World();
 
 		double startX = (world.maxCorner.x + world.minCorner.x) / 2 + 0.5; // centre of block in centre of world
@@ -27,7 +34,6 @@ public class Game {
 		this.player = new Player(startPosition);
 
 		this.controls = new Controller(this, this.player);
-		this.input = input;
 
 		Options.createOptions();
 	}

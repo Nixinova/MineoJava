@@ -4,6 +4,7 @@ import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 import javax.swing.JFrame;
 
@@ -14,12 +15,17 @@ import com.nixinova.menu.MenuDisplay;
 import com.nixinova.options.Options;
 
 public class Mineo {
+	public static final String DATA_FOLDER = ".mineo";
 	public static final String VERSION = "0.0.21_1";
 	public static final String TITLE = "Mineo " + VERSION;
+
+	public static String rootFolder;
 
 	private static JFrame frame;
 
 	public static void main(String[] args) {
+		setupDataFolder();
+
 		Options.createOptions();
 		BufferedImage cursor = new BufferedImage(16, 16, 2);
 		Cursor blank = Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "blank");
@@ -28,7 +34,6 @@ public class Mineo {
 
 		// Start at main menu
 		loadMainMenu();
-		// loadGame();
 
 		frame.pack();
 		frame.getContentPane().setCursor(blank);
@@ -41,11 +46,24 @@ public class Mineo {
 		frame.requestFocus();
 	}
 
-	public static void loadGame() {
+	public static void loadNewGame() {
+		loadGame(true);
+	}
+
+	public static void loadSavedGame() {
+		loadGame(false);
+	}
+
+	private static void loadGame(boolean anew) {
 		frame.getContentPane().removeAll();
 
 		InputHandler input = new InputHandler(frame);
-		Game game = new Game(input);
+
+		Game game = new Game();
+		game.setInput(input);
+		if (anew)
+			game.initNew();
+
 		Display gameDisplay = new Display(game, input);
 
 		frame.add(gameDisplay);
@@ -65,5 +83,11 @@ public class Mineo {
 		frame.pack();
 		menuDisplay.start();
 		menuDisplay.requestFocusInWindow();
+	}
+	
+	private static void setupDataFolder() {
+		rootFolder = String.valueOf(System.getenv("APPDATA")) + "/" + Mineo.DATA_FOLDER;
+		File dir = new File(Mineo.rootFolder);
+		dir.mkdir();
 	}
 }

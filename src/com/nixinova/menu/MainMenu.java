@@ -80,10 +80,10 @@ public class MainMenu extends BaseMenu {
 		// Input actions
 		if (kbd.pressedButton(Keys.LCLICK)) {
 			if (contButton.isMouseInside(this.input)) {
-				Mineo.loadGame();
+				Mineo.loadNewGame();
 			}
 			if (newButton.isMouseInside(this.input)) {
-				Mineo.loadGame();
+				Mineo.loadSavedGame();
 			}
 			if (exitButton.isMouseInside(this.input)) {
 				System.exit(1);

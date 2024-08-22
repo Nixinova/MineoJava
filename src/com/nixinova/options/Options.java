@@ -6,8 +6,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
+import com.nixinova.main.Mineo;
+
 public class Options {
-	public static final String MINEO_FOLDER = ".mineo";
 	public static final String OPTIONS_FILE = "options.txt";
 	/**
 	 * Semantics of version incrementing:
@@ -48,6 +49,8 @@ public class Options {
 		public static String reach = "reach";
 	}
 
+	private static final String optionsFilePath = Mineo.rootFolder + "/" + OPTIONS_FILE;
+
 	public static float fileVersion = OPTIONS_VERSION;
 	public static long seed = DEFAULT_OPTIONS.seed;
 	public static int worldSize = DEFAULT_OPTIONS.worldSize;
@@ -72,14 +75,7 @@ public class Options {
 	}
 
 	public static void createOptions() {
-		String rootFolder = String.valueOf(System.getenv("APPDATA")) + "/" + MINEO_FOLDER;
-		String optionsFilePath = String.valueOf(rootFolder) + "/" + OPTIONS_FILE;
-
-		File dir = new File(rootFolder);
-		dir.mkdir();
-
 		File optionsFile = new File(optionsFilePath);
-
 		if (!optionsFile.exists()) {
 			try {
 				FileWriter writer = new FileWriter(optionsFilePath);

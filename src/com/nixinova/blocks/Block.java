@@ -15,13 +15,19 @@ public class Block {
 	public static Block MISSING = new Block("missing_texture");
 
 	private Render texture;
+	private String name;
 
 	public Block(String texture) {
 		this.texture = texture == null ? null : Texture.loadTexture(texture);
+		this.name = texture;
 	}
 
 	public Render getTexture() {
 		return this.texture;
+	}
+
+	public String getTextureName() {
+		return this.name;
 	}
 
 }

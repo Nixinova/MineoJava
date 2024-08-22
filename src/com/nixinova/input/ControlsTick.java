@@ -10,6 +10,7 @@ import com.nixinova.coords.PxCoord;
 import com.nixinova.coords.TxCoord;
 import com.nixinova.main.Game;
 import com.nixinova.main.Mineo;
+import com.nixinova.main.SavedGame;
 import com.nixinova.options.Options;
 import com.nixinova.player.Hitbox;
 import com.nixinova.player.Hitbox.Corner;
@@ -104,7 +105,7 @@ public class ControlsTick {
 
 			// Block breaking
 			if (kbd.pressedButton(Keys.LCLICK) && this.game.world.isWithinWorld(bHovered)) {
-				this.game.world.setTextureAt(bHovered, Block.AIR.getTexture());
+				this.game.world.mineBlock(bHovered);
 				// Cooldown
 				kbd.startButtonCooldown(Keys.LCLICK);
 			}
@@ -119,7 +120,7 @@ public class ControlsTick {
 				// only place block if not going to be placed within the player's body
 				if (!placedInFoot && !placedInHead) {
 					Block selectedBlock = Hotbar.getCurrentBlock();
-					this.game.world.setTextureAt(bAdjacent, selectedBlock.getTexture());
+					this.game.world.placeBlock(bAdjacent, selectedBlock);
 					// Cooldown
 					kbd.startButtonCooldown(Keys.RCLICK);
 				}
@@ -187,6 +188,8 @@ public class ControlsTick {
 
 		// System keys
 		if (kbd.pressedKey(Keys.ESCAPE)) {
+			// Save game
+			SavedGame.saveToFile(this.game, this.game.world, this.game.player);
 			// Exit to menu
 			Mineo.loadMainMenu();
 		}
