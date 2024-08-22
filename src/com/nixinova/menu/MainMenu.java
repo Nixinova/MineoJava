@@ -20,8 +20,10 @@ public class MainMenu extends BaseMenu {
 	private static final String BG_TEXTURE = "blocks/dirt";
 	private static final double BG_SCALE = 10;
 
+	private final FontGraphics headerFont = FontGraphics.FONT_800;
+	private final FontGraphics footerFont = FontGraphics.FONT_200;
+
 	private Keys kbd;
-	private FontGraphics fg;
 
 	private final BufferedImage bgImg;
 	private final MenuButton playButton;
@@ -30,16 +32,15 @@ public class MainMenu extends BaseMenu {
 	public MainMenu(InputHandler input) {
 		super(input);
 		this.kbd = input.keys;
-		this.fg = new FontGraphics();
-		
+
 		this.bgImg = Texture.loadScaledImage(BG_TEXTURE, BG_SCALE);
-		this.playButton = new MenuButton("    PLAY    ", 400);
-		this.exitButton = new MenuButton("    EXIT    ", 600);
+		this.playButton = new MenuButton("PLAY", 500, 400);
+		this.exitButton = new MenuButton("EXIT", 500, 600);
 	}
 
 	public void run(Graphics g) {
 		Graphics2D graphics = (Graphics2D) g;
-		fg.setGraphics(graphics);
+
 		var buttonScheme = new TextColorScheme(Color.black, Color.lightGray, Color.black);
 		var textScheme = new TextColorScheme(Color.lightGray, Color.black);
 
@@ -52,22 +53,20 @@ public class MainMenu extends BaseMenu {
 		graphics.fillRect(0, 0, Display.WIDTH, Display.HEIGHT);
 
 		// Draw heading
-		setFont(graphics, 100, Font.PLAIN);
-		fg.load(8);
-		fg.drawStringOutlined("MINEO JAVA", Display.WIDTH / 2 - 235, 200, textScheme, 8);
+		//setFont(graphics, 100, Font.PLAIN);
+		headerFont.drawStringOutlined(graphics, "MINEO JAVA", Display.WIDTH / 2 - 235, 200, textScheme);
 
 		// Set up buttons
-		playButton.setGraphics(graphics, fg);
-		exitButton.setGraphics(graphics, fg);
+		playButton.setGraphics(graphics);
+		exitButton.setGraphics(graphics);
 		// Draw buttons
 		playButton.draw(buttonScheme);
 		exitButton.draw(buttonScheme);
 
 		// Draw footer
-		fg.load(2);
-		fg.drawStringOutlined("v" + Mineo.VERSION, 10, Display.HEIGHT - 100, textScheme, 2);
-		fg.drawStringOutlined(String.valueOf(super.fps), 10, 10, textScheme, 2);
-		fg.drawStringOutlined("© Nixinova", Display.WIDTH - 120, Display.HEIGHT - 100, textScheme, 2);
+		footerFont.drawStringOutlined(graphics, "v" + Mineo.VERSION, 10, Display.HEIGHT - 100, textScheme);
+		footerFont.drawStringOutlined(graphics, String.valueOf(super.fps), 10, 10, textScheme);
+		footerFont.drawStringOutlined(graphics, "© Nixinova", Display.WIDTH - 120, Display.HEIGHT - 100, textScheme);
 
 		// Draw cursor
 		graphics.setColor(Color.white);

@@ -14,7 +14,7 @@ public class Texture {
 		try {
 			return ImageIO.read(Texture.class.getResource(TEXTURES_FOLDER + filename + ".png"));
 		} catch (Exception err) {
-			throw new RuntimeException("Error: Missing file \"" + filename + "\"");
+			throw new RuntimeException("Error: Missing file \"" + filename + ".png" + "\"");
 		}
 	}
 

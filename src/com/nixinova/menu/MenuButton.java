@@ -9,42 +9,46 @@ import com.nixinova.input.InputHandler;
 
 public class MenuButton {
 
-	private final int btnIndent = 500;
-	private final int btnBorder = 5;
-	private final int btnWidth = Display.WIDTH - 2 * btnIndent;
-	private final int btnHeight = 100;
-	private final int btnPadX = btnWidth / 14;
-	private final int btnPadY = btnHeight / 4;
-	private final int btnFontSize = 6;
+	private final int BORDER = 5;
 
 	public int minX, maxX;
 	public int minY, maxY;
 
 	private Graphics graphics;
 	private FontGraphics fg;
-	private String text;
 
-	public MenuButton(String text, int startY) {
+	private String text;
+	private int btnWidth;
+	private int btnHeight;
+	private int btnPadX;
+	private int btnPadY;
+
+	public MenuButton(String text, int startX, int startY) {
+		btnWidth = Display.WIDTH - 2 * startX;
+		btnHeight = 100;
+		btnPadX = btnWidth / 2;
+		btnPadY = btnHeight / 4;
+
 		this.text = text;
-		this.minX = btnIndent;
-		this.maxX = btnIndent + btnWidth;
+		this.minX = startX;
+		this.maxX = startX + btnWidth;
 		this.minY = startY;
 		this.maxY = startY + btnHeight;
+		this.fg = FontGraphics.FONT_600;
 	}
 
-	public void setGraphics(Graphics graphics, FontGraphics fg) {
+	public void setGraphics(Graphics graphics) {
 		this.graphics = graphics;
-		this.fg = fg;
 	}
 
 	public void draw(TextColorScheme colour) {
+		int dedentX = fg.getTextLength(text) / 2;
 		graphics.setColor(colour.border);
-		graphics.fillRect(btnIndent, minY, btnWidth, btnHeight);
+		graphics.fillRect(minX, minY, btnWidth, btnHeight);
 		graphics.setColor(colour.fill);
-		graphics.fillRect(btnIndent + btnBorder, minY + btnBorder, btnWidth - 2 * btnBorder, btnHeight - 2 * btnBorder);
+		graphics.fillRect(minX + BORDER, minY + BORDER, btnWidth - 2 * BORDER, btnHeight - 2 * BORDER);
 
-		fg.load(btnFontSize);
-		fg.drawString(text, colour.text, minX + btnPadX, minY + btnPadY);
+		fg.drawString(graphics, text, colour.text, minX + btnPadX - dedentX, minY + btnPadY);
 	}
 
 	public boolean isMouseInside(InputHandler input) {

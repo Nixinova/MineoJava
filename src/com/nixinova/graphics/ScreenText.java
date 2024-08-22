@@ -12,38 +12,39 @@ public class ScreenText {
 	private static final int INDENT = 5;
 	private static final int SEP = 15;
 
-	private FontGraphics fg;
+	private final FontGraphics headerFont = FontGraphics.FONT_150;
+	private final FontGraphics infoFont = FontGraphics.FONT_100;
+
+	private Graphics graphics;
 	private int curLineIndex = 1;
 
 	public ScreenText(Graphics graphics) {
-		this.fg = new FontGraphics();
-		this.fg.setGraphics(graphics);
+		this.graphics = graphics;
 	}
 
 	public void drawMainInfo(Game game) {
 		boolean showFullInfo = game.controls.gameInfoShown;
 
 		// Draw heading
-		fg.load(1.5);
-		drawInfoLine(Mineo.TITLE);
+		drawInfoLine(headerFont, Mineo.TITLE);
 
 		if (!showFullInfo)
 			return;
 
 		// Draw info contents
-		fg.load(1);
 		// FPS
-		drawInfoLine("FPS: %d", game.fps);
+		drawInfoLine(infoFont, "FPS: %d", game.fps);
 		// Player block at foot
 		var blockPos = game.player.getPosition().toSubBlock();
 		var camPos = game.controls.getCameraPosition().toSubBlock();
-		drawInfoLine("Position: %.1f / %.1f..%.1f / %.1f", blockPos.x, blockPos.y, camPos.y, blockPos.z);
+		drawInfoLine(infoFont, "Position: %.1f / %.1f..%.1f / %.1f", blockPos.x, blockPos.y, camPos.y, blockPos.z);
 		// Mouse look angle
-		drawInfoLine("Rotation: %.1f / %.1f", game.controls.getMouseHorizDeg(), game.controls.getMouseVertDeg());
+		drawInfoLine(infoFont, "Rotation: %.1f / %.1f",
+			game.controls.getMouseHorizDeg(), game.controls.getMouseVertDeg());
 		// Block being looked at
 		var lookingAt = game.player.getLookingAt().hoveredBlock;
 		if (lookingAt != null)
-			drawInfoLine("Selected: %d / %d / %d", lookingAt.x, lookingAt.y, lookingAt.z);
+			drawInfoLine(infoFont, "Selected: %d / %d / %d", lookingAt.x, lookingAt.y, lookingAt.z);
 	}
 
 	public void drawOptionsWarning() {
@@ -67,15 +68,14 @@ public class ScreenText {
 		}
 
 		Color col = diffMajor ? Color.red : diffMinor ? Color.yellow : Color.white;
-		fg.load(1);
-		fg.drawString(msg1, col, INDENT, Display.HEIGHT - SEP * 8);
-		fg.drawString(msg2, col, INDENT, Display.HEIGHT - SEP * 7);
-		fg.drawString(msg3, col, INDENT, Display.HEIGHT - SEP * 6);
+		infoFont.drawString(graphics, msg1, col, INDENT, Display.HEIGHT - SEP * 8);
+		infoFont.drawString(graphics, msg2, col, INDENT, Display.HEIGHT - SEP * 7);
+		infoFont.drawString(graphics, msg3, col, INDENT, Display.HEIGHT - SEP * 6);
 	}
 
-	private void drawInfoLine(String fStr, Object... args) {
+	private void drawInfoLine(FontGraphics fg, String fStr, Object... args) {
 		String fmtdString = String.format(fStr, args);
-		fg.drawString(fmtdString, Color.white, INDENT, SEP * curLineIndex++);
+		fg.drawString(graphics, fmtdString, Color.white, INDENT, SEP * curLineIndex++);
 	}
 
 }
