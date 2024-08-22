@@ -61,8 +61,11 @@ public class Mineo {
 
 		Game game = new Game();
 		game.setInput(input);
+
 		if (anew)
 			game.initNew();
+		else
+			game.initSaved();
 
 		Display gameDisplay = new Display(game, input);
 
@@ -84,7 +87,7 @@ public class Mineo {
 		menuDisplay.start();
 		menuDisplay.requestFocusInWindow();
 	}
-	
+
 	private static void setupDataFolder() {
 		rootFolder = String.valueOf(System.getenv("APPDATA")) + "/" + Mineo.DATA_FOLDER;
 		File dir = new File(Mineo.rootFolder);

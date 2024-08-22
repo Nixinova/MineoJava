@@ -3,6 +3,7 @@ package com.nixinova.world;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.Map.Entry;
 
 import com.nixinova.blocks.Block;
 import com.nixinova.blocks.BlockFace;
@@ -26,7 +27,18 @@ public class World {
 
 		this.mapBlockTextures();
 	}
-	
+
+	public World(Map<BlockCoord, Block> blockChanges) {
+		this();
+		this.blockChanges = blockChanges;
+		// Update world to match block changes map
+		for (Entry<BlockCoord, Block> entry : blockChanges.entrySet()) {
+			BlockCoord blockPos = entry.getKey();
+			Block block = entry.getValue();
+			setTextureAt(blockPos, block.getTexture());
+		}
+	}
+
 	public Map<BlockCoord, Block> getBlockChanges() {
 		return blockChanges;
 	}

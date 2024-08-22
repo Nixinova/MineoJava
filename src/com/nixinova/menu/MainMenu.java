@@ -55,7 +55,6 @@ public class MainMenu extends BaseMenu {
 		graphics.fillRect(0, 0, Display.WIDTH, Display.HEIGHT);
 
 		// Draw heading
-		//setFont(graphics, 100, Font.PLAIN);
 		headerFont.drawStringOutlined(graphics, "MINEO JAVA", Display.WIDTH / 2 - 235, 200, textScheme);
 
 		// Set up buttons
@@ -80,10 +79,10 @@ public class MainMenu extends BaseMenu {
 		// Input actions
 		if (kbd.pressedButton(Keys.LCLICK)) {
 			if (contButton.isMouseInside(this.input)) {
-				Mineo.loadNewGame();
+				Mineo.loadSavedGame();
 			}
 			if (newButton.isMouseInside(this.input)) {
-				Mineo.loadSavedGame();
+				Mineo.loadNewGame();
 			}
 			if (exitButton.isMouseInside(this.input)) {
 				System.exit(1);

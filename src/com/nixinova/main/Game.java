@@ -38,6 +38,13 @@ public class Game {
 		Options.createOptions();
 	}
 
+	public void initSaved() {
+		SavedGame gameSave = new SavedGame();
+		this.world = gameSave.world;
+		this.player = gameSave.player;
+		this.controls = new Controller(this, this.player);
+	}
+
 	public void tick() {
 		this.preTick();
 
