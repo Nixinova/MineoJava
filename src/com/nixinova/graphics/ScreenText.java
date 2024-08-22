@@ -18,7 +18,8 @@ public class ScreenText {
 
 	public ScreenText(Graphics graphics) {
 		this.graphics = graphics;
-		this.fg = new FontGraphics(graphics);
+		this.fg = new FontGraphics();
+		this.fg.setGraphics(graphics);
 	}
 
 	public void drawMainInfo(Game game) {

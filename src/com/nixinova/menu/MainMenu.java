@@ -21,27 +21,32 @@ public class MainMenu extends BaseMenu {
 	private static final double BG_SCALE = 10;
 
 	private Keys kbd;
+	private FontGraphics fg;
+
+	private final BufferedImage bgImg;
+	private final MenuButton playButton;
+	private final MenuButton exitButton;
 
 	public MainMenu(InputHandler input) {
 		super(input);
 		this.kbd = input.keys;
+		this.fg = new FontGraphics();
+		
+		this.bgImg = Texture.loadScaledImage(BG_TEXTURE, BG_SCALE);
+		this.playButton = new MenuButton("    PLAY    ", 400);
+		this.exitButton = new MenuButton("    EXIT    ", 600);
 	}
 
 	public void run(Graphics g) {
 		Graphics2D graphics = (Graphics2D) g;
-		FontGraphics fg = new FontGraphics(graphics);
+		fg.setGraphics(graphics);
 		var buttonScheme = new TextColorScheme(Color.black, Color.lightGray, Color.black);
 		var textScheme = new TextColorScheme(Color.lightGray, Color.black);
 
-		// Set up buttons
-		final MenuButton playButton = new MenuButton(graphics, fg, "    PLAY    ", 400);
-		final MenuButton exitButton = new MenuButton(graphics, fg, "    EXIT    ", 600);
-
-		// Clear
+		// Clear window
 		graphics.clearRect(0, 0, Display.WIDTH, Display.HEIGHT);
 
 		// Textured background
-		BufferedImage bgImg = Texture.loadTexture(BG_TEXTURE, BG_SCALE).getBufferedImage();
 		Rectangle2D anchorRect = new Rectangle2D.Double(0, 0, bgImg.getWidth(), bgImg.getHeight());
 		graphics.setPaint(new TexturePaint(bgImg, anchorRect));
 		graphics.fillRect(0, 0, Display.WIDTH, Display.HEIGHT);
@@ -51,6 +56,9 @@ public class MainMenu extends BaseMenu {
 		fg.load(8);
 		fg.drawStringOutlined("MINEO JAVA", Display.WIDTH / 2 - 235, 200, textScheme, 8);
 
+		// Set up buttons
+		playButton.setGraphics(graphics, fg);
+		exitButton.setGraphics(graphics, fg);
 		// Draw buttons
 		playButton.draw(buttonScheme);
 		exitButton.draw(buttonScheme);

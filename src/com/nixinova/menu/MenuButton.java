@@ -24,14 +24,17 @@ public class MenuButton {
 	private FontGraphics fg;
 	private String text;
 
-	public MenuButton(Graphics graphics, FontGraphics fg, String text, int startY) {
-		this.graphics = graphics;
-		this.fg = fg;
+	public MenuButton(String text, int startY) {
 		this.text = text;
 		this.minX = btnIndent;
 		this.maxX = btnIndent + btnWidth;
 		this.minY = startY;
 		this.maxY = startY + btnHeight;
+	}
+
+	public void setGraphics(Graphics graphics, FontGraphics fg) {
+		this.graphics = graphics;
+		this.fg = fg;
 	}
 
 	public void draw(TextColorScheme colour) {

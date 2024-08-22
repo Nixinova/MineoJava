@@ -17,16 +17,37 @@ public class FontGraphics {
 
 	private Graphics graphics;
 	private Map<Character, BufferedImage> charImages;
+	private BufferedImage baseFontImage;
 
-	public FontGraphics(Graphics graphics) {
-		this.graphics = graphics;
+	public FontGraphics() {
 		this.charImages = new HashMap<>();
+		this.baseFontImage = Texture.loadImage(FONT_FILE);
 		load(1);
 	}
 
-	public void load(double size) {
+	public void setGraphics(Graphics graphics) {
+		this.graphics = graphics;
+	}
+
+	public void load(double scale) {
 		try {
-			tryLoad(size);
+			BufferedImage fontImage = baseFontImage;
+			if (scale != 1) {
+				fontImage = Texture.scaleImage(fontImage, scale);
+			}
+
+			int charWidth = (int) (CHAR_WIDTH * scale);
+			int charHeight = (int) (CHAR_HEIGHT * scale);
+
+			final int offset = (int) (1 * scale);
+
+			for (int i = 0; i < FONT_SET.length(); i++) {
+				int x = i * charWidth + offset;
+				int y = offset;
+				char ch = FONT_SET.charAt(i);
+				BufferedImage chImg = fontImage.getSubimage(x, y, charWidth, charHeight);
+				this.charImages.put(ch, trimTransparent(chImg, scale));
+			}
 		} catch (RasterFormatException e) {
 			if (warnPrinted)
 				return;
@@ -35,24 +56,6 @@ public class FontGraphics {
 			System.err.println(String.format("Warning: Font file %s.png is malformed.", FONT_FILE));
 			System.out.println("Font file must contain exactly these characters in this order:" + FONT_SET);
 			System.out.println(String.format("Font characters must be exactly %dx%dpx.", CHAR_WIDTH, CHAR_HEIGHT));
-		}
-	}
-
-	private void tryLoad(double size) {
-		Render fontTex = Texture.loadTexture(FONT_FILE, size);
-		BufferedImage fontImage = fontTex.getBufferedImage();
-
-		int charWidth = (int) (CHAR_WIDTH * size);
-		int charHeight = (int) (CHAR_HEIGHT * size);
-
-		final int offset = (int) (1 * size);
-
-		for (int i = 0; i < FONT_SET.length(); i++) {
-			int x = i * charWidth + offset;
-			int y = offset;
-			char ch = FONT_SET.charAt(i);
-			BufferedImage chImg = fontImage.getSubimage(x, y, charWidth, charHeight);
-			this.charImages.put(ch, trimTransparent(chImg, size));
 		}
 	}
 
