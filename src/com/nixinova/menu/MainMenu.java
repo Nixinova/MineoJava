@@ -26,7 +26,8 @@ public class MainMenu extends BaseMenu {
 	private Keys kbd;
 
 	private final BufferedImage bgImg;
-	private final MenuButton playButton;
+	private final MenuButton newButton;
+	private final MenuButton contButton;
 	private final MenuButton exitButton;
 
 	public MainMenu(InputHandler input) {
@@ -34,8 +35,9 @@ public class MainMenu extends BaseMenu {
 		this.kbd = input.keys;
 
 		this.bgImg = Texture.loadScaledImage(BG_TEXTURE, BG_SCALE);
-		this.playButton = new MenuButton("PLAY", 500, 400);
-		this.exitButton = new MenuButton("EXIT", 500, 600);
+		this.contButton = new MenuButton("CONTINUE", 500, 350);
+		this.newButton = new MenuButton("NEW GAME", 500, 500);
+		this.exitButton = new MenuButton("EXIT", 500, 650);
 	}
 
 	public void run(Graphics g) {
@@ -57,10 +59,12 @@ public class MainMenu extends BaseMenu {
 		headerFont.drawStringOutlined(graphics, "MINEO JAVA", Display.WIDTH / 2 - 235, 200, textScheme);
 
 		// Set up buttons
-		playButton.setGraphics(graphics);
+		contButton.setGraphics(graphics);
+		newButton.setGraphics(graphics);
 		exitButton.setGraphics(graphics);
 		// Draw buttons
-		playButton.draw(buttonScheme);
+		contButton.draw(buttonScheme);
+		newButton.draw(buttonScheme);
 		exitButton.draw(buttonScheme);
 
 		// Draw footer
@@ -75,7 +79,10 @@ public class MainMenu extends BaseMenu {
 
 		// Input actions
 		if (kbd.pressedButton(Keys.LCLICK)) {
-			if (playButton.isMouseInside(this.input)) {
+			if (contButton.isMouseInside(this.input)) {
+				Mineo.loadGame();
+			}
+			if (newButton.isMouseInside(this.input)) {
 				Mineo.loadGame();
 			}
 			if (exitButton.isMouseInside(this.input)) {
