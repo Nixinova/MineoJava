@@ -42,21 +42,24 @@ public class Mineo {
 	}
 
 	public static void loadGame() {
-		frame = new JFrame();
+		frame.getContentPane().removeAll();
+
 		InputHandler input = new InputHandler(frame);
 		Game game = new Game(input);
-		Display display = new Display(game, input);
+		Display gameDisplay = new Display(game, input);
 
-		frame.add(display);
+		frame.add(gameDisplay);
 		frame.pack();
-		display.start();
-		display.requestFocusInWindow();
+		gameDisplay.start();
+		gameDisplay.requestFocusInWindow();
 	}
 
 	public static void loadMainMenu() {
-		frame = new JFrame();
+		frame.getContentPane().removeAll();
+
 		InputHandler input = new InputHandler(frame);
-		MenuDisplay menuDisplay = new MenuDisplay(new MainMenu(input));
+		MainMenu mainMenu = new MainMenu(input);
+		MenuDisplay menuDisplay = new MenuDisplay(mainMenu);
 
 		frame.add(menuDisplay);
 		frame.pack();

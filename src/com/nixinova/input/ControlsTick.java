@@ -9,6 +9,7 @@ import com.nixinova.coords.Coord3;
 import com.nixinova.coords.PxCoord;
 import com.nixinova.coords.TxCoord;
 import com.nixinova.main.Game;
+import com.nixinova.main.Mineo;
 import com.nixinova.options.Options;
 import com.nixinova.player.Hitbox;
 import com.nixinova.player.Hitbox.Corner;
@@ -186,7 +187,8 @@ public class ControlsTick {
 
 		// System keys
 		if (kbd.pressedKey(Keys.ESCAPE)) {
-			System.exit(1);
+			// Exit to menu
+			Mineo.loadMainMenu();
 		}
 		if (kbd.pressedKey(Keys.UI_TOGGLE)) {
 			controls.uiShown = !controls.uiShown;
