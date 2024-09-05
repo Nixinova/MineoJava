@@ -49,10 +49,10 @@ public class Player {
 		BlockCoord pos = this.position.toBlock();
 		int playerHeadPosY = (int) (pos.y + PLAYER_HEIGHT);
 		for (int y = playerHeadPosY; y < Options.buildHeight; y++) {
-			if (world.isAir(pos.x, (int) (pos.y + PLAYER_HEIGHT + 1), pos.z))
-				return false;
+			if (!world.isAir(pos.x, y, pos.z))
+				return true;
 		}
-		return true;
+		return false;
 	}
 
 }
