@@ -26,13 +26,7 @@ public class Game {
 
 	public void initNew() {
 		this.world = new World();
-
-		double startX = (world.maxCorner.x + world.minCorner.x) / 2 + 0.5; // centre of block in centre of world
-		double startY = Options.groundLevel + 1; // one block above the ground
-		double startZ = (world.maxCorner.z + world.minCorner.z) / 2 + 0.5; // centre of block in centre of world
-		Coord3 startPosition = Coord3.fromSubBlock(startX, startY, startZ);
-		this.player = new Player(startPosition);
-
+		this.player = new Player(this.world.getHorizontalCentre());
 		this.controls = new Controller(this, this.player);
 
 		Options.createOptions();

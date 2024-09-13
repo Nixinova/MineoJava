@@ -70,7 +70,8 @@ public class SavedGame {
 			scanner = new Scanner(saveFile);
 		} catch (FileNotFoundException err) {
 			System.err.println("Save file not found.");
-			//
+			this.world = new World();
+			this.player = new Player(this.world.getHorizontalCentre());
 			return;
 		}
 

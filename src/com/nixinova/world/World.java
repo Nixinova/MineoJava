@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import com.nixinova.blocks.Block;
 import com.nixinova.blocks.BlockFace;
 import com.nixinova.coords.BlockCoord;
+import com.nixinova.coords.Coord3;
 import com.nixinova.graphics.Render;
 import com.nixinova.options.Options;
 
@@ -95,7 +96,7 @@ public class World {
 			// If within the world, return texture
 			return this.blockTextures[blockX][blockY][blockZ];
 		} else {
-			// When outside of world, return sky
+			// Return nothing when outside of world
 			return null;
 		}
 	}
@@ -117,6 +118,13 @@ public class World {
 	public void placeBlock(BlockCoord pos, Block block) {
 		setTextureAt(pos, block.getTexture());
 		blockChanges.put(pos, block);
+	}
+	
+	public Coord3 getHorizontalCentre() {
+		double x = (this.maxCorner.x + this.minCorner.x) / 2 + 0.5; // centre of block in centre of world
+		double y = Options.groundLevel + 1; // one block above the ground
+		double z = (this.maxCorner.z + this.minCorner.z) / 2 + 0.5; // centre of block in centre of world
+		return Coord3.fromSubBlock(x, y, z);
 	}
 
 	// NOTE: does not abide by this.minCorner
