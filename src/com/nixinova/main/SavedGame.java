@@ -46,14 +46,14 @@ public class SavedGame {
 			writer.write(String.format("%c %.1f\n", CHAR_VERSION, SAVE_VERSION));
 
 			// Writer player position
-			writer.write(String.format("%c %d\n", CHAR_PLAYERPOS, packCoord(game.player.getPosition())));
+			TxCoord playerPos = game.player.getPosition().toTx();
+			writer.write(String.format("%c %d,%d,%d\n", CHAR_PLAYERPOS, playerPos.x, playerPos.y, playerPos.z));
 
 			// Write each changed block in world
 			for (Entry<BlockCoord, Block> entry : game.world.getBlockChanges().entrySet()) {
 				BlockCoord block = entry.getKey();
-				int packPos = packCoord(Coord3.fromBlock(block));
 				int blockId = Arrays.asList(Block.BLOCKS).indexOf(entry.getValue());
-				writer.write(String.format("%c %d %s\n", CHAR_BLOCKPOS, packPos, blockId));
+				writer.write(String.format("%c %d,%d,%d %s\n", CHAR_BLOCKPOS, block.x, block.y, block.z, blockId));
 			}
 
 			writer.close();
@@ -70,6 +70,7 @@ public class SavedGame {
 			scanner = new Scanner(saveFile);
 		} catch (FileNotFoundException err) {
 			System.err.println("Save file not found.");
+			//
 			return;
 		}
 
@@ -90,14 +91,21 @@ public class SavedGame {
 				}
 				// Player position data
 				case CHAR_PLAYERPOS -> {
-					int packedPos = Integer.parseInt(lineParts[1]);
-					this.player = new Player(unpackCoord(packedPos));
+					String[] posData = lineParts[1].trim().split(",");
+					int posX = Integer.parseInt(posData[0]);
+					int posY = Integer.parseInt(posData[1]);
+					int posZ = Integer.parseInt(posData[2]);
+					Coord3 pos = Coord3.fromTx(posX, posY, posZ);
+					this.player = new Player(pos);
 				}
 				// Changed blocks data
 				case CHAR_BLOCKPOS -> {
-					int packedPos = Integer.parseInt(lineParts[1]);
+					String[] posData = lineParts[1].trim().split(",");
 					int blockId = Integer.parseInt(lineParts[2]);
-					BlockCoord pos = unpackCoord(packedPos).toBlock();
+					int posX = Integer.parseInt(posData[0]);
+					int posY = Integer.parseInt(posData[1]);
+					int posZ = Integer.parseInt(posData[2]);
+					BlockCoord pos = new BlockCoord(posX, posY, posZ);
 					Block block = Block.BLOCKS[blockId];
 					blockChanges.put(pos, block);
 				}
@@ -107,18 +115,6 @@ public class SavedGame {
 		this.world = new World(blockChanges);
 		
 		scanner.close();
-	}
-
-	private static int packCoord(Coord3 coord) {
-		TxCoord tx = coord.toTx();
-		return tx.x << 16 | tx.y << 8 | tx.z;
-	}
-
-	private static Coord3 unpackCoord(int pack) {
-		int x = pack >> 16 & 0xFF;
-		int y = pack >> 8 & 0xFF;
-		int z = pack & 0xFF;
-		return Coord3.fromTx(x, y, z);
 	}
 
 }
