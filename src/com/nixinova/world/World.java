@@ -96,7 +96,7 @@ public class World {
 			return this.blockTextures[blockX][blockY][blockZ];
 		} else {
 			// When outside of world, return sky
-			return Block.SKY.getTexture();
+			return null;
 		}
 	}
 

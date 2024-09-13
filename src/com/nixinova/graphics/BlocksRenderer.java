@@ -85,7 +85,7 @@ public class BlocksRenderer extends Render {
 						continue;
 
 					// Early return if block is exposed to air
-					if (!game.world.isExposed(x, y, z))
+					if (!this.game.world.isExposed(x, y, z))
 						continue;
 
 					// Ensure block is visible to player

@@ -4,15 +4,22 @@ import com.nixinova.graphics.Render;
 import com.nixinova.graphics.Texture;
 
 public class Block {
-	public static Block SKY = new Block("env/sky");
+	public static final Block AIR = new Block(null);
+	public static final Block BEDROCK = new Block("blocks/bedrock");
+	public static final Block STONE = new Block("blocks/stone");
+	public static final Block DIRT = new Block("blocks/dirt");
+	public static final Block GRASS = new Block("blocks/grass");
 
-	public static Block AIR = new Block(null);
-	public static Block BEDROCK = new Block("blocks/bedrock");
-	public static Block STONE = new Block("blocks/stone");
-	public static Block DIRT = new Block("blocks/dirt");
-	public static Block GRASS = new Block("blocks/grass");
-	public static Block DEBUG = new Block("debug");
-	public static Block MISSING = new Block("missing_texture");
+	public static final Block DEBUG = new Block("debug");
+	public static final Block MISSING = new Block("missing_texture");
+	
+	public static final Block[] BLOCKS = {
+		AIR,
+		BEDROCK,
+		STONE, 
+		DIRT, 
+		GRASS,
+	};
 
 	private Render texture;
 	private String name;
