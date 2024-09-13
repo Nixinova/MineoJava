@@ -103,7 +103,13 @@ public class Display extends Canvas implements Runnable {
 			return;
 		}
 
-		Graphics graphics = buffer.getDrawGraphics();
+		Graphics graphics;
+		try {
+			graphics = buffer.getDrawGraphics();
+		} catch (NullPointerException err) {
+			// Suppress erroneous SunGraphics2D exception when changing scenes
+			return;
+		}
 
 		// Draw world
 		this.renderer.renderWorld(this.game, graphics);

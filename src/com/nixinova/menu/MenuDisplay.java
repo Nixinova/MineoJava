@@ -91,7 +91,13 @@ public class MenuDisplay extends Canvas implements Runnable {
 			return;
 		}
 
-		Graphics graphics = buffer.getDrawGraphics();
+		Graphics graphics;
+		try {
+			graphics = buffer.getDrawGraphics();
+		} catch (NullPointerException err) {
+			// Suppress erroneous SunGraphics2D exception when changing scenes
+			return;
+		}
 
 		// Draw menu
 		this.menu.run(graphics);
