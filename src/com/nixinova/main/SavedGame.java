@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,13 +13,23 @@ import java.util.Scanner;
 import com.nixinova.blocks.Block;
 import com.nixinova.coords.BlockCoord;
 import com.nixinova.coords.Coord3;
+import com.nixinova.coords.TxCoord;
 import com.nixinova.player.Player;
 import com.nixinova.world.World;
 
 public class SavedGame {
 	public static final String SAVE_FILE = "game.dat";
+	/**
+	 * Semantics of version incrementing:
+	 * - +1.0: Major: Fundamental file format changes that make older save files unreadable.
+	 * - +0.1: Minor: Addition of new data items; keeps backward compatibility.
+	 */
+	public static float SAVE_VERSION = 1.0f;
 
 	private static final String saveFilePath = Mineo.rootFolder + "/" + SAVE_FILE;
+	private static final char CHAR_VERSION = 'v';
+	private static final char CHAR_PLAYERPOS = 'P';
+	private static final char CHAR_BLOCKPOS = 'B';
 
 	public World world;
 	public Player player;
@@ -27,21 +38,22 @@ public class SavedGame {
 		loadFromFile();
 	}
 
-	public static void saveToFile( World world, Player player) {
-		var pos = player.getPosition().toTx();
-
+	public static void saveToFile(Game game) {
 		try {
 			FileWriter writer = new FileWriter(saveFilePath);
+			
+			// Write version
+			writer.write(String.format("%c %.1f\n", CHAR_VERSION, SAVE_VERSION));
 
-			writer.write("PLAYER\n");
-			writer.write(String.format("%d,%d,%d\n", pos.x, pos.y, pos.z));
+			// Writer player position
+			writer.write(String.format("%c %d\n", CHAR_PLAYERPOS, packCoord(game.player.getPosition())));
 
-			writer.write("WORLD\n");
-			// store each changed block in world
-			for (Entry<BlockCoord, Block> entry : world.getBlockChanges().entrySet()) {
+			// Write each changed block in world
+			for (Entry<BlockCoord, Block> entry : game.world.getBlockChanges().entrySet()) {
 				BlockCoord block = entry.getKey();
-				String tex = entry.getValue().getTextureName();
-				writer.write(String.format("%d,%d,%d=%s\n", block.x, block.y, block.z, tex == null ? "0" : tex));
+				int packPos = packCoord(Coord3.fromBlock(block));
+				int blockId = Arrays.asList(Block.BLOCKS).indexOf(entry.getValue());
+				writer.write(String.format("%c %d %s\n", CHAR_BLOCKPOS, packPos, blockId));
 			}
 
 			writer.close();
@@ -61,46 +73,52 @@ public class SavedGame {
 			return;
 		}
 
+		Map<BlockCoord, Block> blockChanges = new HashMap<>();
+
 		while (scanner.hasNextLine()) {
 			String line = scanner.nextLine().trim();
+			String[] lineParts = line.split(" ");
+			final char modeChar = lineParts[0].charAt(0);
 
-			// Load player data
-			if (line.equals("PLAYER")) {
-				// Load player position if present
-
-				if (!scanner.hasNextLine())
-					break;
-
-				String[] posData = scanner.nextLine().trim().split(",");
-				int posX = Integer.parseInt(posData[0]);
-				int posY = Integer.parseInt(posData[1]);
-				int posZ = Integer.parseInt(posData[2]);
-				this.player = new Player(Coord3.fromTx(posX, posY, posZ));
-			}
-			// Load world data
-			else if (line.equals("WORLD")) {
-				// Load block data if present
-
-				if (!scanner.hasNextLine())
-					break;
-
-				Map<BlockCoord, Block> blockChanges = new HashMap<>();
-				while (scanner.hasNextLine()) {
-					String blockData = scanner.nextLine().trim();
-
-					String[] posData = blockData.split("=")[0].split(",");
-					int posX = Integer.parseInt(posData[0]);
-					int posY = Integer.parseInt(posData[1]);
-					int posZ = Integer.parseInt(posData[2]);
-					String texName = blockData.split("=")[1];
-
-					BlockCoord pos = new BlockCoord(posX, posY, posZ);
-					blockChanges.put(pos, texName.equals("0") ? Block.AIR : new Block(texName));
+			switch (modeChar) {
+				// Save file version
+				case CHAR_VERSION -> {
+					float ver = Float.parseFloat(lineParts[1]);
+					if (ver != SAVE_VERSION) {
+						System.err.println("Save file is out of date!");
+					}
 				}
-				this.world = new World(blockChanges);
+				// Player position data
+				case CHAR_PLAYERPOS -> {
+					int packedPos = Integer.parseInt(lineParts[1]);
+					this.player = new Player(unpackCoord(packedPos));
+				}
+				// Changed blocks data
+				case CHAR_BLOCKPOS -> {
+					int packedPos = Integer.parseInt(lineParts[1]);
+					int blockId = Integer.parseInt(lineParts[2]);
+					BlockCoord pos = unpackCoord(packedPos).toBlock();
+					Block block = Block.BLOCKS[blockId];
+					blockChanges.put(pos, block);
+				}
 			}
 		}
+		
+		this.world = new World(blockChanges);
+		
 		scanner.close();
+	}
+
+	private static int packCoord(Coord3 coord) {
+		TxCoord tx = coord.toTx();
+		return tx.x << 16 | tx.y << 8 | tx.z;
+	}
+
+	private static Coord3 unpackCoord(int pack) {
+		int x = pack >> 16 & 0xFF;
+		int y = pack >> 8 & 0xFF;
+		int z = pack & 0xFF;
+		return Coord3.fromTx(x, y, z);
 	}
 
 }

@@ -189,7 +189,7 @@ public class ControlsTick {
 		// System keys
 		if (kbd.pressedKey(Keys.ESCAPE)) {
 			// Save game
-			SavedGame.saveToFile(this.game.world, this.game.player);
+			SavedGame.saveToFile(this.game);
 			// Exit to menu
 			Mineo.loadMainMenu();
 		}
