@@ -1,5 +1,10 @@
 # Changelog
 
+- Changed default worldSize to 100
+- Changed default groundLevel to 16
+- Changed default buildHeight to 32
+- Changed default jump height to 1.6
+
 ## 0.1
 *2025-03-02 01:33*
 - Added main menu

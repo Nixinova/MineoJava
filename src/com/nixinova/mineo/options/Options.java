@@ -20,16 +20,16 @@ public class Options {
 
 	public static final class DEFAULT_OPTIONS {
 		public static long seed = 100L;
-		public static int worldSize = 40;
-		public static int groundLevel = 10;
-		public static int buildHeight = 18;
+		public static int worldSize = 100;
+		public static int groundLevel = 16;
+		public static int buildHeight = 32;
 		public static int renderDistance = 20;
 		public static double gamma = 1.0;
 		public static double gravity = 0.2;
 		public static double sensitivity = 0.005;
 		public static double walkSpeed = 0.5;
 		public static double sprintSpeed = 0.8;
-		public static double jumpHeight = 1.5;
+		public static double jumpHeight = 1.6;
 		public static double reach = 5.0;
 	}
 
