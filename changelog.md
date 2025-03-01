@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1
+*2025-03-02 01:33*
+- Added main menu
+- Added level saving and loading
+- Added save file format
+- Changed sky to no longer render when player is underground
+- Changed font glyphs
+- Changed block rendering to render far away blocks monochromatically
+
 ## 0.0.21_1
 *2024-08-17 22:13*
 - Added HUD toggling with F2
