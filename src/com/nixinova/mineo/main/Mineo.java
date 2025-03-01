@@ -71,6 +71,7 @@ public class Mineo {
 
 		frame.add(gameDisplay);
 		frame.pack();
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // windowed fullscreen
 		gameDisplay.start();
 		gameDisplay.requestFocusInWindow();
 	}
@@ -84,6 +85,7 @@ public class Mineo {
 
 		frame.add(menuDisplay);
 		frame.pack();
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // windowed fullscreen
 		menuDisplay.start();
 		menuDisplay.requestFocusInWindow();
 	}
