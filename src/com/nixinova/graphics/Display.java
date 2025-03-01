@@ -97,19 +97,21 @@ public class Display extends Canvas implements Runnable {
 	}
 
 	private void render() {
+		try {
+			doRender();
+		} catch (IllegalStateException err) {
+			// Suppress erroneous SunGraphics2D exception when changing scenes
+		}
+	}
+
+	private void doRender() {
 		BufferStrategy buffer = getBufferStrategy();
 		if (buffer == null) {
 			createBufferStrategy(2);
 			return;
 		}
 
-		Graphics graphics;
-		try {
-			graphics = buffer.getDrawGraphics();
-		} catch (NullPointerException err) {
-			// Suppress erroneous SunGraphics2D exception when changing scenes
-			return;
-		}
+		Graphics graphics = buffer.getDrawGraphics();
 
 		// Draw world
 		this.renderer.renderWorld(this.game, graphics);

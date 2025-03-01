@@ -84,20 +84,22 @@ public class MenuDisplay extends Canvas implements Runnable {
 		}
 	}
 
-	public void render() {
+	private void render() {
+		try {
+			doRender();
+		} catch (IllegalStateException err) {
+			// Suppress erroneous SunGraphics2D exception when changing scenes
+		}
+	}
+
+	public void doRender() {
 		BufferStrategy buffer = getBufferStrategy();
 		if (buffer == null) {
 			createBufferStrategy(2);
 			return;
 		}
 
-		Graphics graphics;
-		try {
-			graphics = buffer.getDrawGraphics();
-		} catch (NullPointerException err) {
-			// Suppress erroneous SunGraphics2D exception when changing scenes
-			return;
-		}
+		Graphics graphics = buffer.getDrawGraphics();
 
 		// Draw menu
 		this.menu.run(graphics);

@@ -1,5 +1,6 @@
 bin/
 jars/
 .classpath
+.metadata
 .project
 module-info.java
