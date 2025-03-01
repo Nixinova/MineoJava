@@ -2,7 +2,7 @@ package com.nixinova.menu;
 
 import java.awt.Graphics;
 
-import com.nixinova.graphics.Display;
+import com.nixinova.display.GameDisplay;
 import com.nixinova.graphics.FontGraphics;
 import com.nixinova.graphics.TextColorScheme;
 import com.nixinova.input.InputHandler;
@@ -24,7 +24,7 @@ public class MenuButton {
 	private int btnPadY;
 
 	public MenuButton(String text, int startX, int startY) {
-		btnWidth = Display.WIDTH - 2 * startX;
+		btnWidth = GameDisplay.WIDTH - 2 * startX;
 		btnHeight = 100;
 		btnPadX = btnWidth / 2;
 		btnPadY = btnHeight / 4;

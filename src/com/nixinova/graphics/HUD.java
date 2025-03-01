@@ -5,6 +5,7 @@ import java.awt.Graphics;
 
 import com.nixinova.PixelColor;
 import com.nixinova.blocks.Block;
+import com.nixinova.display.GameDisplay;
 import com.nixinova.player.Hotbar;
 
 public class HUD {
@@ -25,8 +26,8 @@ public class HUD {
 		int size = 64;
 		int sep = 10;
 		int cell = size + sep;
-		int startX = (Display.WIDTH / 2) - 4 * cell;
-		int startY = Display.HEIGHT - 150;
+		int startX = (GameDisplay.WIDTH / 2) - 4 * cell;
+		int startY = GameDisplay.HEIGHT - 150;
 
 		// Draw hotbar border
 		graphics.setColor(Color.gray);
@@ -53,8 +54,8 @@ public class HUD {
 
 	private void drawCursor() {
 		int size = 5;
-		int startX = (Display.WIDTH - size) / 2;
-		int startY = (Display.HEIGHT - size) / 2;
+		int startX = (GameDisplay.WIDTH - size) / 2;
+		int startY = (GameDisplay.HEIGHT - size) / 2;
 		graphics.setColor(PixelColor.fromPixel(PixelColor.SELECTION_OUTLINE));
 		graphics.fillRect(startX, startY, size, size);
 	}
@@ -62,7 +63,7 @@ public class HUD {
 	private void drawSelectedBlock() {
 		final int size = 100;
 		final int padding = 30;
-		int startX = Display.WIDTH - size - padding;
+		int startX = GameDisplay.WIDTH - size - padding;
 		int startY = padding;
 		Render texture = Hotbar.getCurrentBlock().getTexture();
 		drawTextureOnScreen(texture, size, startX, startY);

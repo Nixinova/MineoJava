@@ -13,7 +13,7 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.JFrame;
 
-import com.nixinova.graphics.Display;
+import com.nixinova.display.GameDisplay;
 
 // Input handler: absolute mouse movement, regardless of sensitivity etc
 public class InputHandler implements KeyListener, FocusListener, MouseListener, MouseMotionListener {
@@ -30,8 +30,8 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 		this.frame = frame;
 		this.keys = new Keys();
 
-		this.centerX = Display.WIDTH / 2;
-		this.centerY = Display.HEIGHT / 2;
+		this.centerX = GameDisplay.WIDTH / 2;
+		this.centerY = GameDisplay.HEIGHT / 2;
 		this.mouseX = this.centerX;
 		this.mouseY = this.centerY;
 		this.deltaX = 0;

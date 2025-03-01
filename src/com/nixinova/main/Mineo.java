@@ -8,10 +8,10 @@ import java.io.File;
 
 import javax.swing.JFrame;
 
-import com.nixinova.graphics.Display;
+import com.nixinova.display.GameDisplay;
+import com.nixinova.display.MenuDisplay;
 import com.nixinova.input.InputHandler;
 import com.nixinova.menu.MainMenu;
-import com.nixinova.menu.MenuDisplay;
 import com.nixinova.options.Options;
 
 public class Mineo {
@@ -38,7 +38,7 @@ public class Mineo {
 		frame.pack();
 		frame.getContentPane().setCursor(blank);
 		frame.setDefaultCloseOperation(3);
-		frame.setSize(Display.WIDTH, Display.HEIGHT);
+		frame.setSize(GameDisplay.WIDTH, GameDisplay.HEIGHT);
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // windowed fullscreen
 		frame.setTitle(TITLE);
 		frame.setVisible(true);
@@ -67,7 +67,7 @@ public class Mineo {
 		else
 			game.initSaved();
 
-		Display gameDisplay = new Display(game, input);
+		GameDisplay gameDisplay = new GameDisplay(game, input);
 
 		frame.add(gameDisplay);
 		frame.pack();

@@ -8,7 +8,7 @@ import java.awt.TexturePaint;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-import com.nixinova.graphics.Display;
+import com.nixinova.display.GameDisplay;
 import com.nixinova.graphics.FontGraphics;
 import com.nixinova.graphics.TextColorScheme;
 import com.nixinova.graphics.Texture;
@@ -47,15 +47,15 @@ public class MainMenu extends BaseMenu {
 		var textScheme = new TextColorScheme(Color.lightGray, Color.black);
 
 		// Clear window
-		graphics.clearRect(0, 0, Display.WIDTH, Display.HEIGHT);
+		graphics.clearRect(0, 0, GameDisplay.WIDTH, GameDisplay.HEIGHT);
 
 		// Textured background
 		Rectangle2D anchorRect = new Rectangle2D.Double(0, 0, bgImg.getWidth(), bgImg.getHeight());
 		graphics.setPaint(new TexturePaint(bgImg, anchorRect));
-		graphics.fillRect(0, 0, Display.WIDTH, Display.HEIGHT);
+		graphics.fillRect(0, 0, GameDisplay.WIDTH, GameDisplay.HEIGHT);
 
 		// Draw heading
-		headerFont.drawStringOutlined(graphics, "MINEO JAVA", Display.WIDTH / 2 - 235, 200, textScheme);
+		headerFont.drawStringOutlined(graphics, "MINEO JAVA", GameDisplay.WIDTH / 2 - 235, 200, textScheme);
 
 		// Set up buttons
 		contButton.setGraphics(graphics);
@@ -67,9 +67,9 @@ public class MainMenu extends BaseMenu {
 		exitButton.draw(buttonScheme);
 
 		// Draw footer
-		footerFont.drawStringOutlined(graphics, "v" + Mineo.VERSION, 10, Display.HEIGHT - 100, textScheme);
+		footerFont.drawStringOutlined(graphics, "v" + Mineo.VERSION, 10, GameDisplay.HEIGHT - 100, textScheme);
 		footerFont.drawStringOutlined(graphics, String.valueOf(super.fps), 10, 10, textScheme);
-		footerFont.drawStringOutlined(graphics, "© Nixinova", Display.WIDTH - 120, Display.HEIGHT - 100, textScheme);
+		footerFont.drawStringOutlined(graphics, "© Nixinova", GameDisplay.WIDTH - 120, GameDisplay.HEIGHT - 100, textScheme);
 
 		// Draw cursor
 		graphics.setColor(Color.white);

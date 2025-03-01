@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import com.nixinova.PixelColor;
+import com.nixinova.display.GameDisplay;
 import com.nixinova.main.Game;
 
 public class Render3D extends Render {
@@ -19,7 +20,7 @@ public class Render3D extends Render {
 	public void renderWorld(Game game, Graphics graphics) {
 		// Clear window
 		graphics.setColor(Color.black);
-		graphics.fillRect(0, 0, Display.WIDTH, Display.HEIGHT);
+		graphics.fillRect(0, 0, GameDisplay.WIDTH, GameDisplay.HEIGHT);
 
 		// Prepare renderer
 		blockRender.prepare(game, graphics);
@@ -42,7 +43,7 @@ public class Render3D extends Render {
 		final double gradientMult = 0.97;
 
 		double tilt = game.controls.getMouseVertRads();
-		double skySize = Display.HEIGHT * (SKY_SIZE + tilt) + game.player.getPosition().toBlock().y;
+		double skySize = GameDisplay.HEIGHT * (SKY_SIZE + tilt) + game.player.getPosition().toBlock().y;
 
 		// Generate starting blue colour from mouse angle
 		int currentBlue = baseBlue;
@@ -64,7 +65,7 @@ public class Render3D extends Render {
 				gradientedBlue = 0;
 
 			graphics.setColor(PixelColor.fromPixel(gradientedBlue));
-			graphics.fillRect(0, vert, Display.WIDTH, vert + bandHeight);
+			graphics.fillRect(0, vert, GameDisplay.WIDTH, vert + bandHeight);
 		}
 	}
 }

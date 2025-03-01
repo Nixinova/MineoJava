@@ -3,6 +3,7 @@ package com.nixinova.graphics;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import com.nixinova.display.GameDisplay;
 import com.nixinova.main.Game;
 import com.nixinova.main.Mineo;
 import com.nixinova.options.Options;
@@ -68,9 +69,9 @@ public class ScreenText {
 		}
 
 		Color col = diffMajor ? Color.red : diffMinor ? Color.yellow : Color.white;
-		infoFont.drawString(graphics, msg1, col, INDENT, Display.HEIGHT - SEP * 8);
-		infoFont.drawString(graphics, msg2, col, INDENT, Display.HEIGHT - SEP * 7);
-		infoFont.drawString(graphics, msg3, col, INDENT, Display.HEIGHT - SEP * 6);
+		infoFont.drawString(graphics, msg1, col, INDENT, GameDisplay.HEIGHT - SEP * 8);
+		infoFont.drawString(graphics, msg2, col, INDENT, GameDisplay.HEIGHT - SEP * 7);
+		infoFont.drawString(graphics, msg3, col, INDENT, GameDisplay.HEIGHT - SEP * 6);
 	}
 
 	private void drawInfoLine(FontGraphics fg, String fStr, Object... args) {
