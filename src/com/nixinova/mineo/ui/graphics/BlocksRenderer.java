@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import com.nixinova.mineo.main.Game;
 import com.nixinova.mineo.maths.PixelColor;
@@ -131,7 +132,9 @@ public class BlocksRenderer extends Render {
 				coordToScreenPx(texCornersList.cornerC, false),
 			};
 			
-			int txPixel = Texture.getTexel(texture, 1, 1);
+			// Generate random colour from the texture, seeded with block pos
+			Random random = new Random(blockX * 16 + blockY * 8 + blockZ);
+			int txPixel = Texture.getTexel(texture, random.nextInt(Texture.SIZE), random.nextInt(Texture.SIZE));
 
 			saveRect(coords, txPixel);
 			return;
