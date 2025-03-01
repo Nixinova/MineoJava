@@ -80,8 +80,7 @@ public class BlocksRenderer extends Render {
 						continue;
 
 					// Ensure block is within render distance
-					boolean inRenderDist = this.isWithinRenderDistance(x, y, z);
-					if (!inRenderDist)
+					if (this.getBlockDistance(x, y, z) >= Options.renderDistance)
 						continue;
 
 					// Early return if block is exposed to air
@@ -122,6 +121,21 @@ public class BlocksRenderer extends Render {
 		// Get corners of block
 		BlockCorners blockCorners = new BlockCorners(blockX, blockY, blockZ, face);
 		TexelCorners texCornersList = new TexelCorners(blockCorners);
+		
+		// If the block is far away, we can get away with rendering the whole block one colour
+		if (this.getBlockDistance(blockX, blockY, blockZ) >= Options.DEFAULT_OPTIONS.renderDistance) {
+			var coords = new PxCoord[] {
+				coordToScreenPx(texCornersList.cornerA, false),
+				coordToScreenPx(texCornersList.cornerB, false),
+				coordToScreenPx(texCornersList.cornerD, false),
+				coordToScreenPx(texCornersList.cornerC, false),
+			};
+			
+			int txPixel = Texture.getTexel(texture, 1, 1);
+
+			saveRect(coords, txPixel);
+			return;
+		}
 
 		// Get corners of each texel and render
 		for (int texX = 0; texX < Texture.SIZE; texX++) {
@@ -159,13 +173,12 @@ public class BlocksRenderer extends Render {
 
 	}
 
-	private boolean isWithinRenderDistance(int blockX, int blockY, int blockZ) {
+	private double getBlockDistance(int blockX, int blockY, int blockZ) {
 		BlockCoord playerPos = this.game.controls.getFootPosition().toBlock();
 		int dx = playerPos.x - blockX;
 		int dy = playerPos.y - blockY;
 		int dz = playerPos.z - blockZ;
-		int distance = (int) Math.sqrt(dx * dx + dy * dy + dz * dz);
-		return distance < Options.renderDistance;
+		return Math.sqrt(dx * dx + dy * dy + dz * dz);
 	}
 
 	private PxCoord coordToScreenPx(SubBlockCoord block, boolean force) {

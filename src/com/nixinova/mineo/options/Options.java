@@ -18,7 +18,7 @@ public class Options {
 	 */
 	public static final float OPTIONS_VERSION = 1.12F;
 
-	private static final class DEFAULT_OPTIONS {
+	public static final class DEFAULT_OPTIONS {
 		public static long seed = 100L;
 		public static int worldSize = 40;
 		public static int groundLevel = 10;
