@@ -22,6 +22,9 @@ public class Mineo {
 	public static String rootFolder;
 
 	private static JFrame frame;
+	
+	private static MenuDisplay menuDisplay;
+	private static GameDisplay gameDisplay;
 
 	public static void main(String[] args) {
 		setupDataFolder();
@@ -61,19 +64,20 @@ public class Mineo {
 
 		Game game = new Game();
 		game.setInput(input);
-
 		if (anew)
 			game.initNew();
 		else
 			game.initSaved();
-
-		GameDisplay gameDisplay = new GameDisplay(game, input);
+		gameDisplay = new GameDisplay(game, input);
 
 		frame.add(gameDisplay);
 		frame.pack();
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // windowed fullscreen
 		gameDisplay.start();
 		gameDisplay.requestFocusInWindow();
+		
+		// kill other scenes
+		if (menuDisplay != null) menuDisplay.stop();
 	}
 
 	public static void loadMainMenu() {
@@ -81,13 +85,16 @@ public class Mineo {
 
 		InputHandler input = new InputHandler(frame);
 		MainMenu mainMenu = new MainMenu(input);
-		MenuDisplay menuDisplay = new MenuDisplay(mainMenu);
+		menuDisplay = new MenuDisplay(mainMenu);
 
 		frame.add(menuDisplay);
 		frame.pack();
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // windowed fullscreen
 		menuDisplay.start();
 		menuDisplay.requestFocusInWindow();
+		
+		// kill other scenes
+		if (gameDisplay != null) gameDisplay.stop();
 	}
 
 	private static void setupDataFolder() {
