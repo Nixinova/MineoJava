@@ -101,7 +101,7 @@ public class BlocksRenderer extends Render {
 	}
 
 	private void drawOneBlock(int blockX, int blockY, int blockZ) {
-		Render texture = this.game.world.getTextureAt(blockX, blockY, blockZ);
+		Render texture = this.game.world.getBlockAt(blockX, blockY, blockZ);
 
 		final BlockFace[] faces = {
 			BlockFace.XMIN, BlockFace.XMAX,

@@ -18,7 +18,7 @@ public class World {
 	/** Exclusive (<) */
 	public final BlockCoord maxCorner;
 
-	private Render[][][] blockTextures;
+	private Render[][][] worldBlocks;
 	private Map<BlockCoord, Block> blockChanges;
 
 	public World() {
@@ -26,7 +26,7 @@ public class World {
 		this.maxCorner = new BlockCoord(Options.worldSize, Options.buildHeight, Options.worldSize);
 		this.blockChanges = new HashMap<>();
 
-		this.mapBlockTextures();
+		this.mapBlocks();
 	}
 
 	public World(Map<BlockCoord, Block> blockChanges) {
@@ -36,7 +36,7 @@ public class World {
 		for (Entry<BlockCoord, Block> entry : blockChanges.entrySet()) {
 			BlockCoord blockPos = entry.getKey();
 			Block block = entry.getValue();
-			setTextureAt(blockPos, block.getTexture());
+			setBlockAt(blockPos, block.getTexture());
 		}
 	}
 
@@ -59,7 +59,7 @@ public class World {
 	/** returns -1 if all is air */
 	public int getMinGroundY(int blockX, int blockZ) {
 		for (int i = 0; i < Options.buildHeight; i++) {
-			if (this.getTextureAt(blockX, i, blockZ) == null) {
+			if (this.getBlockAt(blockX, i, blockZ) == null) {
 				return i - 1;
 			}
 		}
@@ -83,7 +83,7 @@ public class World {
 
 	public boolean isAir(int blockX, int blockY, int blockZ) {
 		boolean isOutsideWorld = !isWithinWorld(blockX, blockY, blockZ);
-		boolean isAir = getTextureAt(blockX, blockY, blockZ) == Block.AIR.getTexture();
+		boolean isAir = getBlockAt(blockX, blockY, blockZ) == Block.AIR.getTexture();
 		return isOutsideWorld || isAir;
 	}
 
@@ -91,23 +91,23 @@ public class World {
 		return isAir(block.x, block.y, block.z);
 	}
 
-	public Render getTextureAt(int blockX, int blockY, int blockZ) {
+	public Render getBlockAt(int blockX, int blockY, int blockZ) {
 		if (isWithinWorld(blockX, blockY, blockZ)) {
 			// If within the world, return texture
-			return this.blockTextures[blockX][blockY][blockZ];
+			return this.worldBlocks[blockX][blockY][blockZ];
 		} else {
 			// Return nothing when outside of world
 			return null;
 		}
 	}
 
-	public Render getTextureAt(BlockCoord block) {
-		return getTextureAt(block.x, block.y, block.z);
+	public Render getBlockAt(BlockCoord block) {
+		return getBlockAt(block.x, block.y, block.z);
 	}
 
-	private void setTextureAt(BlockCoord block, Render texture) {
+	private void setBlockAt(BlockCoord block, Render texture) {
 		if (isWithinWorld(block.x, block.y, block.z)) {
-			this.blockTextures[block.x][block.y][block.z] = texture;
+			this.worldBlocks[block.x][block.y][block.z] = texture;
 		}
 	}
 
@@ -116,7 +116,7 @@ public class World {
 	}
 
 	public void placeBlock(BlockCoord pos, Block block) {
-		setTextureAt(pos, block.getTexture());
+		setBlockAt(pos, block.getTexture());
 		blockChanges.put(pos, block);
 	}
 	
@@ -128,33 +128,45 @@ public class World {
 	}
 
 	// NOTE: does not abide by this.minCorner
-	private void mapBlockTextures() {
+	private void mapBlocks() {
 		int maxX = this.maxCorner.x + 1;
 		int maxY = this.maxCorner.y + 1;
 		int maxZ = this.maxCorner.z + 1;
-		this.blockTextures = new Render[maxX][maxY][maxZ];
+		this.worldBlocks = new Render[maxX][maxY][maxZ];
+		
+		var terrainGrounds = new int[maxX][maxZ];
 
 		Random random = new Random(Options.seed);
 
 		for (int x = 0; x < this.maxCorner.x; x++) {
 			for (int z = 0; z < this.maxCorner.z; z++) {
 				int localGroundY = Options.groundLevel;
+				
+				if (x > 1 && z > 1) {
+					// Create average ground from surrounding blocks
+					int surroundingGroundY = (terrainGrounds[x - 1][z - 1] + terrainGrounds[x][z - 1] + terrainGrounds[x - 1][z]) / 3;
+					localGroundY = surroundingGroundY + 1;
+				}
+				localGroundY += random.nextInt(-1, 1); // +/- 1 for randomness
+				if (localGroundY < 4) localGroundY = 4;
+				if (localGroundY > Options.buildHeight + 4) localGroundY = Options.buildHeight + 4;
+				terrainGrounds[x][z] = localGroundY;
 
 				for (int y = 0; y < this.maxCorner.y; y++) {
 					Block block;
 
 					if (y == 0)
 						block = Block.BEDROCK;
-					else if (y <= localGroundY - 4)
+					else if (y <= Options.groundLevel - 4)
 						block = Block.STONE;
-					else if (y <= localGroundY - 1)
+					else if (y <= Options.groundLevel - 1)
 						block = Block.DIRT;
 					else if (y <= localGroundY)
 						block = Block.GRASS;
 					else
 						block = Block.AIR;
 
-					blockTextures[x][y][z] = block.getTexture();
+					worldBlocks[x][y][z] = block.getTexture();
 				}
 			}
 		}
