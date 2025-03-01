@@ -10,14 +10,15 @@ import com.nixinova.mineo.ui.display.GameDisplay;
 
 public class ScreenText {
 
-	private static final int INDENT = 5;
+	private static final int LEFT_MARGIN = 5;
+	private static final int TOP_MARGIN = 5;
 	private static final int SEP = 15;
 
 	private final FontGraphics headerFont = FontGraphics.FONT_150;
 	private final FontGraphics infoFont = FontGraphics.FONT_100;
 
 	private Graphics graphics;
-	private int curLineIndex = 1;
+	private int curLineIndex = 0;
 
 	public ScreenText(Graphics graphics) {
 		this.graphics = graphics;
@@ -69,14 +70,14 @@ public class ScreenText {
 		}
 
 		Color col = diffMajor ? Color.red : diffMinor ? Color.yellow : Color.white;
-		infoFont.drawString(graphics, msg1, col, INDENT, GameDisplay.HEIGHT - SEP * 8);
-		infoFont.drawString(graphics, msg2, col, INDENT, GameDisplay.HEIGHT - SEP * 7);
-		infoFont.drawString(graphics, msg3, col, INDENT, GameDisplay.HEIGHT - SEP * 6);
+		infoFont.drawString(graphics, msg1, col, LEFT_MARGIN, GameDisplay.HEIGHT - SEP * 8);
+		infoFont.drawString(graphics, msg2, col, LEFT_MARGIN, GameDisplay.HEIGHT - SEP * 7);
+		infoFont.drawString(graphics, msg3, col, LEFT_MARGIN, GameDisplay.HEIGHT - SEP * 6);
 	}
 
 	private void drawInfoLine(FontGraphics fg, String fStr, Object... args) {
 		String fmtdString = String.format(fStr, args);
-		fg.drawString(graphics, fmtdString, Color.white, INDENT, SEP * curLineIndex++);
+		fg.drawString(graphics, fmtdString, Color.white, LEFT_MARGIN, TOP_MARGIN + SEP * curLineIndex++);
 	}
 
 }
