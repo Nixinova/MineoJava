@@ -31,7 +31,14 @@ public class SavedGame {
 	public Player player;
 
 	public SavedGame() {
-		loadFromFile();
+		try {
+			loadFromFile();
+		} catch (FileNotFoundException | ArrayIndexOutOfBoundsException err) {
+			System.err.println("Save file not found or is corrupted.");
+			this.world = new World();
+			this.player = new Player(this.world.getHorizontalCentre());
+			return;
+		}
 	}
 
 	public static void saveToFile(Game game) {
@@ -62,18 +69,10 @@ public class SavedGame {
 		}
 	}
 
-	private void loadFromFile() {
+	private void loadFromFile() throws FileNotFoundException {
 		File saveFile = new File(saveFilePath);
 
-		Scanner scanner;
-		try {
-			scanner = new Scanner(saveFile);
-		} catch (FileNotFoundException err) {
-			System.err.println("Save file not found.");
-			this.world = new World();
-			this.player = new Player(this.world.getHorizontalCentre());
-			return;
-		}
+		Scanner scanner = new Scanner(saveFile);
 
 		Block[][][] blockChanges = new Block[World.maxCorner.x][World.maxCorner.y][World.maxCorner.z];
 

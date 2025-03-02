@@ -1,5 +1,7 @@
 # Changelog
 
+- Fix crashing on world size change
+
 ## 0.1.3
 *2025-03-02 16:48*
 - Added texture mipmapping
