@@ -102,7 +102,10 @@ public class BlocksRenderer extends Render {
 	}
 
 	private void drawOneBlock(int blockX, int blockY, int blockZ) {
-		Render texture = this.game.world.getBlockAt(blockX, blockY, blockZ).getTexture();
+		var block = this.game.world.getBlockAt(blockX, blockY, blockZ);
+		if (block == null) return; // Resizing world in options can cause a block to be undefined
+
+		var texture = block.getTexture();
 
 		final BlockFace[] faces = {
 			BlockFace.XMIN, BlockFace.XMAX,
