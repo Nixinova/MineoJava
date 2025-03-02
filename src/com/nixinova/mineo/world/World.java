@@ -1,9 +1,6 @@
 package com.nixinova.mineo.world;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
-import java.util.Map.Entry;
 
 import com.nixinova.mineo.maths.coords.BlockCoord;
 import com.nixinova.mineo.maths.coords.Coord3;
@@ -14,41 +11,41 @@ import com.nixinova.mineo.world.blocks.BlockFace;
 
 public class World {
 	/** Inclusive (>=) */
-	public final BlockCoord minCorner;
+	public static final BlockCoord minCorner = new BlockCoord(0, 0, 0); // Codebase assumes min corner of world is always 0
 	/** Exclusive (<) */
-	public final BlockCoord maxCorner;
+	public static final BlockCoord maxCorner = new BlockCoord(Options.worldSize, Options.buildHeight, Options.worldSize);
 
 	private Render[][][] worldBlocks;
-	private Map<BlockCoord, Block> blockChanges;
+	private Block[][][] blockChanges;
 
 	public World() {
-		this.minCorner = new BlockCoord(0, 0, 0);
-		this.maxCorner = new BlockCoord(Options.worldSize, Options.buildHeight, Options.worldSize);
-		this.blockChanges = new HashMap<>();
+		this.blockChanges = new Block[maxCorner.x][maxCorner.y][maxCorner.z];
 
 		this.mapBlocks();
 	}
 
-	public World(Map<BlockCoord, Block> blockChanges) {
+	public World(Block[][][] blockChanges) {
 		this();
 		this.blockChanges = blockChanges;
 		// Update world to match block changes map
-		for (Entry<BlockCoord, Block> entry : blockChanges.entrySet()) {
-			BlockCoord blockPos = entry.getKey();
-			Block block = entry.getValue();
-			setBlockAt(blockPos, block.getTexture());
+		for (int x = minCorner.x; x < maxCorner.x; x++) {
+			for (int y = minCorner.y; y < maxCorner.y; y++) {
+				for (int z = minCorner.z; z < maxCorner.z; z++) {
+					Block block = blockChanges[x][y][z];
+					setBlockAt(x, y, z, block.getTexture());
+				}
+			}
 		}
 	}
 
-	public Map<BlockCoord, Block> getBlockChanges() {
+	public Block[][][] getBlockChanges() {
 		return blockChanges;
 	}
 
 	public boolean isWithinWorld(int blockX, int blockY, int blockZ) {
-		final BlockCoord min = minCorner, max = maxCorner;
-		boolean xValid = blockX >= min.x && blockX < max.x;
-		boolean yValid = blockY >= min.y && blockY < max.y;
-		boolean zValid = blockZ >= min.z && blockZ < max.z;
+		boolean xValid = blockX >= minCorner.x && blockX < maxCorner.x;
+		boolean yValid = blockY >= minCorner.y && blockY < maxCorner.y;
+		boolean zValid = blockZ >= minCorner.z && blockZ < maxCorner.z;
 		return xValid && yValid && zValid;
 	}
 
@@ -105,10 +102,14 @@ public class World {
 		return getBlockAt(block.x, block.y, block.z);
 	}
 
-	private void setBlockAt(BlockCoord block, Render texture) {
-		if (isWithinWorld(block.x, block.y, block.z)) {
-			this.worldBlocks[block.x][block.y][block.z] = texture;
+	private void setBlockAt(int blockX, int blockY, int blockZ, Render texture) {
+		if (isWithinWorld(blockX, blockY, blockZ)) {
+			this.worldBlocks[blockX][blockY][blockZ] = texture;
 		}
+	}
+
+	private void setBlockAt(BlockCoord block, Render texture) {
+		setBlockAt(block.x, block.y, block.z, texture);
 	}
 
 	public void mineBlock(BlockCoord pos) {
@@ -117,29 +118,25 @@ public class World {
 
 	public void placeBlock(BlockCoord pos, Block block) {
 		setBlockAt(pos, block.getTexture());
-		blockChanges.put(pos, block);
+		blockChanges[pos.x][pos.y][pos.z] = block; 
 	}
 	
 	public Coord3 getHorizontalCentre() {
-		double x = (this.maxCorner.x + this.minCorner.x) / 2 + 0.5; // centre of block in centre of world
+		double x = maxCorner.x / 2 + 0.5; // centre of block in centre of world
 		double y = Options.groundLevel + 1; // one block above the ground
-		double z = (this.maxCorner.z + this.minCorner.z) / 2 + 0.5; // centre of block in centre of world
+		double z = maxCorner.z / 2 + 0.5; // centre of block in centre of world
 		return Coord3.fromSubBlock(x, y, z);
 	}
 
-	// NOTE: does not abide by this.minCorner
 	private void mapBlocks() {
-		int maxX = this.maxCorner.x + 1;
-		int maxY = this.maxCorner.y + 1;
-		int maxZ = this.maxCorner.z + 1;
-		this.worldBlocks = new Render[maxX][maxY][maxZ];
+		this.worldBlocks = new Render[maxCorner.x][maxCorner.y][maxCorner.z];
 		
-		var terrainGrounds = new int[maxX][maxZ];
+		var terrainGrounds = new int[maxCorner.x][maxCorner.z];
 
 		Random random = new Random(Options.seed);
 
-		for (int x = 0; x < this.maxCorner.x; x++) {
-			for (int z = 0; z < this.maxCorner.z; z++) {
+		for (int x = 0; x < maxCorner.x; x++) {
+			for (int z = 0; z < maxCorner.z; z++) {
 				int localGroundY = Options.groundLevel;
 				
 				if (x > 1 && z > 1) {
@@ -152,7 +149,7 @@ public class World {
 				if (localGroundY > Options.buildHeight + 4) localGroundY = Options.buildHeight + 4;
 				terrainGrounds[x][z] = localGroundY;
 
-				for (int y = 0; y < this.maxCorner.y; y++) {
+				for (int y = 0; y < maxCorner.y; y++) {
 					Block block;
 
 					if (y == 0)

@@ -15,6 +15,7 @@ import com.nixinova.mineo.maths.coords.BlockCoord;
 import com.nixinova.mineo.maths.coords.PxCoord;
 import com.nixinova.mineo.maths.coords.SubBlockCoord;
 import com.nixinova.mineo.options.Options;
+import com.nixinova.mineo.world.World;
 import com.nixinova.mineo.world.blocks.BlockCorners;
 import com.nixinova.mineo.world.blocks.BlockFace;
 import com.nixinova.mineo.world.blocks.TexelCorners;
@@ -70,8 +71,8 @@ public class BlocksRenderer extends Render {
 
 	private void drawWorld() {
 		// Loop from bottom to top of world
-		BlockCoord min = this.game.world.minCorner;
-		BlockCoord max = this.game.world.maxCorner;
+		BlockCoord min = World.minCorner;
+		BlockCoord max = World.maxCorner;
 		for (int x = min.x; x <= max.x; x++) {
 			for (int y = min.y; y <= max.y; y++) {
 				for (int z = min.z; z <= max.z; z++) {

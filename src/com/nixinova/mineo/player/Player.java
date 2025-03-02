@@ -37,8 +37,8 @@ public class Player {
 
 	public boolean isWithinWorld(World world) {
 		SubBlockCoord pos = this.position.toSubBlock();
-		BlockCoord min = world.minCorner;
-		BlockCoord max = world.maxCorner;
+		BlockCoord min = World.minCorner;
+		BlockCoord max = World.maxCorner;
 		return pos.x >= min.x && pos.x <= max.x && pos.y >= min.y && pos.y <= max.y && pos.z >= min.z && pos.z <= max.z;
 	}
 

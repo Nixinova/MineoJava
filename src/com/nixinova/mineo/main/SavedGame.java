@@ -4,13 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 
-import com.nixinova.mineo.maths.coords.BlockCoord;
 import com.nixinova.mineo.maths.coords.Coord3;
 import com.nixinova.mineo.maths.coords.TxCoord;
 import com.nixinova.mineo.player.Player;
@@ -50,10 +45,17 @@ public class SavedGame {
 			writer.write(String.format("%c %d,%d,%d\n", CHAR_PLAYERPOS, playerPos.x, playerPos.y, playerPos.z));
 
 			// Write each changed block in world
-			for (Entry<BlockCoord, Block> entry : game.world.getBlockChanges().entrySet()) {
-				BlockCoord block = entry.getKey();
-				int blockId = Arrays.asList(Block.BLOCKS).indexOf(entry.getValue());
-				writer.write(String.format("%c %d,%d,%d %s\n", CHAR_BLOCKPOS, block.x, block.y, block.z, blockId));
+			for (int x = 0; x < World.maxCorner.x; x++) {
+				for (int y = 0; y < World.maxCorner.y; y++) {
+					for (int z = 0; z < World.maxCorner.z; z++) {
+						var texture = game.world.getBlockAt(x, y, z);
+						int blockId = 0;
+						for (int i = 0; i < Block.BLOCKS.length; i++) {
+							if (Block.BLOCKS[i].getTexture() == texture) blockId = i;
+						}
+						writer.write(String.format("%c %d,%d,%d %s\n", CHAR_BLOCKPOS, x, y, z, blockId));
+					}
+				}
 			}
 
 			writer.close();
@@ -75,7 +77,7 @@ public class SavedGame {
 			return;
 		}
 
-		Map<BlockCoord, Block> blockChanges = new HashMap<>();
+		Block[][][] blockChanges = new Block[World.maxCorner.x][World.maxCorner.y][World.maxCorner.z];
 
 		while (scanner.hasNextLine()) {
 			String line = scanner.nextLine().trim();
@@ -106,9 +108,8 @@ public class SavedGame {
 					int posX = Integer.parseInt(posData[0]);
 					int posY = Integer.parseInt(posData[1]);
 					int posZ = Integer.parseInt(posData[2]);
-					BlockCoord pos = new BlockCoord(posX, posY, posZ);
 					Block block = Block.BLOCKS[blockId];
-					blockChanges.put(pos, block);
+					blockChanges[posX][posY][posZ] = block;
 				}
 			}
 		}
