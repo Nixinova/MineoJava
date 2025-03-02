@@ -46,7 +46,7 @@ public class SavedGame {
 			FileWriter writer = new FileWriter(saveFilePath);
 			
 			// Write version
-			writer.write(String.format("%c %.1f\n", CHAR_VERSION, SAVE_VERSION));
+			writer.write(String.format("%c %.1f : Mineo %s\n", CHAR_VERSION, SAVE_VERSION, Mineo.VERSION));
 
 			// Writer player position
 			TxCoord playerPos = game.player.getPosition().toTx();

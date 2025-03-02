@@ -1,5 +1,6 @@
 # Changelog
 
+- Include game version in save file
 - Fix crashing on world size change
 
 ## 0.1.3
