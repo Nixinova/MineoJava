@@ -48,7 +48,7 @@ public class World {
 	/** returns -1 if all is air */
 	public int getMinGroundY(int blockX, int blockZ) {
 		for (int i = 0; i < Options.buildHeight; i++) {
-			if (this.getBlockAt(blockX, i, blockZ) == null) {
+			if (this.getBlockAt(blockX, i, blockZ) == Block.AIR) {
 				return i - 1;
 			}
 		}
@@ -137,7 +137,7 @@ public class World {
 				}
 				localGroundY += random.nextInt(-1, 1); // +/- 1 for randomness
 				if (localGroundY < 4) localGroundY = 4;
-				if (localGroundY > Options.buildHeight + 4) localGroundY = Options.buildHeight + 4;
+				if (localGroundY > Options.buildHeight - 4) localGroundY = Options.buildHeight - 4;
 				terrainGrounds[x][z] = localGroundY;
 
 				for (int y = 0; y < maxCorner.y; y++) {
