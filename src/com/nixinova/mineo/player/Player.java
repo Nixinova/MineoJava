@@ -35,15 +35,15 @@ public class Player {
 		this.lookingAtBlock = result;
 	}
 
-	public boolean isWithinWorld(World world) {
+	public boolean isWithinWorld() {
 		SubBlockCoord pos = this.position.toSubBlock();
 		BlockCoord min = World.minCorner;
 		BlockCoord max = World.maxCorner;
-		return pos.x >= min.x && pos.x <= max.x && pos.y >= min.y && pos.y <= max.y && pos.z >= min.z && pos.z <= max.z;
+		return pos.x >= min.x && pos.x <= max.x && pos.y >= min.y && pos.z >= min.z && pos.z <= max.z;
 	}
 
 	public boolean isUnderground(World world) {
-		if (!isWithinWorld(world))
+		if (!isWithinWorld())
 			return false;
 
 		BlockCoord pos = this.position.toBlock();

@@ -46,7 +46,7 @@ public class ControlsTick {
 		// Tick
 		boolean aboveGround = isAboveGround();
 		boolean belowGround = isBelowGround();
-		boolean onGround = this.game.player.isWithinWorld(this.game.world) && !aboveGround && !belowGround;
+		boolean onGround = this.game.player.isWithinWorld() && !aboveGround && !belowGround;
 		// Natural events like gravity, etc
 		tickUninputted(aboveGround, belowGround);
 		// Player-controlled movement
@@ -54,14 +54,13 @@ public class ControlsTick {
 	}
 
 	private void tickUninputted(boolean aboveGround, boolean belowGround) {
-
 		// Setup movement
 		double xMove = 0.0D;
 		double yMove = 0.0D;
 		double zMove = 0.0D;
 
 		// Ground checks
-		if (this.game.player.isWithinWorld(this.game.world)) {
+		if (this.game.player.isWithinWorld()) {
 			// Above ground
 			if (aboveGround) {
 				// Fall due to gravity
@@ -250,7 +249,7 @@ public class ControlsTick {
 		// Above the ground if the block one texel beneath the player's feet is air
 		TxCoord curTx = controls.pos.toTx();
 		BlockCoord blockOneTxDown = Coord3.fromTx(curTx.x, curTx.y - 1, curTx.z).toBlock();
-		boolean belowTxIsNotVoid = this.game.world.isWithinWorld(blockOneTxDown);
+		boolean belowTxIsNotVoid = blockOneTxDown.y > 0;
 		boolean belowTxIsAir = this.game.world.isAir(blockOneTxDown);
 		return belowTxIsNotVoid && belowTxIsAir;
 	}

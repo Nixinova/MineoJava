@@ -1,5 +1,7 @@
 # Changelog
 
+- Fixed player movement breaking when at build height
+
 ## 0.1.2
 *2025-03-02 14:21*
 - Changed hotbar slots to also be selectable via mouse scrolling

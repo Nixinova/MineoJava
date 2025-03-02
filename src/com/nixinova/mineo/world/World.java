@@ -71,9 +71,8 @@ public class World {
 	}
 
 	public boolean isAir(int blockX, int blockY, int blockZ) {
-		boolean isOutsideWorld = !isWithinWorld(blockX, blockY, blockZ);
-		boolean isAir = getBlockAt(blockX, blockY, blockZ) == Block.AIR;
-		return isOutsideWorld || isAir;
+		var block = getBlockAt(blockX, blockY, blockZ);
+		return block == null || block == Block.AIR;
 	}
 
 	public boolean isAir(BlockCoord block) {
