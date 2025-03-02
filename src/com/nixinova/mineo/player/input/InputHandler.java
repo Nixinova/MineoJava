@@ -10,16 +10,20 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import javax.swing.JFrame;
 
 import com.nixinova.mineo.ui.display.GameDisplay;
 
 // Input handler: absolute mouse movement, regardless of sensitivity etc
-public class InputHandler implements KeyListener, FocusListener, MouseListener, MouseMotionListener {
+// Make sure to register all implemented classes in base display class
+public class InputHandler implements KeyListener, FocusListener, MouseListener, MouseMotionListener, MouseWheelListener {
 	public int mouseX, mouseY;
 	public int centerX, centerY;
 	public int deltaX, deltaY;
+	public int scroll;
 	public Keys keys;
 
 	private JFrame frame;
@@ -36,6 +40,7 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 		this.mouseY = this.centerY;
 		this.deltaX = 0;
 		this.deltaY = 0;
+		this.scroll = 0;
 
 		try {
 			this.robot = new Robot();
@@ -46,6 +51,7 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 	public void tick() {
 		this.deltaX = 0;
 		this.deltaY = 0;
+		this.scroll = 0;
 	}
 
 	@Override
@@ -106,6 +112,11 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 		this.keys.setButton(Keys.LCLICK, false);
 		this.keys.setButton(Keys.RCLICK, false);
 	}
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent event) {
+        this.scroll = event.getWheelRotation();
+    }
 
 	@Override
 	public void focusGained(FocusEvent event) {

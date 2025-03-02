@@ -8,6 +8,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferStrategy;
 
 import com.nixinova.mineo.player.input.InputHandler;
@@ -33,6 +34,7 @@ public abstract class DisplayBase extends Canvas implements Runnable {
 		addFocusListener((FocusListener) input);
 		addMouseListener((MouseListener) input);
 		addMouseMotionListener((MouseMotionListener) input);
+		addMouseWheelListener((MouseWheelListener) input);
 	}
 
 	protected abstract void renderDisplay(Graphics graphics);

@@ -128,7 +128,7 @@ public class ControlsTick {
 		}
 
 		// Hotbar
-		Hotbar.updateFromKbd(kbd);
+		Hotbar.updateFromInput(input);
 
 		// Movement
 		controls.isWalking = kbd.pressedAnyKey(Keys.FORWARD, Keys.BACK, Keys.LEFT, Keys.RIGHT);
