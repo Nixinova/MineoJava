@@ -130,11 +130,11 @@ public class Raycast {
 			BlockCoord curBlock = applyAsBlock(val -> Math.floor(val), x, y, z);
 
 			// Looking outside the world so no block selected
-			if (!game.world.isWithinWorld(curBlock.x, curBlock.y, curBlock.z))
+			if (!game.world.isWithinWorldBounds(curBlock))
 				return result;
 
 			// If block is solid, return the hit block and step backward and return the adjacent block
-			if (!game.world.isAir(curBlock.x, curBlock.y, curBlock.z)) {
+			if (!game.world.isAir(curBlock)) {
 				result.hoveredBlock = curBlock;
 				result.adjacentBlock = lastBlock;
 				return result;

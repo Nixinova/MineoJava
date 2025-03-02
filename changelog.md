@@ -1,6 +1,7 @@
 # Changelog
 
 - Fixed player movement breaking when at build height
+- Fixed blocks being unselectable when at build height
 
 ## 0.1.2
 *2025-03-02 14:21*

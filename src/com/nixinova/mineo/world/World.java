@@ -45,6 +45,17 @@ public class World {
 		return isWithinWorld(block.x, block.y, block.z);
 	}
 
+	public boolean isWithinWorldBounds(int blockX, int blockY, int blockZ) {
+		boolean xValid = blockX >= minCorner.x && blockX < maxCorner.x;
+		boolean yValid = blockY >= minCorner.y;
+		boolean zValid = blockZ >= minCorner.z && blockZ < maxCorner.z;
+		return xValid && yValid && zValid;
+	}
+
+	public boolean isWithinWorldBounds(BlockCoord block) {
+		return isWithinWorldBounds(block.x, block.y, block.z);
+	}
+
 	/** returns -1 if all is air */
 	public int getMinGroundY(int blockX, int blockZ) {
 		for (int i = 0; i < Options.buildHeight; i++) {

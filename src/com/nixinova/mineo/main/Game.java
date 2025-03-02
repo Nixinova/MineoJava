@@ -1,6 +1,5 @@
 package com.nixinova.mineo.main;
 
-import com.nixinova.mineo.maths.coords.Coord3;
 import com.nixinova.mineo.options.Options;
 import com.nixinova.mineo.player.Player;
 import com.nixinova.mineo.player.input.Controller;
