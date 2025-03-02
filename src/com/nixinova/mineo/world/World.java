@@ -130,6 +130,7 @@ public class World {
 			for (int z = 0; z < maxCorner.z; z++) {
 				int localGroundY = Options.groundLevel;
 				
+				/*
 				if (x > 1 && z > 1) {
 					// Create average ground from surrounding blocks
 					int surroundingGroundY = (terrainGrounds[x - 1][z - 1] + terrainGrounds[x][z - 1] + terrainGrounds[x - 1][z]) / 3;
@@ -139,6 +140,7 @@ public class World {
 				if (localGroundY < 4) localGroundY = 4;
 				if (localGroundY > Options.buildHeight - 4) localGroundY = Options.buildHeight - 4;
 				terrainGrounds[x][z] = localGroundY;
+				*/
 
 				for (int y = 0; y < maxCorner.y; y++) {
 					Block block;
@@ -149,7 +151,7 @@ public class World {
 						block = Block.STONE;
 					else if (y <= Options.groundLevel - 1)
 						block = Block.DIRT;
-					else if (y <= localGroundY)
+					else if (y <= Options.groundLevel)
 						block = Block.GRASS;
 					else
 						block = Block.AIR;
