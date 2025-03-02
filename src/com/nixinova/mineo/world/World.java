@@ -124,7 +124,7 @@ public class World {
 	
 	public Coord3 getHorizontalCentre() {
 		double x = maxCorner.x / 2 + 0.5; // centre of block in centre of world
-		double y = Options.groundLevel + 1; // one block above the ground
+		double y = Options.buildHeight / 2;
 		double z = maxCorner.z / 2 + 0.5; // centre of block in centre of world
 		return Coord3.fromSubBlock(x, y, z);
 	}
@@ -140,28 +140,27 @@ public class World {
 			for (int z = 0; z < maxCorner.z; z++) {
 				int localGroundY = Options.groundLevel;
 				
-				/*
-				if (x > 1 && z > 1) {
-					// Create average ground from surrounding blocks
-					int surroundingGroundY = (terrainGrounds[x - 1][z - 1] + terrainGrounds[x][z - 1] + terrainGrounds[x - 1][z]) / 3;
-					localGroundY = surroundingGroundY + 1;
-				}
-				localGroundY += random.nextInt(-1, 1); // +/- 1 for randomness
-				if (localGroundY < 4) localGroundY = 4;
-				if (localGroundY > Options.buildHeight - 4) localGroundY = Options.buildHeight - 4;
+				// average ground from surrounding blocks
+				if (x > 1 && z > 1)
+					localGroundY = (terrainGrounds[x - 1][z - 1] + terrainGrounds[x][z - 1] + terrainGrounds[x - 1][z]) / 3;
+				// since the above averaging rounds down with weight 1/3, roughly reverse that effect here to create even terrain
+				if (random.nextFloat(1.0f) < 0.35f) localGroundY++;
+				// clamp
+				localGroundY = Math.max(localGroundY, 4);
+				localGroundY = Math.min(localGroundY, Options.buildHeight - 4);
+	
 				terrainGrounds[x][z] = localGroundY;
-				*/
 
 				for (int y = 0; y < maxCorner.y; y++) {
 					Block block;
 
 					if (y == 0)
 						block = Block.BEDROCK;
-					else if (y <= Options.groundLevel - 4)
+					else if (y <= localGroundY - 4)
 						block = Block.STONE;
-					else if (y <= Options.groundLevel - 1)
+					else if (y <= localGroundY - 1)
 						block = Block.DIRT;
-					else if (y <= Options.groundLevel)
+					else if (y == localGroundY && y >= Options.groundLevel)
 						block = Block.GRASS;
 					else
 						block = Block.AIR;
