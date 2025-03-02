@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+*2025-03-02 14:02*
+- Changed world saving to save all blocks in world
+
 ## 0.1_1
 *2025-03-02 01:56*
 - Changed default worldSize to 100
