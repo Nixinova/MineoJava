@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+*2025-03-02 14:21*
+- Changed hotbar slots to also be selectable via mouse scrolling
+
 ## 0.1.1
 *2025-03-02 14:02*
 - Changed world saving to save all blocks in world
