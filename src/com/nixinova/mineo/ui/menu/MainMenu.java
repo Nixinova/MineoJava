@@ -67,9 +67,10 @@ public class MainMenu extends BaseMenu {
 		exitButton.draw(buttonScheme);
 
 		// Draw footer
-		footerFont.drawStringOutlined(graphics, "v" + Mineo.VERSION, 10, GameDisplay.HEIGHT - 100, textScheme);
+		int footerPos = GameDisplay.HEIGHT - 90;
 		footerFont.drawStringOutlined(graphics, String.valueOf(super.fps), 10, 10, textScheme);
-		footerFont.drawStringOutlined(graphics, "© Nixinova", GameDisplay.WIDTH - 120, GameDisplay.HEIGHT - 100, textScheme);
+		footerFont.drawStringOutlined(graphics, "v" + Mineo.VERSION, 10, footerPos, textScheme);
+		footerFont.drawStringOutlined(graphics, "© Nixinova", GameDisplay.WIDTH - 120, footerPos, textScheme);
 
 		// Draw cursor
 		graphics.setColor(Color.white);
