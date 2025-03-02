@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import com.nixinova.mineo.main.Game;
 import com.nixinova.mineo.maths.PixelColor;
@@ -126,28 +125,24 @@ public class BlocksRenderer extends Render {
 		// Get corners of block
 		BlockCorners blockCorners = new BlockCorners(blockX, blockY, blockZ, face);
 		TexelCorners texCornersList = new TexelCorners(blockCorners);
-		
-		// If the block is far away, we can get away with rendering the whole block one colour
-		if (this.getBlockDistance(blockX, blockY, blockZ) >= Options.DEFAULT_OPTIONS.renderDistance) {
-			var coords = new PxCoord[] {
-				coordToScreenPx(texCornersList.cornerA, false),
-				coordToScreenPx(texCornersList.cornerB, false),
-				coordToScreenPx(texCornersList.cornerD, false),
-				coordToScreenPx(texCornersList.cornerC, false),
-			};
-			
-			// Generate random colour from the texture, seeded with block pos
-			Random random = new Random(blockX * 16 + blockY * 8 + blockZ);
-			int txPixel = Texture.getTexel(texture, random.nextInt(Texture.SIZE), random.nextInt(Texture.SIZE));
 
-			saveRect(coords, txPixel);
-			return;
+		// Determine texel scaling based on distance
+		int texelScale;
+		var blockDistance = this.getBlockDistance(blockX, blockY, blockZ);
+		if (blockDistance >= 36) {
+			texelScale = 8;
+		} else if (blockDistance >= 24) {
+			texelScale = 4;
+		} else if (blockDistance >= 12) {
+			texelScale = 2;
+		} else {
+			texelScale = 1; // full res
 		}
 
-		// Get corners of each texel and render
-		for (int texX = 0; texX < Texture.SIZE; texX++) {
-			yloop: for (int texY = 0; texY < Texture.SIZE; texY++) {
-				SubBlockCoord[] curTexCorners = texCornersList.getTexelCorners(texX, texY);
+		// Render each texel at the adjusted resolution
+		for (int texX = 0; texX < Texture.SIZE; texX += texelScale) {
+			yloop: for (int texY = 0; texY < Texture.SIZE; texY += texelScale) {
+				SubBlockCoord[] curTexCorners = texCornersList.getTexelCorners(texX, texY, texelScale);
 
 				// Get screen coords for each corner
 				PxCoord[] polygonCorners = new PxCoord[curTexCorners.length];
@@ -158,26 +153,24 @@ public class BlocksRenderer extends Render {
 					if (screenPos == null) {
 						continue yloop;
 					}
-
 					polygonCorners[i] = screenPos;
 				}
 
-				// Get texel
+				// Get texel (sample from the top-left pixel of the scaled texel area)
 				int txPixel = Texture.getTexel(texture, texX, texY);
 
 				// White border for hovered block
 				boolean isLookingAt = this.lookingAt != null
 					&& this.lookingAt.x == blockX && this.lookingAt.y == blockY && this.lookingAt.z == blockZ;
-				boolean onBorder = texX == 0 || texX == Texture.SIZE - 1 || texY == 0 || texY == Texture.SIZE - 1;
+				boolean onBorder = texX == 0 || texX == Texture.SIZE - texelScale || texY == 0 || texY == Texture.SIZE - texelScale;
 				if (isLookingAt && onBorder) {
 					txPixel = PixelColor.SELECTION_OUTLINE;
 				}
 
-				// Save texel
+				// Save texel (scaled area)
 				saveRect(polygonCorners, txPixel);
 			}
 		}
-
 	}
 
 	private double getBlockDistance(int blockX, int blockY, int blockZ) {

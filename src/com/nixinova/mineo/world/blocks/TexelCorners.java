@@ -16,7 +16,7 @@ public class TexelCorners {
 
 	public SubBlockCoord cornerA, cornerB, cornerC, cornerD;
 	public Vector3<Double> horizVec, vertVec;
-	/** SubBlockCoord[cornerID: 0,1,2,3][xPosition][yPosition] */
+	/** SubBlockCoord[xPosition][yPosition][cornerID: 0,1,2,3] */
 	public SubBlockCoord[][][] texCornersList;
 
 	private final int SIZE = Texture.SIZE;
@@ -36,8 +36,18 @@ public class TexelCorners {
 		this.toTexelCornersArray();
 	}
 
-	public SubBlockCoord[] getTexelCorners(int x, int y) {
-		return texCornersList[x][y];
+	public SubBlockCoord[] getTexelCorners(int x, int y, int scale) {
+	    // prevent out-of-bounds
+	    int x2 = Math.min(x + scale - 1, texCornersList.length - 1);
+	    int y2 = Math.min(y + scale - 1, texCornersList[0].length - 1);
+
+	    // Get four corners derived from multiple texels
+	    SubBlockCoord texA = texCornersList[x][y][0];
+	    SubBlockCoord texB = texCornersList[x2][y][1];
+	    SubBlockCoord texC = texCornersList[x][y2][3];
+	    SubBlockCoord texD = texCornersList[x2][y2][2];
+
+	    return BlockCorners.abcdToArray(texA, texB, texC, texD);
 	}
 
 	/** Convert these 4 block corners into an array grid of texel corners. */
