@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import com.nixinova.mineo.maths.coords.Coord3;
@@ -48,11 +49,8 @@ public class SavedGame {
 			for (int x = 0; x < World.maxCorner.x; x++) {
 				for (int y = 0; y < World.maxCorner.y; y++) {
 					for (int z = 0; z < World.maxCorner.z; z++) {
-						var texture = game.world.getBlockAt(x, y, z);
-						int blockId = 0;
-						for (int i = 0; i < Block.BLOCKS.length; i++) {
-							if (Block.BLOCKS[i].getTexture() == texture) blockId = i;
-						}
+						Block block = game.world.getBlockAt(x, y, z);
+						int blockId = Arrays.asList(Block.BLOCKS).indexOf(block);
 						writer.write(String.format("%c %d,%d,%d %s\n", CHAR_BLOCKPOS, x, y, z, blockId));
 					}
 				}

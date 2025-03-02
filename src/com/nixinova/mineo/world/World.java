@@ -5,7 +5,6 @@ import java.util.Random;
 import com.nixinova.mineo.maths.coords.BlockCoord;
 import com.nixinova.mineo.maths.coords.Coord3;
 import com.nixinova.mineo.options.Options;
-import com.nixinova.mineo.ui.graphics.Render;
 import com.nixinova.mineo.world.blocks.Block;
 import com.nixinova.mineo.world.blocks.BlockFace;
 
@@ -15,31 +14,24 @@ public class World {
 	/** Exclusive (<) */
 	public static final BlockCoord maxCorner = new BlockCoord(Options.worldSize, Options.buildHeight, Options.worldSize);
 
-	private Render[][][] worldBlocks;
-	private Block[][][] blockChanges;
+	private Block[][][] worldBlocks;
 
 	public World() {
-		this.blockChanges = new Block[maxCorner.x][maxCorner.y][maxCorner.z];
-
 		this.mapBlocks();
 	}
 
 	public World(Block[][][] blockChanges) {
 		this();
-		this.blockChanges = blockChanges;
+		this.worldBlocks = blockChanges;
 		// Update world to match block changes map
 		for (int x = minCorner.x; x < maxCorner.x; x++) {
 			for (int y = minCorner.y; y < maxCorner.y; y++) {
 				for (int z = minCorner.z; z < maxCorner.z; z++) {
 					Block block = blockChanges[x][y][z];
-					setBlockAt(x, y, z, block.getTexture());
+					setBlockAt(x, y, z, block);
 				}
 			}
 		}
-	}
-
-	public Block[][][] getBlockChanges() {
-		return blockChanges;
 	}
 
 	public boolean isWithinWorld(int blockX, int blockY, int blockZ) {
@@ -80,7 +72,7 @@ public class World {
 
 	public boolean isAir(int blockX, int blockY, int blockZ) {
 		boolean isOutsideWorld = !isWithinWorld(blockX, blockY, blockZ);
-		boolean isAir = getBlockAt(blockX, blockY, blockZ) == Block.AIR.getTexture();
+		boolean isAir = getBlockAt(blockX, blockY, blockZ) == Block.AIR;
 		return isOutsideWorld || isAir;
 	}
 
@@ -88,7 +80,7 @@ public class World {
 		return isAir(block.x, block.y, block.z);
 	}
 
-	public Render getBlockAt(int blockX, int blockY, int blockZ) {
+	public Block getBlockAt(int blockX, int blockY, int blockZ) {
 		if (isWithinWorld(blockX, blockY, blockZ)) {
 			// If within the world, return texture
 			return this.worldBlocks[blockX][blockY][blockZ];
@@ -98,18 +90,18 @@ public class World {
 		}
 	}
 
-	public Render getBlockAt(BlockCoord block) {
+	public Block getBlockAt(BlockCoord block) {
 		return getBlockAt(block.x, block.y, block.z);
 	}
 
-	private void setBlockAt(int blockX, int blockY, int blockZ, Render texture) {
+	private void setBlockAt(int blockX, int blockY, int blockZ, Block block) {
 		if (isWithinWorld(blockX, blockY, blockZ)) {
-			this.worldBlocks[blockX][blockY][blockZ] = texture;
+			this.worldBlocks[blockX][blockY][blockZ] = block;
 		}
 	}
 
-	private void setBlockAt(BlockCoord block, Render texture) {
-		setBlockAt(block.x, block.y, block.z, texture);
+	private void setBlockAt(BlockCoord pos, Block block) {
+		setBlockAt(pos.x, pos.y, pos.z, block);
 	}
 
 	public void mineBlock(BlockCoord pos) {
@@ -117,8 +109,7 @@ public class World {
 	}
 
 	public void placeBlock(BlockCoord pos, Block block) {
-		setBlockAt(pos, block.getTexture());
-		blockChanges[pos.x][pos.y][pos.z] = block; 
+		setBlockAt(pos, block);
 	}
 	
 	public Coord3 getHorizontalCentre() {
@@ -129,7 +120,7 @@ public class World {
 	}
 
 	private void mapBlocks() {
-		this.worldBlocks = new Render[maxCorner.x][maxCorner.y][maxCorner.z];
+		this.worldBlocks = new Block[maxCorner.x][maxCorner.y][maxCorner.z];
 		
 		var terrainGrounds = new int[maxCorner.x][maxCorner.z];
 
@@ -163,7 +154,7 @@ public class World {
 					else
 						block = Block.AIR;
 
-					worldBlocks[x][y][z] = block.getTexture();
+					worldBlocks[x][y][z] = block;
 				}
 			}
 		}
