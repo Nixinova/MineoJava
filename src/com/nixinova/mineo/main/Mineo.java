@@ -8,7 +8,7 @@ import java.io.File;
 
 import javax.swing.JFrame;
 
-import com.nixinova.mineo.options.Options;
+import com.nixinova.mineo.io.Options;
 import com.nixinova.mineo.player.input.InputHandler;
 import com.nixinova.mineo.ui.display.GameDisplay;
 import com.nixinova.mineo.ui.display.MenuDisplay;

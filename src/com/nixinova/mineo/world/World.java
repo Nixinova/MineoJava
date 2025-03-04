@@ -2,9 +2,9 @@ package com.nixinova.mineo.world;
 
 import java.util.Random;
 
+import com.nixinova.mineo.io.Options;
 import com.nixinova.mineo.maths.coords.BlockCoord;
 import com.nixinova.mineo.maths.coords.Coord3;
-import com.nixinova.mineo.options.Options;
 import com.nixinova.mineo.world.blocks.Block;
 import com.nixinova.mineo.world.blocks.BlockFace;
 

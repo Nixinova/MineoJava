@@ -8,12 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.nixinova.mineo.io.Options;
 import com.nixinova.mineo.main.Game;
 import com.nixinova.mineo.maths.PixelColor;
 import com.nixinova.mineo.maths.coords.BlockCoord;
 import com.nixinova.mineo.maths.coords.PxCoord;
 import com.nixinova.mineo.maths.coords.SubBlockCoord;
-import com.nixinova.mineo.options.Options;
 import com.nixinova.mineo.world.World;
 import com.nixinova.mineo.world.blocks.BlockCorners;
 import com.nixinova.mineo.world.blocks.BlockFace;

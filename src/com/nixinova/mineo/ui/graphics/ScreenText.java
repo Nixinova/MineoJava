@@ -3,9 +3,9 @@ package com.nixinova.mineo.ui.graphics;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import com.nixinova.mineo.io.Options;
 import com.nixinova.mineo.main.Game;
 import com.nixinova.mineo.main.Mineo;
-import com.nixinova.mineo.options.Options;
 import com.nixinova.mineo.ui.display.GameDisplay;
 
 public class ScreenText {

@@ -1,6 +1,7 @@
 package com.nixinova.mineo.main;
 
-import com.nixinova.mineo.options.Options;
+import com.nixinova.mineo.io.Options;
+import com.nixinova.mineo.io.WorldSaving;
 import com.nixinova.mineo.player.Player;
 import com.nixinova.mineo.player.input.Controller;
 import com.nixinova.mineo.player.input.InputHandler;
@@ -32,7 +33,7 @@ public class Game {
 	}
 
 	public void initSaved() {
-		SavedGame gameSave = new SavedGame();
+		WorldSaving gameSave = new WorldSaving();
 		this.world = gameSave.world;
 		this.player = gameSave.player;
 		this.controls = new Controller(this, this.player);

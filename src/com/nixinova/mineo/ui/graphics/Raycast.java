@@ -1,11 +1,11 @@
 package com.nixinova.mineo.ui.graphics;
 
+import com.nixinova.mineo.io.Options;
 import com.nixinova.mineo.main.Game;
 import com.nixinova.mineo.maths.Vector3;
 import com.nixinova.mineo.maths.coords.BlockCoord;
 import com.nixinova.mineo.maths.coords.Coord1;
 import com.nixinova.mineo.maths.coords.Coord3;
-import com.nixinova.mineo.options.Options;
 import com.nixinova.mineo.world.blocks.HoveredBlock;
 
 public class Raycast {

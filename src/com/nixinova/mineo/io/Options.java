@@ -1,4 +1,4 @@
-package com.nixinova.mineo.options;
+package com.nixinova.mineo.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;

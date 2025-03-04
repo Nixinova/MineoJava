@@ -1,4 +1,4 @@
-package com.nixinova.mineo.main;
+package com.nixinova.mineo.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,13 +7,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
+import com.nixinova.mineo.main.Game;
+import com.nixinova.mineo.main.Mineo;
 import com.nixinova.mineo.maths.coords.Coord3;
 import com.nixinova.mineo.maths.coords.TxCoord;
 import com.nixinova.mineo.player.Player;
 import com.nixinova.mineo.world.World;
 import com.nixinova.mineo.world.blocks.Block;
 
-public class SavedGame {
+public class WorldSaving {
 	public static final String SAVE_FILE = "game.dat";
 	/**
 	 * Semantics of version incrementing:
@@ -27,7 +29,7 @@ public class SavedGame {
 	public World world;
 	public Player player;
 
-	public SavedGame() {
+	public WorldSaving() {
 		try {
 			loadFromFile();
 		} catch (FileNotFoundException | ArrayIndexOutOfBoundsException | Error err) {

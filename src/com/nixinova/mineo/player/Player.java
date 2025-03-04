@@ -1,9 +1,9 @@
 package com.nixinova.mineo.player;
 
+import com.nixinova.mineo.io.Options;
 import com.nixinova.mineo.maths.coords.BlockCoord;
 import com.nixinova.mineo.maths.coords.Coord3;
 import com.nixinova.mineo.maths.coords.SubBlockCoord;
-import com.nixinova.mineo.options.Options;
 import com.nixinova.mineo.world.World;
 import com.nixinova.mineo.world.blocks.HoveredBlock;
 

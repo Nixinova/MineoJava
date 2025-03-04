@@ -1,15 +1,15 @@
 package com.nixinova.mineo.player.input;
 
+import com.nixinova.mineo.io.Options;
+import com.nixinova.mineo.io.WorldSaving;
 import com.nixinova.mineo.main.Game;
 import com.nixinova.mineo.main.Mineo;
-import com.nixinova.mineo.main.SavedGame;
 import com.nixinova.mineo.maths.Vector3;
 import com.nixinova.mineo.maths.coords.BlockCoord;
 import com.nixinova.mineo.maths.coords.Coord1;
 import com.nixinova.mineo.maths.coords.Coord3;
 import com.nixinova.mineo.maths.coords.PxCoord;
 import com.nixinova.mineo.maths.coords.TxCoord;
-import com.nixinova.mineo.options.Options;
 import com.nixinova.mineo.player.Hitbox;
 import com.nixinova.mineo.player.Hotbar;
 import com.nixinova.mineo.player.Hitbox.Corner;
@@ -188,7 +188,7 @@ public class ControlsTick {
 		// System keys
 		if (kbd.pressedKey(Keys.ESCAPE)) {
 			// Save game
-			SavedGame.saveToFile(this.game);
+			WorldSaving.saveToFile(this.game);
 			// Exit to menu
 			Mineo.loadMainMenu();
 		}
