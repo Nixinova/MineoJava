@@ -43,7 +43,7 @@ public class WorldSaving {
 	public static void saveToFile(Game game) {
 		try {
 			FileWriter writer = new FileWriter(saveFilePath);
-			
+
 			// Write version
 			writer.write(String.format("v %.1f (Mineo %s)\n", SAVE_VERSION, Mineo.VERSION));
 
@@ -61,9 +61,7 @@ public class WorldSaving {
 
 						int blockId = Arrays.asList(Block.BLOCKS).indexOf(block);
 
-						long posData = x << 16 | y << 8 | z;
-						long data = posData << 8 | blockId;
-						writer.write(String.format("%x\n", data));
+						writer.write(String.format("%d,%d,%d,%d\n", x, y, z, blockId));
 					}
 				}
 			}
@@ -109,17 +107,17 @@ public class WorldSaving {
 				}
 				// Changed blocks data
 				default -> {
-					var data = Long.parseLong(line, 16);
-					int x = (int) ((data >> 24) & 0xFF);
-					int y = (int) ((data >> 16) & 0xFF);
-					int z = (int) ((data >> 8) & 0xFF);
-					int blockId = (int) (data & 0xFF);
+					String[] posData = line.split(",");
+					int posX = Integer.parseInt(posData[0]);
+					int posY = Integer.parseInt(posData[1]);
+					int posZ = Integer.parseInt(posData[2]);
+					int blockId = Integer.parseInt(posData[3]);
 					Block block = Block.BLOCKS[blockId];
-					blockChanges[x][y][z] = block;
+					blockChanges[posX][posY][posZ] = block;
 				}
 			}
 		}
-		
+
 		this.world = new World(blockChanges);
 
 		scanner.close();
