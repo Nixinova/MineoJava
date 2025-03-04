@@ -54,14 +54,19 @@ public class WorldSaving {
 			// Write each changed block in world
 			for (int x = 0; x < World.maxCorner.x; x++) {
 				for (int y = 0; y < World.maxCorner.y; y++) {
+					int dupeCount = 0;
 					for (int z = 0; z < World.maxCorner.z; z++) {
 						Block block = game.world.getBlockAt(x, y, z);
-						if (block == Block.AIR)
-							continue;
-
 						int blockId = Arrays.asList(Block.BLOCKS).indexOf(block);
 
-						writer.write(String.format("%d,%d,%d,%d\n", x, y, z, blockId));
+						Block nextBlock = game.world.getBlockAt(x, y, z + 1);
+						if (block == nextBlock) {
+							dupeCount++;
+							continue;
+						}
+
+						writer.write(String.format("%d,%d,%d %d %d\n", x, y, z - dupeCount, blockId, dupeCount));
+						dupeCount = 0;
 					}
 				}
 			}
@@ -107,13 +112,17 @@ public class WorldSaving {
 				}
 				// Changed blocks data
 				default -> {
-					String[] posData = line.split(",");
+					String[] lineData = line.split(" ");
+					String[] posData = lineData[0].split(",");
 					int posX = Integer.parseInt(posData[0]);
 					int posY = Integer.parseInt(posData[1]);
 					int posZ = Integer.parseInt(posData[2]);
-					int blockId = Integer.parseInt(posData[3]);
+					int blockId = Integer.parseInt(lineData[1]);
+					int times = Integer.parseInt(lineData[2]);
 					Block block = Block.BLOCKS[blockId];
-					blockChanges[posX][posY][posZ] = block;
+					for (int i = 0; i <= times; i++) {
+						blockChanges[posX][posY][posZ + i] = block;
+					}
 				}
 			}
 		}
