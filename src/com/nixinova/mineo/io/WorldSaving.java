@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import com.nixinova.mineo.main.Game;
@@ -26,6 +28,19 @@ public class WorldSaving {
 
 	private static final String saveFilePath = Mineo.rootFolder + "/" + SAVE_FILE;
 
+	private static class BitsPer {
+		private static int x = 0, y = 1, z = 2, blockId = 3;
+	};
+
+	private static final int[] numBitsPer = new int[4];
+	static {
+		// Default bits per field
+		numBitsPer[BitsPer.x] = 8;
+		numBitsPer[BitsPer.y] = 8;
+		numBitsPer[BitsPer.z] = 8;
+		numBitsPer[BitsPer.blockId] = 4;
+	}
+
 	public World world;
 	public Player player;
 
@@ -41,11 +56,20 @@ public class WorldSaving {
 	}
 
 	public static void saveToFile(Game game) {
+		int xBits = numBitsPer[BitsPer.x];
+		int yBits = numBitsPer[BitsPer.y];
+		int zBits = numBitsPer[BitsPer.z];
+		int idBits = numBitsPer[BitsPer.blockId];
+
 		try {
 			FileWriter writer = new FileWriter(saveFilePath);
-			
+
 			// Write version
 			writer.write(String.format("v %.1f (Mineo %s)\n", SAVE_VERSION, Mineo.VERSION));
+
+			// Write storage metadata (int sizes)
+			writer.write(String.format("%c %d,%d,%d,%d\n", 's',
+				numBitsPer[BitsPer.x], numBitsPer[BitsPer.y], numBitsPer[BitsPer.z], numBitsPer[BitsPer.blockId]));
 
 			// Writer player position
 			TxCoord playerPos = game.player.getPosition().toTx();
@@ -61,8 +85,14 @@ public class WorldSaving {
 
 						int blockId = Arrays.asList(Block.BLOCKS).indexOf(block);
 
-						long posData = x << 16 | y << 8 | z;
-						long data = posData << 8 | blockId;
+						long data = 0;
+						data |= x;
+						data <<= xBits;
+						data |= y;
+						data <<= zBits;
+						data |= z;
+						data <<= idBits;
+						data |= blockId;
 						writer.write(String.format("%x\n", data));
 					}
 				}
@@ -81,6 +111,11 @@ public class WorldSaving {
 
 		Block[][][] blockChanges = new Block[World.maxCorner.x][World.maxCorner.y][World.maxCorner.z];
 
+		int xBits = numBitsPer[BitsPer.x];
+		int yBits = numBitsPer[BitsPer.y];
+		int zBits = numBitsPer[BitsPer.z];
+		int idBits = numBitsPer[BitsPer.blockId];
+
 		while (scanner.hasNextLine()) {
 			String line = scanner.nextLine().trim();
 			final char modeChar = line.charAt(0);
@@ -98,6 +133,14 @@ public class WorldSaving {
 						}
 					}
 				}
+				// Storage metadata (int sizes)
+				case 's' -> {
+					var parts = line.split(" ")[1].split(",");
+					xBits = Integer.parseInt(parts[0]);
+					yBits = Integer.parseInt(parts[1]);
+					zBits = Integer.parseInt(parts[2]);
+					idBits = Integer.parseInt(parts[3]);
+				}
 				// Player position data
 				case 'P' -> {
 					String[] posData = line.split(" ")[1].split(",");
@@ -110,16 +153,20 @@ public class WorldSaving {
 				// Changed blocks data
 				default -> {
 					var data = Long.parseLong(line, 16);
-					int x = (int) ((data >> 24) & 0xFF);
-					int y = (int) ((data >> 16) & 0xFF);
-					int z = (int) ((data >> 8) & 0xFF);
-					int blockId = (int) (data & 0xFF);
+					int blockId = (int) (data & ((1 << idBits) - 1));
+					data >>= idBits;
+					int x = (int) (data & ((1 << xBits) - 1));
+					data >>= xBits;
+					int y = (int) (data & ((1 << yBits) - 1));
+					data >>= yBits;
+					int z = (int) (data & ((1 << zBits) - 1));
+
 					Block block = Block.BLOCKS[blockId];
 					blockChanges[x][y][z] = block;
 				}
 			}
 		}
-		
+
 		this.world = new World(blockChanges);
 
 		scanner.close();
