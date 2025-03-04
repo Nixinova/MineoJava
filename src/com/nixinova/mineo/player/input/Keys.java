@@ -51,6 +51,11 @@ public class Keys {
 		this.keys = new boolean[ARR_SIZE];
 		this.cooldowns = new long[keys.length];
 	}
+	
+	public void clear() {
+		this.keys = new boolean[ARR_SIZE];
+		this.cooldowns = new long[keys.length];
+	}
 
 	public boolean pressedKey(int key) {
 		return this.pressedInput(key);

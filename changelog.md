@@ -2,6 +2,7 @@
 
 ## Next
 - Added jagged terrain generation
+- Fixed input not working after losing focus
 
 ## 0.1.3_1
 *2025-03-02 17:52*

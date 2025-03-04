@@ -127,7 +127,7 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 	@Override
 	public void focusLost(FocusEvent event) {
 		// Clear all keypresses
-		this.keys = new Keys();
+		this.keys.clear();
 	}
 
 	@Override
