@@ -28,6 +28,8 @@ public class World {
 			for (int y = minCorner.y; y < maxCorner.y; y++) {
 				for (int z = minCorner.z; z < maxCorner.z; z++) {
 					Block block = blockChanges[x][y][z];
+					if (block == null)
+						block = Block.AIR;
 					setBlockAt(x, y, z, block);
 				}
 			}

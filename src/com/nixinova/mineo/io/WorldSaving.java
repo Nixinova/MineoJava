@@ -56,8 +56,11 @@ public class WorldSaving {
 				for (int y = 0; y < World.maxCorner.y; y++) {
 					for (int z = 0; z < World.maxCorner.z; z++) {
 						Block block = game.world.getBlockAt(x, y, z);
+						if (block == Block.AIR)
+							continue;
+
 						int blockId = Arrays.asList(Block.BLOCKS).indexOf(block);
-						
+
 						long posData = x << 16 | y << 8 | z;
 						long data = posData << 8 | blockId;
 						writer.write(String.format("%x\n", data));
