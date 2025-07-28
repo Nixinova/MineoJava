@@ -1,6 +1,6 @@
 # Changelog
 
-## Next
+## 0.1.4
 - New save file format (v2.0) using run-length encoding
   - Saves roughly 500x file size and makes saving and loading much faster
 - Fixed input not working after losing focus

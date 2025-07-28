@@ -142,6 +142,7 @@ public class World {
 			for (int z = 0; z < maxCorner.z; z++) {
 				int localGroundY = Options.groundLevel;
 				
+				/*
 				// average ground from surrounding blocks
 				if (x > 1 && z > 1)
 					localGroundY = (terrainGrounds[x - 1][z - 1] + terrainGrounds[x][z - 1] + terrainGrounds[x - 1][z]) / 3;
@@ -150,6 +151,7 @@ public class World {
 				// clamp
 				localGroundY = Math.max(localGroundY, 4);
 				localGroundY = Math.min(localGroundY, Options.buildHeight - 4);
+				*/
 	
 				terrainGrounds[x][z] = localGroundY;
 
