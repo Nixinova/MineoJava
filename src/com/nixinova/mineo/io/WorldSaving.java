@@ -4,11 +4,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 import com.nixinova.mineo.main.Game;
 import com.nixinova.mineo.main.Mineo;
+import com.nixinova.mineo.maths.coords.BlockCoord;
 import com.nixinova.mineo.maths.coords.Coord3;
 import com.nixinova.mineo.maths.coords.TxCoord;
 import com.nixinova.mineo.player.Player;
@@ -49,24 +52,38 @@ public class WorldSaving {
 
 			// Writer player position
 			TxCoord playerPos = game.player.getPosition().toTx();
-			writer.write(String.format("%c %d,%d,%d\n", 'P', playerPos.x, playerPos.y, playerPos.z));
+			writer.write(String.format("%d,%d,%d\n", playerPos.x, playerPos.y, playerPos.z));
 
 			// Write each changed block in world
+			// Uses run-length encoding:
+			// The method of world saving used starts scanning from 0,0,0 and counts how many of the same block appear starting from that point.
+			// Once a new block is found, the start point and count are saved. Then we move to the new block and repeat.
+			BlockCoord curStartPoint = new BlockCoord(0, 0, 0);
+			int lastBlockId = Arrays.asList(Block.BLOCKS).indexOf(Block.AIR);
+			int curBlockCount = 0;
 			for (int x = 0; x < World.maxCorner.x; x++) {
 				for (int y = 0; y < World.maxCorner.y; y++) {
-					int dupeCount = 0;
 					for (int z = 0; z < World.maxCorner.z; z++) {
 						Block block = game.world.getBlockAt(x, y, z);
 						int blockId = Arrays.asList(Block.BLOCKS).indexOf(block);
-
-						Block nextBlock = game.world.getBlockAt(x, y, z + 1);
-						if (block == nextBlock) {
-							dupeCount++;
+						
+						// Special case for first block in world: nothing to check against yet
+						if (x + y + z == 0) {
 							continue;
 						}
 
-						writer.write(String.format("%d,%d,%d %d %d\n", x, y, z - dupeCount, blockId, dupeCount));
-						dupeCount = 0;
+						// Increment if same, and continue scan
+						if (blockId == lastBlockId) {
+							curBlockCount++;
+							continue;
+						}
+
+						// If block is different, write the start point, scan length, and block ID
+						writer.write(String.format("%d,%d,%d %d %d\n",
+							curStartPoint.x, curStartPoint.y, curStartPoint.z, curBlockCount, lastBlockId));
+						curBlockCount = 0;
+						lastBlockId = blockId;
+						curStartPoint = new BlockCoord(x, y, z);
 					}
 				}
 			}
@@ -81,50 +98,60 @@ public class WorldSaving {
 		File saveFile = new File(saveFilePath);
 
 		Scanner scanner = new Scanner(saveFile);
-
-		Block[][][] blockChanges = new Block[World.maxCorner.x][World.maxCorner.y][World.maxCorner.z];
-
+		
+		// Load the data from the file
+		String versionLine = scanner.nextLine().trim();
+		String playerLine = scanner.nextLine().trim();
+		List<String> blockLines = new ArrayList<>();
 		while (scanner.hasNextLine()) {
 			String line = scanner.nextLine().trim();
-			final char modeChar = line.charAt(0);
-
-			switch (modeChar) {
-				// Save file version
-				case 'v' -> {
-					float ver = Float.parseFloat(line.split(" ")[1]);
-					if (ver != SAVE_VERSION) {
-						if (Math.floor(ver) == Math.floor(SAVE_VERSION)) {
-							System.err.println("Save file is out of date! Some data may not load correctly.");
-						} else {
-							System.err.println("Save file is critically out of date and cannot be read.");
-							throw new Error();
-						}
-					}
-				}
-				// Player position data
-				case 'P' -> {
-					String[] posData = line.split(" ")[1].split(",");
-					int posX = Integer.parseInt(posData[0]);
-					int posY = Integer.parseInt(posData[1]);
-					int posZ = Integer.parseInt(posData[2]);
-					Coord3 pos = Coord3.fromTx(posX, posY, posZ);
-					this.player = new Player(pos);
-				}
-				// Changed blocks data
-				default -> {
-					String[] lineData = line.split(" ");
-					String[] posData = lineData[0].split(",");
-					int posX = Integer.parseInt(posData[0]);
-					int posY = Integer.parseInt(posData[1]);
-					int posZ = Integer.parseInt(posData[2]);
-					int blockId = Integer.parseInt(lineData[1]);
-					int times = Integer.parseInt(lineData[2]);
-					Block block = Block.BLOCKS[blockId];
-					for (int i = 0; i <= times; i++) {
-						blockChanges[posX][posY][posZ + i] = block;
-					}
-				}
+			blockLines.add(line);
+		}
+		
+		// First line - version information
+		float ver = Float.parseFloat(versionLine.split(" ")[1]);
+		if (ver != SAVE_VERSION) {
+			if (Math.floor(ver) == Math.floor(SAVE_VERSION)) {
+				System.err.println("Save file is out of date! Some data may not load correctly.");
+			} else {
+				System.err.println("Save file is critically out of date and cannot be read.");
+				scanner.close();
+				throw new Error();
 			}
+		}
+		
+		// Second line - player position
+		String[] playerPosData = playerLine.split(",");
+		int playerPosX = Integer.parseInt(playerPosData[0]);
+		int playerPosY = Integer.parseInt(playerPosData[1]);
+		int playerPosZ = Integer.parseInt(playerPosData[2]);
+		Coord3 pos = Coord3.fromTx(playerPosX, playerPosY, playerPosZ);
+		this.player = new Player(pos);
+
+		// Rest of lines - load world data
+		Block[][][] blockChanges = new Block[World.maxCorner.x][World.maxCorner.y][World.maxCorner.z];
+		for (int i = 0; i < blockLines.size() - 1; i++) {
+			// Parse line for scan and block info
+			String[] lineData = blockLines.get(i).split(" ");
+			String[] posData = lineData[0].split(",");
+			int startX = Integer.parseInt(posData[0]);
+			int startY = Integer.parseInt(posData[1]);
+			int startZ = Integer.parseInt(posData[2]);
+			int scanCount = Integer.parseInt(lineData[1]);
+			int blockId = Integer.parseInt(lineData[2]);
+			Block block = Block.BLOCKS[blockId];
+			
+			// Scan starting from start pos scanCount times, filling in the block
+			int count = 0;
+			outer:
+			for (int x = startX; x < World.maxCorner.x; x++)
+				for (int y = startY; y < World.maxCorner.y; y++)
+					for (int z = startZ; z < World.maxCorner.z; z++) {
+						if (count++ > scanCount) {
+							break outer;
+						}
+						blockChanges[x][y][z] = block;
+					}
 		}
 
 		this.world = new World(blockChanges);
