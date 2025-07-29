@@ -16,6 +16,8 @@ public class Hotbar {
 		SLOTS[2] = Block.GRASS;
 		SLOTS[3] = Block.DIRT;
 		SLOTS[4] = Block.STONE;
+		SLOTS[5] = Block.LOG;
+		SLOTS[6] = Block.LEAF;
 	}
 
 	public static void updateFromInput(InputHandler input) {
