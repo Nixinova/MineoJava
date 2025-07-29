@@ -138,11 +138,11 @@ public class World {
 
 		Random random = new Random(Options.seed);
 
+		// First round - generate the base terrain
 		for (int x = 0; x < maxCorner.x; x++) {
 			for (int z = 0; z < maxCorner.z; z++) {
 				int localGroundY = Options.groundLevel;
-				
-				/*
+
 				// average ground from surrounding blocks
 				if (x > 1 && z > 1)
 					localGroundY = (terrainGrounds[x - 1][z - 1] + terrainGrounds[x][z - 1] + terrainGrounds[x - 1][z]) / 3;
@@ -151,7 +151,6 @@ public class World {
 				// clamp
 				localGroundY = Math.max(localGroundY, 4);
 				localGroundY = Math.min(localGroundY, Options.buildHeight - 4);
-				*/
 	
 				terrainGrounds[x][z] = localGroundY;
 
@@ -170,6 +169,37 @@ public class World {
 						block = Block.AIR;
 
 					worldBlocks[x][y][z] = block;
+				}
+			}
+		}
+		
+		// Second round - generate trees
+		final int distFromEdge = 5; // dont put trees on edge of world
+		final int maxTreeHeight = 6;
+		final int leafHeight = 3;
+		final float treeChance = 0.01f;
+		for (int x = distFromEdge; x < maxCorner.x - distFromEdge; x++) {
+			for (int z = distFromEdge; z < maxCorner.z - distFromEdge; z++) {
+				if (random.nextFloat() > treeChance) continue;
+				
+				for (int i = 0; i <= maxTreeHeight; i++) {
+					int y = terrainGrounds[x][z] + i;
+
+					worldBlocks[x][y][z] = Block.LOG;
+
+					// Add leaves
+					if (i > maxTreeHeight - leafHeight) {
+						for (int a = -1; a <= 1; a++)
+							for (int b = -1; b <= 1; b++) {
+								// Don't replace the trunk
+								if (i < maxTreeHeight && a == 0 && b == 0) continue;
+								
+								// Top of tree: skip edges
+								if (i == maxTreeHeight && a != 0 && b != 0) continue;
+
+								worldBlocks[x + a][y][z + b] = Block.LEAF;
+							}
+					}
 				}
 			}
 		}
