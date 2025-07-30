@@ -104,14 +104,13 @@ public class BlocksRenderer extends Render {
 		var block = this.game.world.getBlockAt(blockX, blockY, blockZ);
 		if (block == null) return; // Resizing world in options can cause a block to be undefined
 
-		var texture = block.getTexture();
-
 		final BlockFace[] faces = {
 			BlockFace.XMIN, BlockFace.XMAX,
 			BlockFace.YMIN, BlockFace.YMAX,
 			BlockFace.ZMIN, BlockFace.ZMAX,
 		};
 		for (BlockFace face : faces) {
+			var texture = block.getTexture(face).texture;
 			drawBlockFace(face, blockX, blockY, blockZ, texture);
 		}
 	}

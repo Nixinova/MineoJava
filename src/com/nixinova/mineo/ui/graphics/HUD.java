@@ -46,7 +46,7 @@ public class HUD {
 		for (int i = 0; i < 10; i++) {
 			Block block = Hotbar.SLOTS[i];
 			if (block != null) {
-				drawTextureOnScreen(block.getTexture(), size, curX, curY);
+				drawTextureOnScreen(block.getTexture().texture, size, curX, curY);
 				curX += cell;
 			}
 		}
@@ -65,7 +65,7 @@ public class HUD {
 		final int padding = 30;
 		int startX = GameDisplay.WIDTH - size - padding;
 		int startY = padding;
-		Render texture = Hotbar.getCurrentBlock().getTexture();
+		Render texture = Hotbar.getCurrentBlock().getTexture().texture;
 		drawTextureOnScreen(texture, size, startX, startY);
 	}
 

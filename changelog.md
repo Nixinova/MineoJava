@@ -4,6 +4,7 @@
 - Added jagged terrain
 - Added trees
 - Added new blocks: log and leaf
+- Add different textures per block face (used for log and grass)
 
 ## 0.1.4
 - New save file format (v2.0) using run-length encoding
