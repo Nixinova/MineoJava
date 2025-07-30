@@ -1,13 +1,15 @@
 # Changelog
 
-## Next
+## 0.2
+*2025-07-30 22:03*
 - Added jagged terrain
 - Added trees
 - Added new blocks: log and leaf
-- Add different textures per block face (used for log and grass)
-- Fixed orientation of side textures
+- Added different textures per block face (used for log and grass)
+- Fixed orientation of block side textures
 
 ## 0.1.4
+*2025-07-28 23:36*
 - New save file format (v2.0) using run-length encoding
   - Saves roughly 500x file size and makes saving and loading much faster
 - Fixed input not working after losing focus
