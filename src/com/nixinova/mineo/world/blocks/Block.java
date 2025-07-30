@@ -5,7 +5,7 @@ public class Block {
 	public static final Block BEDROCK = new Block("blocks/bedrock");
 	public static final Block STONE = new Block("blocks/stone");
 	public static final Block DIRT = new Block("blocks/dirt");
-	public static final Block GRASS = new Block("blocks/grass_top", "blocks/grass_top", "blocks/dirt");
+	public static final Block GRASS = new Block("blocks/grass_top", "blocks/grass_side", "blocks/dirt");
 	public static final Block LOG = new Block("blocks/log_top", "blocks/log_side", "blocks/log_top");
 	public static final Block LEAF = new Block("blocks/leaf");
 

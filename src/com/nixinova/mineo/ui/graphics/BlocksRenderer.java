@@ -154,9 +154,23 @@ public class BlocksRenderer extends Render {
 					}
 					polygonCorners[i] = screenPos;
 				}
+				
+				// Apply correction to local texture pixel based on block face
+				int adjustedTexX = texX;
+				int adjustedTexY = texY;
+				if (face == BlockFace.ZMAX || face == BlockFace.ZMIN) {
+					adjustedTexX = texY;
+					adjustedTexY = Texture.SIZE - 1 - texX;
+				}
+				if (face == BlockFace.XMAX || face == BlockFace.XMIN) {
+					adjustedTexY = Texture.SIZE - 1 - texY;
+				}
+				if (face == BlockFace.XMIN || face == BlockFace.ZMAX) {
+					adjustedTexX = Texture.SIZE - 1 - adjustedTexX;
+				}
 
 				// Get texel (sample from the top-left pixel of the scaled texel area)
-				int txPixel = Texture.getTexel(texture, texX, texY);
+				int txPixel = Texture.getTexel(texture, adjustedTexX, adjustedTexY);
 
 				// White border for hovered block
 				boolean isLookingAt = this.lookingAt != null
