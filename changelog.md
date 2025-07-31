@@ -1,6 +1,8 @@
 # Changelog
 
 ## Next
+- Made world rendering independent of world size
+  - Increases performance significantly for larger world sizes
 - Fixed crash caused by trees trying to generate outside the world.
 
 ## 0.2_1

@@ -20,7 +20,7 @@ public class Options {
 
 	public static final class DEFAULT_OPTIONS {
 		public static long seed = 100L;
-		public static int worldSize = 100;
+		public static int worldSize = 500;
 		public static int groundLevel = 16;
 		public static int buildHeight = 32;
 		public static int renderDistance = 20;

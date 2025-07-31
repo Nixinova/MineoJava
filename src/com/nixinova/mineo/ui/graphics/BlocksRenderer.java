@@ -69,12 +69,19 @@ public class BlocksRenderer extends Render {
 	}
 
 	private void drawWorld() {
+		// Generate render distance bounds
+		var playerPos = this.game.player.getPosition().toBlock();
+		var minX = Math.max(playerPos.x - Options.renderDistance, World.minCorner.x);
+		var minY = Math.max(playerPos.y - Options.renderDistance, World.minCorner.y);
+		var minZ = Math.max(playerPos.z - Options.renderDistance, World.minCorner.z);
+		var maxX = Math.min(playerPos.x + Options.renderDistance, World.maxCorner.x);
+		var maxY = Math.min(playerPos.y + Options.renderDistance, World.maxCorner.y);
+		var maxZ = Math.min(playerPos.z + Options.renderDistance, World.maxCorner.z);
+
 		// Loop from bottom to top of world
-		BlockCoord min = World.minCorner;
-		BlockCoord max = World.maxCorner;
-		for (int x = min.x; x <= max.x; x++) {
-			for (int y = min.y; y <= max.y; y++) {
-				for (int z = min.z; z <= max.z; z++) {
+		for (int x = minX; x < maxX; x++) {
+			for (int y = minY; y < maxY; y++) {
+				for (int z = minZ; z < maxZ; z++) {
 					// Ensure block is not air
 					boolean isAir = this.game.world.isAir(x, y, z);
 					if (isAir)
