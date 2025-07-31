@@ -37,6 +37,7 @@ public class Game {
 		this.world = gameSave.world;
 		this.player = gameSave.player;
 		this.controls = new Controller(this, this.player);
+		this.controls.setMouseLook(gameSave.lookHoriz, gameSave.lookVert);
 	}
 
 	public void tick() {

@@ -25,12 +25,13 @@ public class WorldSaving {
 	 * - +1.0: Major: Fundamental file format changes that make older save files unreadable.
 	 * - +0.1: Minor: Addition of new data items; keeps backward compatibility.
 	 */
-	public static float SAVE_VERSION = 2.0f;
+	public static float SAVE_VERSION = 2.1f;
 
 	private static final String saveFilePath = Mineo.rootFolder + "/" + SAVE_FILE;
 
 	public World world;
 	public Player player;
+	public double lookHoriz, lookVert;
 
 	public WorldSaving() {
 		try {
@@ -52,7 +53,9 @@ public class WorldSaving {
 
 			// Writer player position
 			TxCoord playerPos = game.player.getPosition().toTx();
-			writer.write(String.format("%d,%d,%d\n", playerPos.x, playerPos.y, playerPos.z));
+			double playerLookHoriz = game.controls.getMouseHorizRads();
+			double playerLookVert = game.controls.getMouseVertRads();
+			writer.write(String.format("%d,%d,%d,%.3f,%.3f\n", playerPos.x, playerPos.y, playerPos.z, playerLookHoriz, playerLookVert));
 
 			// Write each changed block in world
 			// Uses run-length encoding:
@@ -125,6 +128,8 @@ public class WorldSaving {
 		int playerPosX = Integer.parseInt(playerPosData[0]);
 		int playerPosY = Integer.parseInt(playerPosData[1]);
 		int playerPosZ = Integer.parseInt(playerPosData[2]);
+		this.lookHoriz = Double.parseDouble(playerPosData[3]);
+		this.lookVert = Double.parseDouble(playerPosData[4]);
 		Coord3 pos = Coord3.fromTx(playerPosX, playerPosY, playerPosZ);
 		this.player = new Player(pos);
 

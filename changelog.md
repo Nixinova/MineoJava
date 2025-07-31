@@ -1,6 +1,7 @@
 # Changelog
 
 ## Next
+- Include mouse angle in save file
 - Fixed falling into void when digging straight down.
 - Fixed world save and load.
 

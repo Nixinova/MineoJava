@@ -55,6 +55,11 @@ public class Controller {
 	public double getMouseVertDeg() {
 		return Math.toDegrees(game.controls.getMouseVertRads());
 	}
+	
+	public void setMouseLook(double horizRads, double vertRads) {
+		this.rot = horizRads;
+		this.tilt = vertRads;
+	}
 
 	public Vector3<Double> getViewDirection() {
 		double x = Math.cos(this.tilt) * Math.sin(this.rot);
