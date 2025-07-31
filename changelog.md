@@ -1,5 +1,8 @@
 # Changelog
 
+## Next
+- Fixed crash caused by trees trying to generate outside the world.
+
 ## 0.2_1
 *2025-07-31 21:13*
 - Include mouse angle in save file

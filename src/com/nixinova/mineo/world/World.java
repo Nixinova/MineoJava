@@ -184,6 +184,7 @@ public class World {
 				
 				for (int i = 0; i <= maxTreeHeight; i++) {
 					int y = terrainGrounds[x][z] + i;
+					if (y >= Options.buildHeight) break;
 
 					worldBlocks[x][y][z] = Block.LOG;
 
