@@ -39,7 +39,7 @@ public class Player {
 		SubBlockCoord pos = this.position.toSubBlock();
 		BlockCoord min = World.minCorner;
 		BlockCoord max = World.maxCorner;
-		return pos.x >= min.x && pos.x <= max.x && pos.y >= min.y && pos.z >= min.z && pos.z <= max.z;
+		return pos.x >= min.x && pos.x <= max.x && pos.y > min.y && pos.z >= min.z && pos.z <= max.z;
 	}
 
 	public boolean isUnderground(World world) {

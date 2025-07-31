@@ -249,9 +249,9 @@ public class ControlsTick {
 		// Above the ground if the block one texel beneath the player's feet is air
 		TxCoord curTx = controls.pos.toTx();
 		BlockCoord blockOneTxDown = Coord3.fromTx(curTx.x, curTx.y - 1, curTx.z).toBlock();
-		boolean belowTxIsNotVoid = blockOneTxDown.y > 0;
+		boolean belowTxIsVoid = blockOneTxDown.y < 0;
 		boolean belowTxIsAir = this.game.world.isAir(blockOneTxDown);
-		return belowTxIsNotVoid && belowTxIsAir;
+		return belowTxIsVoid || !belowTxIsVoid && belowTxIsAir;
 	}
 
 	private boolean isBelowGround() {
