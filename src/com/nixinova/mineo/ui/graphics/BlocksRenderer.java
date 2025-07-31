@@ -281,7 +281,8 @@ public class BlocksRenderer extends Render {
 		// Save polygon data to list
 		var polygon = new Polygon(xpoints, ypoints, xpoints.length);
 		var savedPolygon = new SavedPolygon(polygon, fogAppliedPixel);
-		int zKey = (int) (zIndex * Texture.SIZE);
+		// Save depth buffer
+		int zKey = (int) (zIndex * Texture.SIZE * 10);
 		// Initialise array at z index if not present
 		if (!this.savedPolygons.containsKey(zKey)) {
 			this.savedPolygons.put(zKey, new ArrayList<>());
