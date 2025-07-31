@@ -1,9 +1,10 @@
 # Changelog
 
-## Next
+## 0.2_1
+*2025-07-31 21:13*
 - Include mouse angle in save file
-- Fixed falling into void when digging straight down.
-- Fixed world save and load.
+- Fixed falling into void when digging straight down
+- Fixed world save and load
 - Fixed block edge flickering
 
 ## 0.2
