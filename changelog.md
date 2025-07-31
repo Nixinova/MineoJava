@@ -3,6 +3,7 @@
 ## Next
 - Made world rendering independent of world size
   - Increases performance significantly for larger world sizes
+- Changed world saving to store only changed blocks
 - Fixed crash caused by trees trying to generate outside the world.
 
 ## 0.2_1

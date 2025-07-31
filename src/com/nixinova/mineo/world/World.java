@@ -1,5 +1,7 @@
 package com.nixinova.mineo.world;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import com.nixinova.mineo.io.Options;
@@ -15,25 +17,25 @@ public class World {
 	public static final BlockCoord maxCorner = new BlockCoord(Options.worldSize, Options.buildHeight, Options.worldSize);
 
 	private Block[][][] worldBlocks;
+	private Map<BlockCoord, Block> blockChanges;
 
 	public World() {
 		this.mapBlocks();
+		this.blockChanges = new HashMap<BlockCoord, Block>();
 	}
 
-	public World(Block[][][] blockChanges) {
+	public World(Map<BlockCoord, Block> blockChanges) {
 		this();
-		this.worldBlocks = blockChanges;
+
 		// Update world to match block changes map
-		for (int x = minCorner.x; x < maxCorner.x; x++) {
-			for (int y = minCorner.y; y < maxCorner.y; y++) {
-				for (int z = minCorner.z; z < maxCorner.z; z++) {
-					Block block = blockChanges[x][y][z];
-					if (block == null)
-						block = Block.AIR;
-					setBlockAt(x, y, z, block);
-				}
-			}
+		for (var blockCoord : blockChanges.keySet()) {
+			Block block = blockChanges.get(blockCoord);
+			if (block == null)
+				block = Block.AIR;
+			setBlockAt(blockCoord, block);
 		}
+
+		this.blockChanges = blockChanges;
 	}
 
 	public boolean isWithinWorld(int blockX, int blockY, int blockZ) {
@@ -109,6 +111,7 @@ public class World {
 	private void setBlockAt(int blockX, int blockY, int blockZ, Block block) {
 		if (isWithinWorld(blockX, blockY, blockZ)) {
 			this.worldBlocks[blockX][blockY][blockZ] = block;
+			this.blockChanges.put(new BlockCoord(blockX, blockY, blockZ), block);
 		}
 	}
 
@@ -129,6 +132,10 @@ public class World {
 		double y = Options.buildHeight / 2;
 		double z = maxCorner.z / 2 + 0.5; // centre of block in centre of world
 		return Coord3.fromSubBlock(x, y, z);
+	}
+	
+	public Map<BlockCoord, Block> getBlockChanges() {
+		return this.blockChanges;
 	}
 
 	private void mapBlocks() {
