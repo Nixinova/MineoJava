@@ -18,6 +18,8 @@ public class Block {
 		STONE, 
 		DIRT, 
 		GRASS,
+		LOG,
+		LEAF,
 	};
 
 	public enum Side {
