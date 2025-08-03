@@ -154,7 +154,7 @@ public class World {
 				if (x > 1 && z > 1)
 					localGroundY = (terrainGrounds[x - 1][z - 1] + terrainGrounds[x][z - 1] + terrainGrounds[x - 1][z]) / 3;
 				// since the above averaging rounds down with weight 1/3, roughly reverse that effect here to create even terrain
-				if (random.nextFloat(1.0f) < 0.35f) localGroundY++;
+				if (random.nextFloat(1.0f) < 0.3f) localGroundY++;
 				// clamp
 				localGroundY = Math.max(localGroundY, 4);
 				localGroundY = Math.min(localGroundY, Options.buildHeight - 4);

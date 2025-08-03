@@ -1,6 +1,7 @@
 # Changelog
 
 ## Next
+- Fixed terrain generation at greater distances
 - Fixed options file warning message wording
 
 ## 0.2.1
