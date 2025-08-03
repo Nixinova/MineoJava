@@ -1,12 +1,12 @@
 # Changelog
 
-## Next
+## 0.2.1
 - Added world file warning message to main menu
 - Moved options file warning message to main menu
 - Made world rendering independent of world size
   - Increases performance significantly for larger world sizes
 - Changed world saving to store only changed blocks
-- Fixed crash caused by trees trying to generate outside the world.
+- Fixed crash caused by trees trying to generate outside the world
 
 ## 0.2_1
 *2025-07-31 21:13*
