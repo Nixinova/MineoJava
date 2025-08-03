@@ -68,7 +68,6 @@ public class GameDisplay extends DisplayBase {
 			// Game info
 			ScreenText uiText = new ScreenText(graphics);
 			uiText.drawMainInfo(this.game);
-			uiText.drawOptionsWarning();
 		}
 	}
 }

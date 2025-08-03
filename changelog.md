@@ -1,6 +1,8 @@
 # Changelog
 
 ## Next
+- Added world file warning message to main menu
+- Moved options file warning message to main menu
 - Made world rendering independent of world size
   - Increases performance significantly for larger world sizes
 - Changed world saving to store only changed blocks

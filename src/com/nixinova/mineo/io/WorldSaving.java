@@ -27,7 +27,7 @@ public class WorldSaving {
 	 * - +1.0: Major: Fundamental file format changes that make older save files unreadable.
 	 * - +0.1: Minor: Addition of new data items; keeps backward compatibility.
 	 */
-	public static float SAVE_VERSION = 2.1f;
+	public static final float SAVE_VERSION = 2.2f;
 
 	private static final String saveFilePath = Mineo.rootFolder + "/" + SAVE_FILE;
 
@@ -100,6 +100,19 @@ public class WorldSaving {
 			System.err.println("Could not create game save file.");
 		}
 	}
+	
+	public static float loadFileVersion() throws FileNotFoundException {
+		File saveFile = new File(saveFilePath);
+		
+		Scanner scanner = new Scanner(saveFile);
+		
+		var versionLine = scanner.nextLine().trim();
+		float ver = Float.parseFloat(versionLine.split(" ")[1]);
+		
+		scanner.close();
+
+		return ver;
+	}
 
 	private void loadFromFile() throws FileNotFoundException {
 		File saveFile = new File(saveFilePath);
@@ -123,7 +136,10 @@ public class WorldSaving {
 			} else {
 				System.err.println("Save file is critically out of date and cannot be read.");
 				scanner.close();
-				throw new Error();
+				// set default
+				this.player = new Player();
+				this.world = new World();
+				return;
 			}
 		}
 		

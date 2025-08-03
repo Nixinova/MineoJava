@@ -13,6 +13,11 @@ public class Player {
 
 	private Coord3 position;
 	private HoveredBlock lookingAtBlock;
+	
+	public Player() {
+		this.position = Coord3.fromBlock(Options.worldSize / 2, Options.groundLevel + 1, Options.worldSize / 2);
+		this.lookingAtBlock = new HoveredBlock(null, null);
+	}
 
 	public Player(Coord3 startPosition) {
 		this.position = startPosition;

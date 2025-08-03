@@ -7,12 +7,16 @@ import java.awt.Graphics2D;
 import java.awt.TexturePaint;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 
+import com.nixinova.mineo.io.Options;
+import com.nixinova.mineo.io.WorldSaving;
 import com.nixinova.mineo.main.Mineo;
 import com.nixinova.mineo.player.input.InputHandler;
 import com.nixinova.mineo.player.input.Keys;
 import com.nixinova.mineo.ui.display.GameDisplay;
 import com.nixinova.mineo.ui.graphics.FontGraphics;
+import com.nixinova.mineo.ui.graphics.ScreenText;
 import com.nixinova.mineo.ui.graphics.TextColorScheme;
 import com.nixinova.mineo.ui.graphics.Texture;
 
@@ -42,7 +46,6 @@ public class MainMenu extends BaseMenu {
 
 	public void run(Graphics g) {
 		Graphics2D graphics = (Graphics2D) g;
-
 		var buttonScheme = new TextColorScheme(Color.black, Color.lightGray, Color.black);
 		var textScheme = new TextColorScheme(Color.lightGray, Color.black);
 
@@ -77,6 +80,16 @@ public class MainMenu extends BaseMenu {
 		setFont(graphics, 20, Font.PLAIN);
 		graphics.drawString("+", super.input.mouseX, super.input.mouseY);
 
+		// Draw warning messages
+		var uiText = new ScreenText(graphics);
+		uiText.checkThenDrawSavedDataWarning("options.txt", Options.fileVersion, Options.OPTIONS_VERSION);
+		try {
+			var saveVersion = WorldSaving.loadFileVersion();
+			uiText.checkThenDrawSavedDataWarning("game.dat", saveVersion, WorldSaving.SAVE_VERSION);
+		} catch (FileNotFoundException err) {
+			// don't care
+		}
+
 		// Input actions
 		if (kbd.pressedButton(Keys.LCLICK)) {
 			if (contButton.isMouseInside(this.input)) {
@@ -88,9 +101,7 @@ public class MainMenu extends BaseMenu {
 			if (exitButton.isMouseInside(this.input)) {
 				System.exit(1);
 			}
-
 		}
-
 	}
 
 	private void setFont(Graphics graphics, int size, int style) {
