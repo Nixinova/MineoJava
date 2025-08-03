@@ -1,5 +1,8 @@
 # Changelog
 
+## Next
+- Fixed options file warning message wording
+
 ## 0.2.1
 - Added world file warning message to main menu
 - Moved options file warning message to main menu

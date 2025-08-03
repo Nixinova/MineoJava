@@ -57,7 +57,7 @@ public class ScreenText {
 			if (fileV < curV)
 				msg1 = String.format("Outdated %1$s version! Client is on %2$.2f while %1$s is on %3$.2f.", type, curV, fileV);
 			else
-				msg1 = String.format("%1$s file is too new! %2$.2f is newer than expected version %3$.2f.", type, curV, fileV);
+				msg1 = String.format("%1$s file is too new! %2$.2f is newer than expected version %3$.2f.", type, fileV, curV);
 
 			if (diffMajor) // breaking changes to the file format
 				msg2 = String.format("Data in %s which differs from the current version may break or crash your game!", type);
